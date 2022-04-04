@@ -25,3 +25,12 @@ code {
 ::-webkit-scrollbar-thumb {
   background: #758b38;
 }
+
+.admin-drawer {
+  height: 100vh !important;
+  overflow-y: scroll !important;
+}
+
+.admin-drawer::-webkit-scrollbar {
+  width: 0px;
+}

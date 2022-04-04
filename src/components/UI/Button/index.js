@@ -8,11 +8,19 @@ const theme = createTheme({
       main: "#758b38",
       contrastText: "#FFFFFF",
     },
+    secondary: {
+      main: "#5e72e4",
+      contrastText: "#FFFFFF",
+    },
+    info: {
+      main: "#3aff60",
+      contrastText: "#000",
+    },
   },
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
+        containedPrimary: {
           borderRadius: 0,
         },
       },
