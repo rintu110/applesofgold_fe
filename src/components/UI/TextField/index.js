@@ -36,8 +36,7 @@ const theme = createTheme({
         sizeSmall: {
           fontSize: 14,
         },
-        root: {
-          // Some CSS
+        colorPrimary: {
           padding: 0,
           borderRadius: 0,
         },

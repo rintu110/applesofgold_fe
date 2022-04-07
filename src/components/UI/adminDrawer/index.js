@@ -5,6 +5,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Collapse from "@mui/material/Collapse";
 import Logo from "../../../images/adminDrawer/apples-of-gold-jewelry.png";
 import { styled } from "@mui/material/styles";
 import Icon from "@mui/material/Icon";
@@ -30,22 +31,6 @@ const DrawerList = styled(List)(({ theme }) => ({
       backgroundColor: "#fff",
     },
   },
-  // "& .Mui-selected": {
-  //   "&.MuiListItem-root": {
-  //     color: "#FFFFFF",
-  //     backgroundColor: "#ec407ade",
-  //   },
-  //   "& .MuiListItemIcon-root": {
-  //     color: "#FFFFFF",
-  //   },
-  //   "& .MuiListItemText-primary": {
-  //     color: "#FFFFFF",
-  //     fontSize: 18,
-  //   },
-  //   "&:hover": {
-  //     backgroundColor: "#ec407ade",
-  //   },
-  // },
   "& .MuiListItemIcon-root": {
     minWidth: "fit-content",
     paddingRight: 20,
@@ -80,6 +65,16 @@ const Image = styled("img")(({ theme }) => ({
 const drawerWidth = 340;
 
 function AdminDrawer(props) {
+  const [open, setOpen] = React.useState(-1);
+
+  const handleClick = (event) => {
+    if (event === open) {
+      setOpen(-1);
+    } else {
+      setOpen(event);
+    }
+  };
+
   const router = [
     {
       icon: "outlined_flag",
@@ -92,6 +87,26 @@ function AdminDrawer(props) {
       name: "State",
       link: "/admin/state",
       color: "#36f5bf",
+    },
+    {
+      icon: "format_list_bulleted",
+      name: "Category",
+      link: "#",
+      color: "#f3a4b5",
+      expand: [
+        {
+          icon: "category",
+          name: "Category",
+          link: "/admin/category",
+          color: "#c40808",
+        },
+        {
+          icon: "view_agenda",
+          name: "Category meta",
+          link: "/admin/category-meta",
+          color: "#1292ff",
+        },
+      ],
     },
   ];
 
@@ -110,26 +125,70 @@ function AdminDrawer(props) {
           >
             <Image src={Logo} />
             <DrawerList>
-              {router.map((item, index) => (
-                <ListItem button key={index}>
-                  <Link
-                    to={item.link}
-                    style={{
-                      textDecoration: "none",
-                      margin: 0,
-                      padding: 0,
-                      width: "100%",
-                    }}
-                  >
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <Icon sx={{ color: item.color }}>{item.icon}</Icon>
-                      </ListItemIcon>
-                      <ListItemText primary={item.name} />
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
-              ))}
+              {router.map((item, index) =>
+                item.expand ? (
+                  <DrawerList key={index}>
+                    <ListItem>
+                      <ListItemButton onClick={() => handleClick(index)}>
+                        <ListItemIcon>
+                          <Icon sx={{ color: item.color }}>{item.icon}</Icon>
+                        </ListItemIcon>
+                        <ListItemText primary={item.name} />
+                        {open ? (
+                          <Icon>expand_less</Icon>
+                        ) : (
+                          <Icon>expand_more</Icon>
+                        )}
+                      </ListItemButton>
+                    </ListItem>
+                    <Collapse in={index === open} timeout="auto" unmountOnExit>
+                      {item.expand.map((exp, expindex) => (
+                        <DrawerList disablePadding key={expindex}>
+                          <ListItem>
+                            <Link
+                              to={exp.link}
+                              style={{
+                                textDecoration: "none",
+                                margin: 0,
+                                padding: 0,
+                                width: "100%",
+                              }}
+                            >
+                              <ListItemButton>
+                                <ListItemIcon>
+                                  <Icon sx={{ color: exp.color }}>
+                                    {exp.icon}
+                                  </Icon>
+                                </ListItemIcon>
+                                <ListItemText primary={exp.name} />
+                              </ListItemButton>
+                            </Link>
+                          </ListItem>
+                        </DrawerList>
+                      ))}
+                    </Collapse>
+                  </DrawerList>
+                ) : (
+                  <ListItem key={index}>
+                    <Link
+                      to={item.link}
+                      style={{
+                        textDecoration: "none",
+                        margin: 0,
+                        padding: 0,
+                        width: "100%",
+                      }}
+                    >
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <Icon sx={{ color: item.color }}>{item.icon}</Icon>
+                        </ListItemIcon>
+                        <ListItemText primary={item.name} />
+                      </ListItemButton>
+                    </Link>
+                  </ListItem>
+                )
+              )}
             </DrawerList>
           </Box>
         </CustomDrawer>

@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 // import AppBar from "../UI/AppBar";
 import CountryCont from "../../containers/aogproviderfe/country";
 import StateCont from "../../containers/aogproviderfe/state";
+import CategoryCont from "../../containers/aogproviderfe/category";
+import CategoryMetaCont from "../../containers/aogproviderfe/categoryMeta";
 import AdminLogin from "../aogproviderfe/login";
 import Snackbar from "../UI/SnackBar";
 import Loader from "../UI/Loader";
@@ -52,7 +54,8 @@ function Router() {
             <Route path="/" element={<>Hello backend World</>} />
             <Route path="/admin/country" element={<CountryCont />} />
             <Route path="/admin/state" element={<StateCont />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/category" element={<CategoryCont />} />
+            <Route path="/admin/category-meta" element={<CategoryMetaCont />} />
           </Routes>
         }
       />

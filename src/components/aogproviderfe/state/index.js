@@ -11,6 +11,8 @@ import TextField from "../../UI/TextField";
 import Button from "../../UI/Button";
 import StatusMode from "../../UI/StatusMode";
 import EditState from "./editState";
+import Table from "../../UI/Table";
+import Pagination from "../../UI/Pagination";
 
 const DataGridBox = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -168,14 +170,14 @@ function StateComp(props) {
             <TextField
               size="small"
               fullWidth
-              color="secondary"
+              color="primary"
               placeholder="Search by State"
               value={props.state.stateKeyWord}
               onChange={(event) => props.setSearchKeyWord(event.target.value)}
               InputProps={{
                 endAdornment: (
                   <Button
-                    color="secondary"
+                    color="primary"
                     variant="outlined"
                     onClick={() =>
                       props.viewState(
@@ -220,95 +222,43 @@ function StateComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <DataGridBox sx={{ height: 450 }}>
-            <DataGrid
-              rows={props.state.stateStore}
-              columns={columns}
-              headerHeight={30}
-              rowHeight={40}
-              selectionModel={props.state.stateAssign}
-              checkboxSelection
-              disableColumnSelector
-              onSelectionModelChange={(row) =>
-                props.setStateAssignUnassing(row)
-              }
-              hideFooter
-              hideFooterSelectedRowCount
-              hideFooterPagination
-              getRowId={(row) => row._id}
-            />
-          </DataGridBox>
+          <Table
+            rows={props.state.stateStore}
+            columns={columns}
+            selectionModel={props.state.stateAssign}
+            onSelectionModelChange={(row) => props.setStateAssignUnassing(row)}
+          />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Box
-              sx={{
-                ml: "auto",
-                width: "fit-content",
-                my: 2,
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span style={{ backgroundColor: "#FFFFFF" }}>
-                displaying {parseInt(props.state.startingAfter) + 1} -{" "}
-                {parseInt(props.state.startingAfter) > props.state.total
-                  ? props.state.total
-                  : parseInt(props.state.limit) +
-                    parseInt(props.state.startingAfter)}{" "}
-                of {props.state.total}
-                <IconButton
-                  disabled={props.state.startingAfter === 0}
-                  onClick={() =>
-                    props.setStateStartingAfter(
-                      props.login.user_token,
-                      props.state,
-                      parseInt(props.state.startingAfter) -
-                        parseInt(props.state.limit)
-                    )
-                  }
-                >
-                  <Icon>navigate_before</Icon>
-                </IconButton>
-                <IconButton
-                  disabled={
-                    props.state.startingAfter + props.state.limit >=
-                    props.state.total
-                  }
-                  onClick={() =>
-                    props.setStateStartingAfter(
-                      props.login.user_token,
-                      props.state,
-                      parseInt(props.state.startingAfter) +
-                        parseInt(props.state.limit)
-                    )
-                  }
-                >
-                  <Icon>navigate_next</Icon>
-                </IconButton>
-              </span>
-              <Box sx={{ bgcolor: "#ffffff", ml: 2 }}>
-                <TextField
-                  value={props.state.limit}
-                  select
-                  onChange={(event) =>
-                    props.setStateLimit(
-                      props.login.user_token,
-                      props.state,
-                      event.target.value
-                    )
-                  }
-                  color="secondary"
-                  size="small"
-                >
-                  {[5, 10, 15, 20].map((item, index) => (
-                    <MenuItem value={item} key={index}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Box>
-            </Box>
+            <Pagination
+              startingAfter={props.state.startingAfter}
+              total={props.state.total}
+              limit={props.state.limit}
+              nextPage={() =>
+                props.setStateStartingAfter(
+                  props.login.user_token,
+                  props.state,
+                  parseInt(props.state.startingAfter) +
+                    parseInt(props.state.limit)
+                )
+              }
+              previousPage={() =>
+                props.setStateStartingAfter(
+                  props.login.user_token,
+                  props.state,
+                  parseInt(props.state.startingAfter) -
+                    parseInt(props.state.limit)
+                )
+              }
+              setLimit={(event) =>
+                props.setStateLimit(
+                  props.login.user_token,
+                  props.state,
+                  event.target.value
+                )
+              }
+            />
           </Grid>
         </Grid>
       </Grid>

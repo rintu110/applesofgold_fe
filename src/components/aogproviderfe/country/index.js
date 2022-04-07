@@ -4,31 +4,12 @@ import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import { DataGrid } from "@mui/x-data-grid";
-import { styled } from "@mui/material/styles";
 import TextField from "../../UI/TextField";
 import Button from "../../UI/Button";
 import StatusMode from "../../UI/StatusMode";
 import EditCountry from "./editCountry";
-
-const DataGridBox = styled(Box)(({ theme }) => ({
-  width: "100%",
-  "& .table-header": {
-    backgroundColor: "#e9ecef",
-    color: "#8898aa",
-    fontSize: 16,
-    fontWeight: 300,
-  },
-  "& .MuiDataGrid-columnHeaderTitleContainer": {
-    backgroundColor: "#e9ecef",
-  },
-  "& .table-row": {
-    fontSize: 16,
-    color: "#525f7f",
-    fontWeight: 200,
-  },
-}));
+import Table from "../../UI/Table";
+import Pagination from "../../UI/Pagination";
 
 function CountryComp(props) {
   const columns = [
@@ -168,14 +149,14 @@ function CountryComp(props) {
             <TextField
               size="small"
               fullWidth
-              color="secondary"
+              color="primary"
               placeholder="Search by Country"
               value={props.country.countryKeyWord}
               onChange={(event) => props.setSearchKeyWord(event.target.value)}
               InputProps={{
                 endAdornment: (
                   <Button
-                    color="secondary"
+                    color="primary"
                     variant="outlined"
                     onClick={() =>
                       props.viewCountry(
@@ -220,95 +201,45 @@ function CountryComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <DataGridBox sx={{ height: 450 }}>
-            <DataGrid
-              rows={props.country.countryStore}
-              columns={columns}
-              headerHeight={30}
-              rowHeight={40}
-              selectionModel={props.country.countryAssign}
-              checkboxSelection
-              disableColumnSelector
-              onSelectionModelChange={(row) =>
-                props.setCountryAssignUnassing(row)
-              }
-              hideFooter
-              hideFooterSelectedRowCount
-              hideFooterPagination
-              getRowId={(row) => row._id}
-            />
-          </DataGridBox>
+          <Table
+            rows={props.country.countryStore}
+            columns={columns}
+            selectionModel={props.country.countryAssign}
+            onSelectionModelChange={(row) =>
+              props.setCountryAssignUnassing(row)
+            }
+          />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Box
-              sx={{
-                ml: "auto",
-                width: "fit-content",
-                my: 2,
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span style={{ backgroundColor: "#FFFFFF" }}>
-                displaying {parseInt(props.country.startingAfter) + 1} -{" "}
-                {parseInt(props.country.startingAfter) > props.country.total
-                  ? props.country.total
-                  : parseInt(props.country.limit) +
-                    parseInt(props.country.startingAfter)}{" "}
-                of {props.country.total}
-                <IconButton
-                  disabled={props.country.startingAfter === 0}
-                  onClick={() =>
-                    props.setCountryStartingAfter(
-                      props.login.user_token,
-                      props.country,
-                      parseInt(props.country.startingAfter) -
-                        parseInt(props.country.limit)
-                    )
-                  }
-                >
-                  <Icon>navigate_before</Icon>
-                </IconButton>
-                <IconButton
-                  disabled={
-                    props.country.startingAfter + props.country.limit >=
-                    props.country.total
-                  }
-                  onClick={() =>
-                    props.setCountryStartingAfter(
-                      props.login.user_token,
-                      props.country,
-                      parseInt(props.country.startingAfter) +
-                        parseInt(props.country.limit)
-                    )
-                  }
-                >
-                  <Icon>navigate_next</Icon>
-                </IconButton>
-              </span>
-              <Box sx={{ bgcolor: "#ffffff", ml: 2 }}>
-                <TextField
-                  value={props.country.limit}
-                  select
-                  onChange={(event) =>
-                    props.setCountryLimit(
-                      props.login.user_token,
-                      props.country,
-                      event.target.value
-                    )
-                  }
-                  color="secondary"
-                  size="small"
-                >
-                  {[5, 10, 15, 20].map((item, index) => (
-                    <MenuItem value={item} key={index}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Box>
-            </Box>
+            <Pagination
+              startingAfter={props.country.startingAfter}
+              total={props.country.total}
+              limit={props.country.limit}
+              nextPage={() =>
+                props.setCountryStartingAfter(
+                  props.login.user_token,
+                  props.country,
+                  parseInt(props.country.startingAfter) +
+                    parseInt(props.country.limit)
+                )
+              }
+              previousPage={() =>
+                props.setCountryStartingAfter(
+                  props.login.user_token,
+                  props.country,
+                  parseInt(props.country.startingAfter) -
+                    parseInt(props.country.limit)
+                )
+              }
+              setLimit={(event) =>
+                props.setCountryLimit(
+                  props.login.user_token,
+                  props.country,
+                  event
+                )
+              }
+            />
           </Grid>
         </Grid>
       </Grid>
