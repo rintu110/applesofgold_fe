@@ -19,10 +19,8 @@ function CategoryMetaComp(props) {
     setCategoryId,
     setMetaSearchKeyword,
     setEditMeta,
-    resetMeta,
     viewMeta,
     addMeta,
-    updateMeta,
     meta,
     login,
     allCatgory,
@@ -98,8 +96,6 @@ function CategoryMetaComp(props) {
     viewMeta(login.user_token, meta);
     viewAllCategory(login.user_token);
   }, [login.user_token]);
-
-  console.log(meta);
 
   return (
     <>

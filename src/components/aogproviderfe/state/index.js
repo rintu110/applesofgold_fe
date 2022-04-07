@@ -4,33 +4,12 @@ import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import { DataGrid } from "@mui/x-data-grid";
-import { styled } from "@mui/material/styles";
 import TextField from "../../UI/TextField";
 import Button from "../../UI/Button";
 import StatusMode from "../../UI/StatusMode";
 import EditState from "./editState";
 import Table from "../../UI/Table";
 import Pagination from "../../UI/Pagination";
-
-const DataGridBox = styled(Box)(({ theme }) => ({
-  width: "100%",
-  "& .table-header": {
-    backgroundColor: "#e9ecef",
-    color: "#8898aa",
-    fontSize: 16,
-    fontWeight: 300,
-  },
-  "& .MuiDataGrid-columnHeaderTitleContainer": {
-    backgroundColor: "#e9ecef",
-  },
-  "& .table-row": {
-    fontSize: 16,
-    color: "#525f7f",
-    fontWeight: 200,
-  },
-}));
 
 function StateComp(props) {
   const columns = [
