@@ -26,6 +26,9 @@
       "styles/*": [
         "src/styles/*"
       ],
+      "wrapper/*": [
+        "src/wrapper/*"
+      ],
       "@/*": [
         "src/*"
       ],
