@@ -84,7 +84,7 @@ function AdminDrawer({ Components }) {
     },
     {
       icon: "format_list_bulleted",
-      name: "Category",
+      name: "Category Types",
       link: "#",
       color: "#f3a4b5",
       expand: [
@@ -100,6 +100,26 @@ function AdminDrawer({ Components }) {
           link: "/admin/category-meta",
           color: "#1292ff",
         },
+      ],
+    },
+    {
+      icon: "shopping_bag",
+      name: "Products Types",
+      link: "#",
+      color: "#0c34ab",
+      expand: [
+        {
+          icon: "local_mall",
+          name: "Product",
+          link: "/admin/product",
+          color: "#a0d411",
+        },
+        // {
+        //   icon: "view_agenda",
+        //   name: "Category meta",
+        //   link: "/admin/category-meta",
+        //   color: "#1292ff",
+        // },
       ],
     },
   ];

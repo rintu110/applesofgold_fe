@@ -54,36 +54,33 @@ function EditCategory(props) {
           />
         </Box>
         <Box sx={{ mb: 3 }}>
-          <Box sx={{ m: 1 }}>
-            <Autocomplete
-              value={_id}
-              options={category.allCatgory}
-              autoComplete={true}
-              filterSelectedOptions
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-              onInputChange={(event, value) => value !== null && value !== undefined && value !== "" && setTimeout(() => {
-                viewAllCategory(login.user_token, value);
-              }, 200)}
-              onChange={(event, value) => { setValue(value); setCategoryParentId(value) }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  fullWidth
-                  color="secondary"
-                  label="Choose Category"
-                />
-              )}
-              disableListWrap
-              disablePortal
-              renderOption={(props, option) => (
-                <li {...props} key={option._id}>
-                  {option.label}
-                </li>
-              )}
-
-            />
-          </Box>
+          <Autocomplete
+            value={_id}
+            options={category.allCatgory}
+            autoComplete={true}
+            filterSelectedOptions
+            isOptionEqualToValue={(option, value) => true}
+            onInputChange={(event, value) => value !== null && value !== undefined && value !== "" && setTimeout(() => {
+              viewAllCategory(login.user_token, value);
+            }, 200)}
+            onChange={(event, value) => { setValue(value); setCategoryParentId(value) }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                fullWidth
+                color="secondary"
+                label="Choose Category"
+              />
+            )}
+            disableListWrap
+            disablePortal
+            renderOption={(props, option) => (
+              <li {...props} key={option._id}>
+                {option.label}
+              </li>
+            )}
+          />
         </Box>
         <Box sx={{ mb: 3 }}>
           <TextField

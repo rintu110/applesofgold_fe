@@ -184,7 +184,7 @@ function CategoryComp(props) {
               options={category.allCatgory}
               autoComplete={true}
               filterSelectedOptions
-              isOptionEqualToValue={(option, value) => option._id === value._id}
+              isOptionEqualToValue={(option, value) => true}
               onInputChange={(event, value) => value !== null && value !== undefined && value !== "" && setTimeout(() => {
                 viewAllCategory(login.user_token, value);
               }, 200)}

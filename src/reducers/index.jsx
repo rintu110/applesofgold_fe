@@ -4,6 +4,7 @@ import loginReducer from "reducers/login";
 import countryReducer from "reducers/country";
 import categoryReducer from "reducers/category";
 import categoryMetaReducer from "reducers/categoryMeta";
+import productReducer from "reducers/product";
 import stateReducer from "reducers/state";
 
 const root = combineReducers({
@@ -13,6 +14,7 @@ const root = combineReducers({
   stateReducer,
   categoryReducer,
   categoryMetaReducer,
+  productReducer
 });
 
 export default root;
