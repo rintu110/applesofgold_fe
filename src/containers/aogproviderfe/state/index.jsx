@@ -15,6 +15,8 @@ import {
   setStateStartingAfter,
   setEditState,
   updateState,
+  uploadCSV,
+  exportCSV,
 } from "actions/state";
 
 class StateCont extends Component {
@@ -29,6 +31,12 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  exportCSV: (token) => {
+    dispatch(exportCSV(token));
+  },
+  uploadCSV: (token, csv, payload) => {
+    dispatch(uploadCSV(token, csv, payload));
+  },
   updateState: (token, payload) => {
     dispatch(updateState(token, payload));
   },

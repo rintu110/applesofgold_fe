@@ -59,7 +59,8 @@ function productReducer(state = productState, action) {
         productCost: action.payload.cost,
         productWeight: action.payload.weight,
         productTaxable: action.payload.taxable,
-        productId: action.payload.product_id,
+        productId: action.payload._id,
+        productEdit: true,
       });
     case constant.SET_STARTING_AFTER:
       return (state = { ...state, startingAfter: action.payload });

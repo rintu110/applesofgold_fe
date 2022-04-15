@@ -198,6 +198,41 @@ function CountryComp(props) {
                 UNASSIGNED
               </Button>
             </Box>
+            <Box sx={{ mr: 2 }}>
+              <label htmlFor="state-csv-file">
+                <input
+                  accept=".csv"
+                  id="state-csv-file"
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(event) =>
+                    props.uploadCSV(
+                      props.login.user_token,
+                      event.target.files[0],
+                      props.country
+                    )
+                  }
+                />
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  component="span"
+                >
+                  Import
+                </Button>
+              </label>
+            </Box>
+            <Box>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={() => props.exportCSV(props.login.user_token)}
+              >
+                Export
+              </Button>
+            </Box>
           </Box>
         </Grid>
         <Grid item xs={12}>
@@ -221,7 +256,7 @@ function CountryComp(props) {
                   props.login.user_token,
                   props.country,
                   parseInt(props.country.startingAfter) +
-                  parseInt(props.country.limit)
+                    parseInt(props.country.limit)
                 )
               }
               previousPage={() =>
@@ -229,7 +264,7 @@ function CountryComp(props) {
                   props.login.user_token,
                   props.country,
                   parseInt(props.country.startingAfter) -
-                  parseInt(props.country.limit)
+                    parseInt(props.country.limit)
                 )
               }
               setLimit={(event) =>

@@ -455,3 +455,123 @@ export const updateCountry = (token, payload) => {
       });
   };
 };
+
+export const uploadCSV = (token, csv, payload) => {
+  return (dispatch) => {
+    dispatch(setLoader());
+
+    const schema = yup.object({
+      csv: yup
+        .object()
+        .nullable()
+        .shape({
+          name: yup.string().trim().required("Please select one csv file"),
+          size: yup
+            .number()
+            .max(1100000, "file size is too large")
+            .required("Please select you csv file"),
+        }),
+    });
+
+    schema
+      .validate({ csv: csv })
+      .then(() => {
+        var formdata = new FormData();
+
+        formdata.append("user_token", token);
+
+        formdata.append("csv", csv);
+
+        return fetch(UNIVERSAL.BASEURL + "admin/api/add_country_from_csv", {
+          method: "POST",
+          body: formdata,
+        })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            if (responseJson.status) {
+              dispatch(
+                viewCountry(
+                  token,
+                  payload.startingAfter,
+                  payload.limit,
+                  payload.countryKeyWord
+                )
+              );
+              dispatch(
+                setSnackBar({
+                  status: responseJson.status,
+                  message: responseJson.message,
+                })
+              );
+            } else {
+              dispatch(
+                setSnackBar({
+                  status: responseJson.status,
+                  message: responseJson.message,
+                })
+              );
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            dispatch(
+              setSnackBar({
+                status: 500,
+                message:
+                  "Can't upload country right now please try again later",
+              })
+            );
+          })
+          .finally(() => {
+            dispatch(unsetLoader());
+          });
+      })
+      .catch((err) => {
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: err.errors[0],
+          })
+        );
+      })
+      .finally(() => {
+        dispatch(unsetLoader());
+      });
+  };
+};
+
+export const exportCSV = (token) => {
+  return (dispatch) => {
+    dispatch(setLoader());
+
+    return fetch(UNIVERSAL.BASEURL + "admin/api/export_country_to_csv", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_token: token,
+      }),
+    })
+      .then((response) => response.blob())
+      .then((responseJson) => {
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(responseJson);
+        link.download = `country_${new Date()}.csv`;
+        link.click();
+        dispatch(unsetLoader());
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: "Can't export country right now please try again later",
+          })
+        );
+      })
+      .finally(() => {
+        dispatch(unsetLoader());
+      });
+  };
+};

@@ -198,6 +198,41 @@ function StateComp(props) {
                 UNASSIGNED
               </Button>
             </Box>
+            <Box sx={{ mr: 2 }}>
+              <label htmlFor="state-csv-file">
+                <input
+                  accept=".csv"
+                  id="state-csv-file"
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(event) =>
+                    props.uploadCSV(
+                      props.login.user_token,
+                      event.target.files[0],
+                      props.state
+                    )
+                  }
+                />
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  component="span"
+                >
+                  Import
+                </Button>
+              </label>
+            </Box>
+            <Box>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={() => props.exportCSV(props.login.user_token)}
+              >
+                Export
+              </Button>
+            </Box>
           </Box>
         </Grid>
         <Grid item xs={12}>
@@ -219,7 +254,7 @@ function StateComp(props) {
                   props.login.user_token,
                   props.state,
                   parseInt(props.state.startingAfter) +
-                  parseInt(props.state.limit)
+                    parseInt(props.state.limit)
                 )
               }
               previousPage={() =>
@@ -227,7 +262,7 @@ function StateComp(props) {
                   props.login.user_token,
                   props.state,
                   parseInt(props.state.startingAfter) -
-                  parseInt(props.state.limit)
+                    parseInt(props.state.limit)
                 )
               }
               setLimit={(event) =>

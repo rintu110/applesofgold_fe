@@ -10,6 +10,7 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import StatusMode from "components/UI/StatusMode";
+import EditProduct from "components/aogproviderfe/product/editProduct";
 
 function ProductComp(props) {
   const [_id, setValue] = React.useState({ _id: "", label: "" });
@@ -25,11 +26,9 @@ function ProductComp(props) {
     setProductCategoryId,
     setProductAssignUnassigned,
     setEditProduct,
-    resetProduct,
     setProductKeyword,
     viewProduct,
     addProduct,
-    updateProduct,
     assignProduct,
     unassignProduct,
     uploadCSV,
@@ -130,10 +129,10 @@ function ProductComp(props) {
         <>
           <IconButton
             size="small"
-            //  onClick={() => {
-            //    setEditCategory(params.row);
-            //    setCategory(params.row.parent);
-            //  }}
+            onClick={() => {
+              setEditProduct(params.row);
+              setCategory(params.row.category);
+            }}
           >
             <Icon fontSize="small" color="secondary">
               edit
@@ -473,6 +472,7 @@ function ProductComp(props) {
           </Grid>
         </Grid>
       </Grid>
+      {product.productEdit && <EditProduct {...props} category={category} />}
     </>
   );
 }

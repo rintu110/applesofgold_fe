@@ -15,6 +15,8 @@ import {
   setCountryStartingAfter,
   setEditCountry,
   updateCountry,
+  uploadCSV,
+  exportCSV,
 } from "actions/country";
 
 class CountryCont extends Component {
@@ -29,6 +31,12 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  exportCSV: (token) => {
+    dispatch(exportCSV(token));
+  },
+  uploadCSV: (token, csv, payload) => {
+    dispatch(uploadCSV(token, csv, payload));
+  },
   updateCountry: (token, payload) => {
     dispatch(updateCountry(token, payload));
   },

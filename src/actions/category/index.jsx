@@ -19,7 +19,7 @@ export const viewAllCategory = (token, searchKeyWord) => {
       },
       body: JSON.stringify({
         user_token: token,
-        searchKeyWord: searchKeyWord
+        searchKeyWord: searchKeyWord,
       }),
     })
       .then((response) => response.json())
@@ -43,7 +43,7 @@ export const viewAllCategory = (token, searchKeyWord) => {
             message: "Can't view all category right now please try again later",
           })
         );
-      })
+      });
   };
 };
 
@@ -590,7 +590,7 @@ export const exportCSV = (token) => {
       .then((responseJson) => {
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(responseJson);
-        link.download = `category_${+new Date()}.csv`;
+        link.download = `category_${new Date()}.csv`;
         link.click();
         dispatch(unsetLoader());
       })
