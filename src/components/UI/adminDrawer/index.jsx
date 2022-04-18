@@ -104,7 +104,7 @@ function AdminDrawer({ Components }) {
     },
     {
       icon: "shopping_bag",
-      name: "Products Types",
+      name: "Product Types",
       link: "#",
       color: "#0c34ab",
       expand: [
@@ -114,13 +114,19 @@ function AdminDrawer({ Components }) {
           link: "/admin/product",
           color: "#a0d411",
         },
-        // {
-        //   icon: "view_agenda",
-        //   name: "Category meta",
-        //   link: "/admin/category-meta",
-        //   color: "#1292ff",
-        // },
+        {
+          icon: "view_agenda",
+          name: "Product meta",
+          link: "/admin/product-meta",
+          color: "#ff1100",
+        },
       ],
+    },
+    {
+      icon: "assignment",
+      name: "Assign Category & Product",
+      link: "/admin/assign-category&product",
+      color: "#f5ad05",
     },
   ];
 

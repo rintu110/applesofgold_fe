@@ -8,58 +8,49 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
-function EditCategory(props) {
+function EditProductMeta(props) {
   const [_id, setValue] = React.useState("");
   const {
-    setCategoryName,
-    setCategoryCode,
-    setCategoryContent,
-    setCategoryParentId,
-    resetCategory,
-    updateCategory,
-    viewAllCategory,
-    category,
+    setMetaTitle,
+    setMetaDesc,
+    setMetaKeyword,
+    setForeginId,
+    meta,
     login,
+    allProduct,
+    viewAllProduct,
+    updateProductMeta,
+    resetMeta,
   } = props;
 
   React.useEffect(() => {
-    if (props.categorys.length > 0) {
+    if (props.product !== undefined) {
       setValue({
-        _id: props.categorys[0]._id,
-        label: props.categorys[0].category_nm,
+        _id: props.product._id,
+        label: props.product.label,
       });
-      viewAllCategory(login.user_token, props.categorys[0].category_nm);
+      viewAllProduct(login.user_token, props.product.label);
     }
   }, []);
 
   return (
-    <Dialog maxWidth="xs" fullWidth open={category.categoryEdit}>
-      <DialogTitle>Edit Category</DialogTitle>
+    <Dialog maxWidth="xs" fullWidth open={meta.metaEdit}>
+      <DialogTitle>Edit Product Meta</DialogTitle>
       <DialogContent>
         <Box sx={{ my: 3 }}>
           <TextField
             size="small"
             fullWidth
             color="secondary"
-            label="Category name"
-            value={category.categoryName}
-            onChange={(event) => setCategoryName(event.target.value)}
+            label="Meta title"
+            value={meta.metaTitle}
+            onChange={(event) => setMetaTitle(event.target.value)}
           />
         </Box>
-        <Box sx={{ mb: 3 }}>
-          <TextField
-            size="small"
-            fullWidth
-            color="secondary"
-            label="Category code"
-            value={category.categoryCode}
-            onChange={(event) => setCategoryCode(event.target.value)}
-          />
-        </Box>
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 2 }}>
           <Autocomplete
             value={_id}
-            options={category.allCatgory}
+            options={allProduct}
             freeSolo
             autoComplete
             isOptionEqualToValue={(option, value) => true}
@@ -67,13 +58,11 @@ function EditCategory(props) {
               value !== null &&
               value !== undefined &&
               value !== "" &&
-              setTimeout(() => {
-                viewAllCategory(login.user_token, value);
-              }, 200)
+              viewAllProduct(login.user_token, value)
             }
             onChange={(event, value) => {
               setValue(value);
-              setCategoryParentId(value);
+              setForeginId(value);
             }}
             renderInput={(params) => (
               <TextField
@@ -81,7 +70,7 @@ function EditCategory(props) {
                 size="small"
                 fullWidth
                 color="secondary"
-                label="Choose Category"
+                label="Choose Product"
               />
             )}
             disableListWrap
@@ -92,16 +81,26 @@ function EditCategory(props) {
             )}
           />
         </Box>
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            label="Meta keyword"
+            value={meta.metaKeyword}
+            onChange={(event) => setMetaKeyword(event.target.value)}
+          />
+        </Box>
+        <Box sx={{ mb: 2 }}>
           <TextField
             fullWidth
             multiline
             size="small"
             rows={4}
             color="secondary"
-            label="Category content"
-            value={category.categoryContent}
-            onChange={(event) => setCategoryContent(event.target.value)}
+            label="Meta description"
+            value={meta.metaDesc}
+            onChange={(event) => setMetaDesc(event.target.value)}
           />
         </Box>
       </DialogContent>
@@ -110,7 +109,7 @@ function EditCategory(props) {
           variant="outlined"
           color="secondary"
           size="small"
-          onClick={() => resetCategory()}
+          onClick={() => resetMeta()}
         >
           Cancel
         </Button>
@@ -119,8 +118,8 @@ function EditCategory(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateCategory(login.user_token, category);
-            setValue({ _id: "", label: "" });
+            updateProductMeta(login.user_token, meta);
+            setValue("");
           }}
         >
           Update
@@ -130,4 +129,4 @@ function EditCategory(props) {
   );
 }
 
-export default EditCategory;
+export default EditProductMeta;

@@ -9,7 +9,7 @@ import Button from "components/UI/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
 function EditProduct(props) {
-  const [_id, setValue] = React.useState({ _id: "", label: "" });
+  const [_id, setValue] = React.useState("");
   const {
     setProductName,
     setProductCode,
@@ -28,12 +28,12 @@ function EditProduct(props) {
   } = props;
 
   React.useEffect(() => {
-    if (props.category.length > 0) {
+    if (props.category !== undefined) {
       setValue({
-        _id: props.category[0]._id,
-        label: props.category[0].category_nm,
+        _id: props.category._id,
+        label: props.category.label,
       });
-      viewAllCategory(login.user_token, props.category[0].category_nm);
+      viewAllCategory(login.user_token, props.category.label);
     }
   }, []);
 
@@ -55,8 +55,8 @@ function EditProduct(props) {
           <Autocomplete
             value={_id}
             options={allCatgory}
-            autoComplete={true}
-            filterSelectedOptions
+            freeSolo
+            autoComplete
             isOptionEqualToValue={(option, value) => true}
             onInputChange={(event, value) =>
               value !== null &&
@@ -78,7 +78,6 @@ function EditProduct(props) {
               />
             )}
             disableListWrap
-            disablePortal
             renderOption={(props, option) => (
               <li {...props} key={option._id}>
                 {option.label}

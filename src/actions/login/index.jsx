@@ -16,7 +16,7 @@ export const login = (email, password) => {
     var expireTime = time + 3600 * 1000 * 24 * 365 * 1;
     date.setTime(expireTime);
 
-    return fetch(UNIVERSAL.BASEURL + "api/login_users", {
+    return fetch(UNIVERSAL.BASEURL + "api/users/login_users", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -31,8 +31,12 @@ export const login = (email, password) => {
       .then((responseJson) => {
         if (responseJson.status) {
           dispatch(setUserDetails(responseJson.result));
-          document.cookie = `applesofgoldObject=${responseJson.result.user_token}; expires=${date.toUTCString()}; path=/;`;
-          document.cookie = `type=${responseJson.result.user_type}; expires=${date.toUTCString()}; path=/;`;
+          document.cookie = `applesofgoldObject=${
+            responseJson.result.user_token
+          }; expires=${date.toUTCString()}; path=/;`;
+          document.cookie = `type=${
+            responseJson.result.user_type
+          }; expires=${date.toUTCString()}; path=/;`;
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -67,7 +71,7 @@ export const getUserDetails = (token) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "api/get_user_details", {
+    return fetch(UNIVERSAL.BASEURL + "api/users/get_user_details", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -112,7 +116,7 @@ export const getUserDetails = (token) => {
 };
 
 export const getServerSideUserDetails = (token, store) =>
-  fetch(UNIVERSAL.BASEURL + "api/get_user_details", {
+  fetch(UNIVERSAL.BASEURL + "api/users/get_user_details", {
     method: "POST",
     headers: {
       Accept: "application/json",

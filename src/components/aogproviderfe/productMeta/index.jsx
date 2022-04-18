@@ -7,90 +7,69 @@ import Box from "@mui/material/Box";
 import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
-import StatusMode from "components/UI/StatusMode";
 import Pagination from "components/UI/Pagination";
-import EditCategory from "components/aogproviderfe/category/editCategory";
+import EditProductMeta from "components/aogproviderfe/productMeta/editProductMeta";
 import Autocomplete from "@mui/material/Autocomplete";
 
-function CategoryComp(props) {
+function ProductMetaComp(props) {
   const [_id, setValue] = React.useState("");
-  const [categorys, setCategory] = React.useState("");
+  const [product, setProduct] = React.useState("");
   const {
-    setCategoryName,
-    setCategoryCode,
-    setCategoryContent,
-    setCategoryParentId,
-    setCategoryKeyWord,
-    setAssignUnassignCategory,
-    setEditCategory,
-    viewCategory,
-    addCategory,
-    assignedCategory,
-    unassignedCategory,
-    category,
+    setMetaTitle,
+    setMetaDesc,
+    setMetaKeyword,
+    setForeginId,
+    setMetaSearchKeyword,
+    setEditMeta,
+    viewProductMeta,
+    addProductMeta,
+    meta,
     login,
-    setCategoryLimit,
-    setCategoryStartingAfter,
-    viewAllCategory,
+    allProduct,
     uploadCSV,
     exportCSV,
+    setMetaStartingAfter,
+    setMetaLimit,
+    viewAllProduct,
+    resetEverythingMeta,
   } = props;
 
   const columns = [
     {
-      field: "category_nm",
+      field: "meta_title",
       flex: 1,
-      headerName: "CATEGORY NAME",
-      minWidth: 150,
+      headerName: "META TITLE",
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
     {
-      field: "code",
-      headerName: "CATEGORY CODE",
+      field: "meta_desc",
+      headerName: "META DESCRIPTION",
       flex: 1,
-      width: 300,
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
     {
-      field: "status",
-      headerName: "STATUS",
+      field: "meta_keyword",
+      headerName: "META KEYWORD",
       flex: 1,
-      width: 300,
       headerClassName: "table-header",
       cellClassName: "table-row",
       disableSelectionOnClick: true,
-      renderCell: (params) => (
-        <StatusMode active={params.row.status === 1 ? true : false} />
-      ),
     },
     {
-      field: "page_content",
-      headerName: "CATEGORY CONTENT",
-      width: 350,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "parent_id",
-      headerName: "PARENT",
+      field: "prd_id",
+      headerName: "PRODUCT",
       flex: 1,
-      width: 300,
       headerClassName: "table-header",
       cellClassName: "table-row",
       renderCell: (params) => (
-        <>
-          {parseInt(params.row.parent_id) === 0
-            ? "Non"
-            : params.row.parent.length > 0 && params.row.parent[0].category_nm}
-        </>
+        <>{parseInt(params.row.prd_id) === 0 ? "Non" : params.row.product_nm}</>
       ),
     },
     {
       field: "actions",
       headerName: "ACTIONS",
-      flex: 0.7,
       headerClassName: "table-header",
       cellClassName: "table-row",
       disableSelectionOnClick: true,
@@ -99,8 +78,11 @@ function CategoryComp(props) {
           <IconButton
             size="small"
             onClick={() => {
-              setEditCategory(params.row);
-              setCategory(params.row.parent);
+              setEditMeta({ ...params.row, foregin_id: params.row.prd_id });
+              setProduct({
+                _id: params.row.prd_id,
+                label: params.row.product_nm,
+              });
             }}
           >
             <Icon fontSize="small" color="secondary">
@@ -113,7 +95,8 @@ function CategoryComp(props) {
   ];
 
   React.useEffect(() => {
-    viewCategory(login.user_token, category);
+    resetEverythingMeta();
+    viewProductMeta(login.user_token, meta);
   }, [login.user_token]);
 
   return (
@@ -122,7 +105,7 @@ function CategoryComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Category
+              Add Product Meta
             </Typography>
           </Box>
         </Grid>
@@ -130,28 +113,28 @@ function CategoryComp(props) {
           <Grid item xs={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY NAME
+                META TITLE
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY CODE
+                META DESC
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY PARENT
+                META KEYWORD
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY CONTENT
+                PRODUCT
               </Typography>
             </Box>
           </Grid>
@@ -163,9 +146,9 @@ function CategoryComp(props) {
               size="small"
               fullWidth
               color="secondary"
-              placeholder="Category name"
-              value={category.categoryName}
-              onChange={(event) => setCategoryName(event.target.value)}
+              placeholder="Meta title"
+              value={meta.metaTitle}
+              onChange={(event) => setMetaTitle(event.target.value)}
             />
           </Box>
         </Grid>
@@ -175,9 +158,21 @@ function CategoryComp(props) {
               size="small"
               fullWidth
               color="secondary"
-              placeholder="Category code"
-              value={category.categoryCode}
-              onChange={(event) => setCategoryCode(event.target.value)}
+              placeholder="Meta description"
+              value={meta.metaDesc}
+              onChange={(event) => setMetaDesc(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={3}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Meta keyword"
+              value={meta.metaKeyword}
+              onChange={(event) => setMetaKeyword(event.target.value)}
             />
           </Box>
         </Grid>
@@ -185,7 +180,7 @@ function CategoryComp(props) {
           <Box sx={{ m: 1 }}>
             <Autocomplete
               value={_id}
-              options={category.allCatgory}
+              options={allProduct}
               freeSolo
               autoComplete
               isOptionEqualToValue={(option, value) => true}
@@ -193,13 +188,11 @@ function CategoryComp(props) {
                 value !== null &&
                 value !== undefined &&
                 value !== "" &&
-                setTimeout(() => {
-                  viewAllCategory(login.user_token, value);
-                }, 200)
+                viewAllProduct(login.user_token, value)
               }
               onChange={(event, value) => {
                 setValue(value);
-                setCategoryParentId(value);
+                setForeginId(value);
               }}
               renderInput={(params) => (
                 <TextField
@@ -207,7 +200,7 @@ function CategoryComp(props) {
                   size="small"
                   fullWidth
                   color="secondary"
-                  placeholder="Choose Category"
+                  placeholder="Choose Product"
                 />
               )}
               disableListWrap
@@ -219,18 +212,6 @@ function CategoryComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={3}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Category content"
-              value={category.categoryContent}
-              onChange={(event) => setCategoryContent(event.target.value)}
-            />
-          </Box>
-        </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
             <Button
@@ -238,8 +219,8 @@ function CategoryComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addCategory(login.user_token, category);
-                setValue({ _id: "", label: "" });
+                addProductMeta(login.user_token, meta);
+                setValue("");
               }}
             >
               ADD
@@ -249,7 +230,7 @@ function CategoryComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2, mt: 5 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Category List
+              Product Meta List
             </Typography>
           </Box>
         </Grid>
@@ -259,15 +240,15 @@ function CategoryComp(props) {
               size="small"
               fullWidth
               color="primary"
-              placeholder="Search by Category"
-              value={category.categoryKeyWord}
-              onChange={(event) => setCategoryKeyWord(event.target.value)}
+              placeholder="Search by Product Meta"
+              value={meta.metaSearchKeyword}
+              onChange={(event) => setMetaSearchKeyword(event.target.value)}
               InputProps={{
                 endAdornment: (
                   <Button
                     color="primary"
                     variant="outlined"
-                    onClick={() => viewCategory(login.user_token, category)}
+                    onClick={() => viewProductMeta(login.user_token, meta)}
                   >
                     Search
                   </Button>
@@ -278,33 +259,15 @@ function CategoryComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
-            <Button
-              size="small"
-              color="secondary"
-              variant="contained"
-              onClick={() => assignedCategory(login.user_token, category)}
-            >
-              ASSIGNED
-            </Button>
-            <Box sx={{ mx: 2 }}>
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={() => unassignedCategory(login.user_token, category)}
-              >
-                UNASSIGNED
-              </Button>
-            </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="category-csv-file">
+              <label htmlFor="category-meta-csv-file">
                 <input
                   accept=".csv"
-                  id="category-csv-file"
+                  id="category-meta-csv-file"
                   type="file"
                   style={{ display: "none" }}
                   onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], category)
+                    uploadCSV(login.user_token, event.target.files[0], meta)
                   }
                 />
                 <Button
@@ -331,44 +294,49 @@ function CategoryComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={category.categoryStore}
+            rows={meta.metaStore}
             columns={columns}
-            selectionModel={category.categoryAssign}
-            onSelectionModelChange={(row) => setAssignUnassignCategory(row)}
+            disableSelectionOnClick
+            checkboxSelection={false}
           />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
             <Pagination
-              startingAfter={category.statingAfter}
-              total={category.total}
-              limit={category.limit}
+              startingAfter={meta.startingAfter}
+              total={meta.total}
+              limit={meta.limit}
               nextPage={() =>
-                setCategoryStartingAfter(
+                setMetaStartingAfter(
                   login.user_token,
-                  category,
-                  parseInt(category.statingAfter) + parseInt(category.limit)
+                  meta,
+                  parseInt(meta.startingAfter) + parseInt(meta.limit),
+                  viewProductMeta(login.user_token, meta)
                 )
               }
               previousPage={() =>
-                setCategoryStartingAfter(
+                setMetaStartingAfter(
                   login.user_token,
-                  category,
-                  parseInt(category.statingAfter) - parseInt(category.limit)
+                  meta,
+                  parseInt(meta.startingAfter) - parseInt(meta.limit),
+                  viewProductMeta(login.user_token, meta)
                 )
               }
               setLimit={(event) =>
-                setCategoryLimit(login.user_token, category, event)
+                setMetaLimit(
+                  login.user_token,
+                  meta,
+                  event,
+                  viewProductMeta(login.user_token, meta)
+                )
               }
             />
           </Grid>
         </Grid>
       </Grid>
-      {category.categoryEdit && (
-        <EditCategory {...props} categorys={categorys} />
-      )}
+      {meta.metaEdit && <EditProductMeta {...props} product={product} />}
     </>
   );
 }
 
-export default CategoryComp;
+export default ProductMetaComp;

@@ -4,52 +4,53 @@ import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import Autocomplete from "@mui/material/Autocomplete";
 import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
-import StatusMode from "components/UI/StatusMode";
 import Pagination from "components/UI/Pagination";
-import EditCategory from "components/aogproviderfe/category/editCategory";
-import Autocomplete from "@mui/material/Autocomplete";
+import StatusMode from "components/UI/StatusMode";
+import EditAssignCatPrd from "components/aogproviderfe/assignCatPrd/editAssignCatPrd";
 
-function CategoryComp(props) {
+function AssignCategoryProductComp(props) {
   const [_id, setValue] = React.useState("");
-  const [categorys, setCategory] = React.useState("");
+  const [category_id, setCategoryValue] = React.useState("");
+  const [category, setCategory] = React.useState("");
+  const [product, setProduct] = React.useState("");
   const {
-    setCategoryName,
-    setCategoryCode,
-    setCategoryContent,
-    setCategoryParentId,
-    setCategoryKeyWord,
-    setAssignUnassignCategory,
-    setEditCategory,
-    viewCategory,
-    addCategory,
-    assignedCategory,
-    unassignedCategory,
-    category,
-    login,
-    setCategoryLimit,
-    setCategoryStartingAfter,
     viewAllCategory,
+    viewAllProduct,
+    setAssignCatId,
+    setAssignPrdId,
+    setAssignCatPrdSearchKeyword,
+    setAssignedUnassignedCatPrd,
+    setEditAssignCatPrd,
+    setAssignStartingAfter,
+    setAssignLimit,
+    viewAssignCatPrd,
+    addAssignCatPrd,
+    assignedCatPrd,
+    unassignedCatPrd,
     uploadCSV,
     exportCSV,
+    login,
+    assign,
+    allProduct,
+    allCatgory,
   } = props;
 
   const columns = [
     {
       field: "category_nm",
       flex: 1,
-      headerName: "CATEGORY NAME",
-      minWidth: 150,
+      headerName: "CATEGORY",
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
     {
-      field: "code",
-      headerName: "CATEGORY CODE",
+      field: "product_nm",
+      headerName: "PRODUCT",
       flex: 1,
-      width: 300,
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
@@ -57,7 +58,6 @@ function CategoryComp(props) {
       field: "status",
       headerName: "STATUS",
       flex: 1,
-      width: 300,
       headerClassName: "table-header",
       cellClassName: "table-row",
       disableSelectionOnClick: true,
@@ -66,31 +66,8 @@ function CategoryComp(props) {
       ),
     },
     {
-      field: "page_content",
-      headerName: "CATEGORY CONTENT",
-      width: 350,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "parent_id",
-      headerName: "PARENT",
-      flex: 1,
-      width: 300,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      renderCell: (params) => (
-        <>
-          {parseInt(params.row.parent_id) === 0
-            ? "Non"
-            : params.row.parent.length > 0 && params.row.parent[0].category_nm}
-        </>
-      ),
-    },
-    {
       field: "actions",
       headerName: "ACTIONS",
-      flex: 0.7,
       headerClassName: "table-header",
       cellClassName: "table-row",
       disableSelectionOnClick: true,
@@ -99,8 +76,15 @@ function CategoryComp(props) {
           <IconButton
             size="small"
             onClick={() => {
-              setEditCategory(params.row);
-              setCategory(params.row.parent);
+              setEditAssignCatPrd(params.row);
+              setProduct({
+                _id: params.row.prd_id,
+                label: params.row.product_nm,
+              });
+              setCategory({
+                _id: params.row.cat_id,
+                label: params.row.category_nm,
+              });
             }}
           >
             <Icon fontSize="small" color="secondary">
@@ -113,7 +97,7 @@ function CategoryComp(props) {
   ];
 
   React.useEffect(() => {
-    viewCategory(login.user_token, category);
+    viewAssignCatPrd(login.user_token, assign);
   }, [login.user_token]);
 
   return (
@@ -122,84 +106,44 @@ function CategoryComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Category
+              Add Assign Category {"&"} Product
             </Typography>
           </Box>
         </Grid>
         <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={2}>
+          <Grid item xs={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY NAME
+                CATEGORY
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY CODE
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY PARENT
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY CONTENT
+                PRODUCT
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={2} />
         </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Category name"
-              value={category.categoryName}
-              onChange={(event) => setCategoryName(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Category code"
-              value={category.categoryCode}
-              onChange={(event) => setCategoryCode(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={5}>
           <Box sx={{ m: 1 }}>
             <Autocomplete
-              value={_id}
-              options={category.allCatgory}
+              value={category_id}
               freeSolo
+              options={allCatgory}
               autoComplete
               isOptionEqualToValue={(option, value) => true}
               onInputChange={(event, value) =>
                 value !== null &&
                 value !== undefined &&
                 value !== "" &&
-                setTimeout(() => {
-                  viewAllCategory(login.user_token, value);
-                }, 200)
+                viewAllCategory(login.user_token, value)
               }
               onChange={(event, value) => {
-                setValue(value);
-                setCategoryParentId(value);
+                setCategoryValue(value);
+                setAssignCatId(value);
               }}
               renderInput={(params) => (
                 <TextField
@@ -219,15 +163,39 @@ function CategoryComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={5}>
           <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Category content"
-              value={category.categoryContent}
-              onChange={(event) => setCategoryContent(event.target.value)}
+            <Autocomplete
+              value={_id}
+              options={allProduct}
+              freeSolo
+              autoComplete
+              isOptionEqualToValue={(option, value) => true}
+              onInputChange={(event, value) =>
+                value !== null &&
+                value !== undefined &&
+                value !== "" &&
+                viewAllProduct(login.user_token, value)
+              }
+              onChange={(event, value) => {
+                setValue(value);
+                setAssignPrdId(value);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  fullWidth
+                  color="secondary"
+                  placeholder="Choose Product"
+                />
+              )}
+              disableListWrap
+              renderOption={(props, option) => (
+                <li {...props} key={option._id}>
+                  {option.label}
+                </li>
+              )}
             />
           </Box>
         </Grid>
@@ -238,8 +206,9 @@ function CategoryComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addCategory(login.user_token, category);
-                setValue({ _id: "", label: "" });
+                addAssignCatPrd(login.user_token, assign);
+                setValue("");
+                setCategoryValue("");
               }}
             >
               ADD
@@ -249,7 +218,7 @@ function CategoryComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2, mt: 5 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Category List
+              Assign Category {"&"} Product List
             </Typography>
           </Box>
         </Grid>
@@ -259,15 +228,17 @@ function CategoryComp(props) {
               size="small"
               fullWidth
               color="primary"
-              placeholder="Search by Category"
-              value={category.categoryKeyWord}
-              onChange={(event) => setCategoryKeyWord(event.target.value)}
+              placeholder="Search by Assing Category and Product"
+              value={assign.assignCatPrdSearchKeyWord}
+              onChange={(event) =>
+                setAssignCatPrdSearchKeyword(event.target.value)
+              }
               InputProps={{
                 endAdornment: (
                   <Button
                     color="primary"
                     variant="outlined"
-                    onClick={() => viewCategory(login.user_token, category)}
+                    onClick={() => viewAssignCatPrd(login.user_token, assign)}
                   >
                     Search
                   </Button>
@@ -282,7 +253,7 @@ function CategoryComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => assignedCategory(login.user_token, category)}
+              onClick={() => assignedCatPrd(login.user_token, assign)}
             >
               ASSIGNED
             </Button>
@@ -291,20 +262,20 @@ function CategoryComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => unassignedCategory(login.user_token, category)}
+                onClick={() => unassignedCatPrd(login.user_token, assign)}
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="category-csv-file">
+              <label htmlFor="assign-csv-file">
                 <input
                   accept=".csv"
-                  id="category-csv-file"
+                  id="assign-csv-file"
                   type="file"
                   style={{ display: "none" }}
                   onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], category)
+                    uploadCSV(login.user_token, event.target.files[0], assign)
                   }
                 />
                 <Button
@@ -331,44 +302,44 @@ function CategoryComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={category.categoryStore}
+            rows={assign.assignCatPrdStore}
             columns={columns}
-            selectionModel={category.categoryAssign}
-            onSelectionModelChange={(row) => setAssignUnassignCategory(row)}
+            selectionModel={assign.assignUnAssignStore}
+            onSelectionModelChange={(row) => setAssignedUnassignedCatPrd(row)}
           />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
             <Pagination
-              startingAfter={category.statingAfter}
-              total={category.total}
-              limit={category.limit}
+              startingAfter={assign.startingAfter}
+              total={assign.total}
+              limit={assign.limit}
               nextPage={() =>
-                setCategoryStartingAfter(
+                setAssignStartingAfter(
                   login.user_token,
-                  category,
-                  parseInt(category.statingAfter) + parseInt(category.limit)
+                  assign,
+                  parseInt(assign.startingAfter) + parseInt(assign.limit)
                 )
               }
               previousPage={() =>
-                setCategoryStartingAfter(
+                setAssignStartingAfter(
                   login.user_token,
-                  category,
-                  parseInt(category.statingAfter) - parseInt(category.limit)
+                  assign,
+                  parseInt(assign.startingAfter) - parseInt(assign.limit)
                 )
               }
               setLimit={(event) =>
-                setCategoryLimit(login.user_token, category, event)
+                setAssignLimit(login.user_token, assign, event)
               }
             />
           </Grid>
         </Grid>
       </Grid>
-      {category.categoryEdit && (
-        <EditCategory {...props} categorys={categorys} />
+      {assign.editAssignCatPrd && (
+        <EditAssignCatPrd {...props} product={product} category={category} />
       )}
     </>
   );
 }
 
-export default CategoryComp;
+export default AssignCategoryProductComp;

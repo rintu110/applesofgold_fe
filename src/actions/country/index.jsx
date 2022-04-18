@@ -67,7 +67,7 @@ export const viewCountry = (token, startingAfter, limit, searchKeyWord) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/view_country", {
+    return fetch(UNIVERSAL.BASEURL + "admin/api/country/view_country", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -127,7 +127,7 @@ export const addCountry = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_country", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/country/add_country", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -216,7 +216,7 @@ export const assignedCountry = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/assigned_country", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/country/assigned_country", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -305,17 +305,20 @@ export const unassignedCountry = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/unassigned_country", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            country_id: payload.countryAssign,
-          }),
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/country/unassigned_country",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_token: token,
+              country_id: payload.countryAssign,
+            }),
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -388,7 +391,7 @@ export const updateCountry = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/edit_country", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/country/edit_country", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -482,10 +485,13 @@ export const uploadCSV = (token, csv, payload) => {
 
         formdata.append("csv", csv);
 
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_country_from_csv", {
-          method: "POST",
-          body: formdata,
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/country/add_country_from_csv",
+          {
+            method: "POST",
+            body: formdata,
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -544,15 +550,18 @@ export const exportCSV = (token) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/export_country_to_csv", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-      }),
-    })
+    return fetch(
+      UNIVERSAL.BASEURL + "admin/api/country/export_country_to_csv",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_token: token,
+        }),
+      }
+    )
       .then((response) => response.blob())
       .then((responseJson) => {
         const link = document.createElement("a");

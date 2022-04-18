@@ -9,7 +9,7 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import EditCategoryMeta from "components/aogproviderfe/category_meta/editCategoryMeta";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 
 function CategoryMetaComp(props) {
   const [_id, setValue] = React.useState({ _id: "", label: "" });
@@ -31,7 +31,7 @@ function CategoryMetaComp(props) {
     exportCSV,
     setMetaStartingAfter,
     setMetaLimit,
-    viewAllCategory
+    viewAllCategory,
   } = props;
 
   const columns = [
@@ -78,11 +78,7 @@ function CategoryMetaComp(props) {
       cellClassName: "table-row",
       renderCell: (params) => (
         <>
-          {parseInt(params.row.cat_id) === 0
-            ? "Non"
-            : params.row.category.length > 0 &&
-            params.row.category[0].category_nm
-          }
+          {parseInt(params.row.cat_id) === 0 ? "Non" : params.row.category_nm}
         </>
       ),
     },
@@ -94,7 +90,16 @@ function CategoryMetaComp(props) {
       disableSelectionOnClick: true,
       renderCell: (params) => (
         <>
-          <IconButton size="small" onClick={() => { setEditMeta(params.row); setCategory(params.row.category) }}>
+          <IconButton
+            size="small"
+            onClick={() => {
+              setEditMeta(params.row);
+              setCategory({
+                _id: params.row.cat_id,
+                label: params.row.category_nm,
+              });
+            }}
+          >
             <Icon fontSize="small" color="secondary">
               edit
             </Icon>
@@ -209,13 +214,21 @@ function CategoryMetaComp(props) {
             <Autocomplete
               value={_id}
               options={allCatgory}
-              autoComplete={true}
-              filterSelectedOptions
+              freeSolo
+              autoComplete
               isOptionEqualToValue={(option, value) => true}
-              onInputChange={(event, value) => value !== null && value !== undefined && value !== "" && setTimeout(() => {
-                viewAllCategory(login.user_token, value);
-              }, 200)}
-              onChange={(event, value) => { setValue(value); setCategoryId(value) }}
+              onInputChange={(event, value) =>
+                value !== null &&
+                value !== undefined &&
+                value !== "" &&
+                setTimeout(() => {
+                  viewAllCategory(login.user_token, value);
+                }, 200)
+              }
+              onChange={(event, value) => {
+                setValue(value);
+                setCategoryId(value);
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -226,13 +239,11 @@ function CategoryMetaComp(props) {
                 />
               )}
               disableListWrap
-              disablePortal
               renderOption={(props, option) => (
                 <li {...props} key={option._id}>
                   {option.label}
                 </li>
               )}
-
             />
           </Box>
         </Grid>
@@ -242,7 +253,10 @@ function CategoryMetaComp(props) {
               color="info"
               fullWidth
               variant="contained"
-              onClick={() => { addMeta(login.user_token, meta); setValue({ _id: "", label: "" }) }}
+              onClick={() => {
+                addMeta(login.user_token, meta);
+                setValue({ _id: "", label: "" });
+              }}
             >
               ADD
             </Button>

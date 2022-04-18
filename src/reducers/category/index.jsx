@@ -19,7 +19,10 @@ const categoryState = {
 function categoryReducer(state = categoryState, action) {
   switch (action.type) {
     case constant.SET_ALL_CATEGORY:
-      const allcategory = action.payload.map(({ _id, category_nm }) => ({ _id: _id, label: category_nm }))
+      const allcategory = action.payload.map(({ _id, category_nm }) => ({
+        _id: _id,
+        label: category_nm,
+      }));
       return (state = { ...state, allCatgory: allcategory });
     case constant.SET_CATEGORY_STORE:
       return (state = { ...state, categoryStore: action.payload });
@@ -28,7 +31,13 @@ function categoryReducer(state = categoryState, action) {
     case constant.SET_CATEGORY_CODE:
       return (state = { ...state, categoryCode: action.payload });
     case constant.SET_CATEGORY_PARENT_ID:
-      return (state = { ...state, categoryParentId: action.payload !== null && action.payload !== undefined && action.payload._id });
+      return (state = {
+        ...state,
+        categoryParentId:
+          action.payload !== null &&
+          action.payload !== undefined &&
+          action.payload._id,
+      });
     case constant.SET_CATEGORY_CONTENT:
       return (state = { ...state, categoryContent: action.payload });
     case constant.SET_TOTAL_CATEGORY:

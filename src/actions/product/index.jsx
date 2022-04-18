@@ -99,7 +99,7 @@ export const viewProduct = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/view_product", {
+    return fetch(UNIVERSAL.BASEURL + "admin/api/product/view_product", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -190,7 +190,7 @@ export const addProduct = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_product", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/product/add_product", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -303,7 +303,7 @@ export const updateProduct = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/edit_product", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/product/edit_product", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -393,7 +393,7 @@ export const assignProduct = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/assigned_product", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/product/assigned_product", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -475,17 +475,20 @@ export const unassignProduct = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/unassigned_product", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            _id: payload.productAssign,
-          }),
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/product/unassigned_product",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_token: token,
+              _id: payload.productAssign,
+            }),
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -560,10 +563,13 @@ export const uploadCSV = (token, csv, payload) => {
 
         formdata.append("csv", csv);
 
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_product_from_csv", {
-          method: "POST",
-          body: formdata,
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/product/add_product_from_csv",
+          {
+            method: "POST",
+            body: formdata,
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -615,15 +621,18 @@ export const exportCSV = (token) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/export_product_to_csv", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-      }),
-    })
+    return fetch(
+      UNIVERSAL.BASEURL + "admin/api/product/export_product_to_csv",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_token: token,
+        }),
+      }
+    )
       .then((response) => response.blob())
       .then((responseJson) => {
         const link = document.createElement("a");
@@ -643,6 +652,44 @@ export const exportCSV = (token) => {
       })
       .finally(() => {
         dispatch(unsetLoader());
+      });
+  };
+};
+
+export const viewAllProduct = (token, searchKeyWord) => {
+  return (dispatch) => {
+    return fetch(UNIVERSAL.BASEURL + "admin/api/product/view_all_product", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_token: token,
+        searchKeyWord: searchKeyWord,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if (responseJson.status) {
+          dispatch(setAllProduct(responseJson.result));
+        } else {
+          dispatch(
+            setSnackBar({
+              status: responseJson.status,
+              message: responseJson.message,
+            })
+          );
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: "Can't view all Product right now please try again later",
+          })
+        );
       });
   };
 };

@@ -1,81 +1,15 @@
-import * as constant from "constants/categoryMeta";
+import { setMetaStore, setTotalMeta, resetMeta } from "actions/meta";
 import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
 
-export const setMetaStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    payload.startingAfter = startingAfter;
-    dispatch(viewMeta(token, payload));
-  };
-};
-
-export const setMetaLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_META_LIMIT, payload: limit });
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: 0 });
-    payload.limit = limit;
-    dispatch(viewMeta(token, payload));
-  };
-};
-
-export const setMetaContent = (payload) => ({
-  type: constant.SET_META_CONTENT,
-  payload: payload,
-});
-
-export const setMetaTitle = (payload) => ({
-  type: constant.SET_META_TITLE,
-  payload: payload,
-});
-
-export const setMetaDesc = (payload) => ({
-  type: constant.SET_META_DESC,
-  payload: payload,
-});
-
-export const setMetaKeyword = (payload) => ({
-  type: constant.SET_META_KEYWORD,
-  payload: payload,
-});
-
-export const setCategoryId = (payload) => ({
-  type: constant.SET_CATEGORY_ID,
-  payload: payload,
-});
-
-export const setMetaStore = (payload) => ({
-  type: constant.SET_META_STORE,
-  payload: payload,
-});
-
-export const setMetaSearchKeyword = (payload) => ({
-  type: constant.SET_META_SEARCH_KEYWORD,
-  payload: payload,
-});
-
-export const setEditMeta = (payload) => ({
-  type: constant.SET_EDIT_META,
-  payload: payload,
-});
-
-export const setTotalMeta = (payload) => ({
-  type: constant.SET_TOTAL_META,
-  payload: payload,
-});
-
-export const resetMeta = () => ({
-  type: constant.RESET_META,
-});
-
-export const viewMeta = (token, payload) => {
+export const viewProductMeta = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
     return fetch(
-      UNIVERSAL.BASEURL + "admin/api/category_meta/view_category_meta",
+      UNIVERSAL.BASEURL + "admin/api/product_meta/view_product_meta",
       {
         method: "POST",
         headers: {
@@ -115,8 +49,7 @@ export const viewMeta = (token, payload) => {
         dispatch(
           setSnackBar({
             status: 500,
-            message:
-              "Can't view category meta right now please try again later",
+            message: "Can't view product meta right now please try again later",
           })
         );
       })
@@ -126,7 +59,7 @@ export const viewMeta = (token, payload) => {
   };
 };
 
-export const addMeta = (token, payload) => {
+export const addProductMeta = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -140,19 +73,18 @@ export const addMeta = (token, payload) => {
         .trim()
         .required("Please enter a meta description!"),
       metaKeyword: yup.string().trim().required("Please enter a meta keyword!"),
-      metaCategoryId: yup
+      metaForeignId: yup
         .string()
         .trim()
         .matches(schemaConst.OBJECT_ID, "Invalid category id!")
-        .required("Please enter a category id"),
-      metaContent: yup.string().trim().required("Please enter a meta content!"),
+        .required("Please enter a product id"),
     });
 
     schema
       .validate({ ...payload })
       .then(() => {
         return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category_meta/add_category_meta",
+          UNIVERSAL.BASEURL + "admin/api/product_meta/add_product_meta",
           {
             method: "POST",
             headers: {
@@ -161,11 +93,10 @@ export const addMeta = (token, payload) => {
             },
             body: JSON.stringify({
               user_token: token,
-              cat_id: payload.metaCategoryId,
+              prd_id: payload.metaForeignId,
               meta_keyword: payload.metaKeyword,
               meta_desc: payload.metaDesc,
               meta_title: payload.metaTitle,
-              meta_content: payload.metaContent,
             }),
           }
         )
@@ -173,7 +104,7 @@ export const addMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewProductMeta(token, payload));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -195,7 +126,7 @@ export const addMeta = (token, payload) => {
               setSnackBar({
                 status: 500,
                 message:
-                  "Can't add category meta right now please try again later",
+                  "Can't add product meta right now please try again later",
               })
             );
           })
@@ -217,7 +148,7 @@ export const addMeta = (token, payload) => {
   };
 };
 
-export const updateMeta = (token, payload) => {
+export const updateProductMeta = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -231,24 +162,23 @@ export const updateMeta = (token, payload) => {
         .trim()
         .required("Please enter a meta description!"),
       metaKeyword: yup.string().trim().required("Please enter a meta keyword!"),
-      metaCategoryId: yup
+      metaForeignId: yup
         .string()
         .trim()
-        .matches(schemaConst.OBJECT_ID, "Invalid category id!")
-        .required("Please enter a category id"),
+        .matches(schemaConst.OBJECT_ID, "Invalid product id!")
+        .required("Please enter a product id"),
       metaId: yup
         .string()
         .trim()
         .matches(schemaConst.OBJECT_ID, "Invalid meta id!")
         .required("Please enter a meta id"),
-      metaContent: yup.string().trim().required("Please enter a meta content!"),
     });
 
     schema
       .validate({ ...payload })
       .then(() => {
         return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category_meta/edit_category_meta",
+          UNIVERSAL.BASEURL + "admin/api/product_meta/edit_product_meta",
           {
             method: "POST",
             headers: {
@@ -257,12 +187,11 @@ export const updateMeta = (token, payload) => {
             },
             body: JSON.stringify({
               user_token: token,
-              cat_id: payload.metaCategoryId,
+              prd_id: payload.metaForeignId,
               meta_keyword: payload.metaKeyword,
               meta_desc: payload.metaDesc,
               meta_title: payload.metaTitle,
               meta_id: payload.metaId,
-              meta_content: payload.metaContent,
             }),
           }
         )
@@ -270,7 +199,7 @@ export const updateMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewProductMeta(token, payload));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -292,7 +221,7 @@ export const updateMeta = (token, payload) => {
               setSnackBar({
                 status: 500,
                 message:
-                  "Can't update category meta right now please try again later",
+                  "Can't update product meta right now please try again later",
               })
             );
           })
@@ -314,7 +243,7 @@ export const updateMeta = (token, payload) => {
   };
 };
 
-export const deleteMeta = (token, payload) => {
+export const deleteProductMeta = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -330,7 +259,7 @@ export const deleteMeta = (token, payload) => {
       .validate({ ...payload })
       .then(() => {
         return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category_meta/delete_category_meta",
+          UNIVERSAL.BASEURL + "admin/api/product_meta/delete_product_meta",
           {
             method: "POST",
             headers: {
@@ -347,7 +276,7 @@ export const deleteMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewProductMeta(token, payload));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -369,7 +298,7 @@ export const deleteMeta = (token, payload) => {
               setSnackBar({
                 status: 500,
                 message:
-                  "Can't delete category meta right now please try again later",
+                  "Can't delete product meta right now please try again later",
               })
             );
           })
@@ -418,7 +347,8 @@ export const uploadCSV = (token, csv, payload) => {
         formdata.append("csv", csv);
 
         return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category_meta/add_meta_from_csv",
+          UNIVERSAL.BASEURL +
+            "admin/api/product_meta/add_product_meta_from_csv",
           {
             method: "POST",
             body: formdata,
@@ -427,7 +357,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewMeta(token, payload));
+              dispatch(viewProductMeta(token, payload));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -449,7 +379,7 @@ export const uploadCSV = (token, csv, payload) => {
               setSnackBar({
                 status: 500,
                 message:
-                  "Can't upload category meta right now please try again later",
+                  "Can't upload product meta right now please try again later",
               })
             );
           })
@@ -476,10 +406,11 @@ export const exportCSV = (token) => {
     dispatch(setLoader());
 
     return fetch(
-      UNIVERSAL.BASEURL + "admin/api/category_meta/export_meta_to_csv",
+      UNIVERSAL.BASEURL + "admin/api/product_meta/export_product_meta_to_csv",
       {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -491,7 +422,7 @@ export const exportCSV = (token) => {
       .then((responseJson) => {
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(responseJson);
-        link.download = `category_meta_${+new Date()}.csv`;
+        link.download = `product_meta_${new Date()}.csv`;
         link.click();
         dispatch(unsetLoader());
       })
@@ -501,7 +432,7 @@ export const exportCSV = (token) => {
           setSnackBar({
             status: 500,
             message:
-              "Can't export category meta right now please try again later",
+              "Can't export product meta right now please try again later",
           })
         );
       })

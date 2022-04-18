@@ -87,7 +87,11 @@ function productReducer(state = productState, action) {
     case constant.SET_PRODUCT_KEYWORD:
       return (state = { ...state, productKeyword: action.payload });
     case constant.SET_ALL_PRODUCT:
-      return (state = { ...state, allProduct: action.payload });
+      const allproduct = action.payload.map(({ _id, product_nm }) => ({
+        _id: _id,
+        label: product_nm,
+      }));
+      return (state = { ...state, allProduct: allproduct });
     default:
       return state;
   }

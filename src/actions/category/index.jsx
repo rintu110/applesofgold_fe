@@ -11,7 +11,7 @@ export const setAllCategoryStore = (payload) => ({
 
 export const viewAllCategory = (token, searchKeyWord) => {
   return (dispatch) => {
-    return fetch(UNIVERSAL.BASEURL + "admin/api/view_all_category", {
+    return fetch(UNIVERSAL.BASEURL + "admin/api/category/view_all_category", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -117,7 +117,7 @@ export const viewCategory = (token, payload) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/view_category", {
+    return fetch(UNIVERSAL.BASEURL + "admin/api/category/view_category", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -187,7 +187,7 @@ export const addCategory = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_category", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/category/add_category", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -275,7 +275,7 @@ export const updateCategory = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/edit_category", {
+        return fetch(UNIVERSAL.BASEURL + "admin/api/category/edit_category", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -358,17 +358,20 @@ export const assignedCategory = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/assigned_category", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            category_id: payload.categoryAssign,
-          }),
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/category/assigned_category",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_token: token,
+              category_id: payload.categoryAssign,
+            }),
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -437,17 +440,20 @@ export const unassignedCategory = (token, payload) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/unassigned_category", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            category_id: payload.categoryAssign,
-          }),
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/category/unassigned_category",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_token: token,
+              category_id: payload.categoryAssign,
+            }),
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -522,10 +528,13 @@ export const uploadCSV = (token, csv, payload) => {
 
         formdata.append("csv", csv);
 
-        return fetch(UNIVERSAL.BASEURL + "admin/api/add_category_from_csv", {
-          method: "POST",
-          body: formdata,
-        })
+        return fetch(
+          UNIVERSAL.BASEURL + "admin/api/category/add_category_from_csv",
+          {
+            method: "POST",
+            body: formdata,
+          }
+        )
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
@@ -577,15 +586,18 @@ export const exportCSV = (token) => {
   return (dispatch) => {
     dispatch(setLoader());
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/export_category_to_csv", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-      }),
-    })
+    return fetch(
+      UNIVERSAL.BASEURL + "admin/api/category/export_category_to_csv",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_token: token,
+        }),
+      }
+    )
       .then((response) => response.blob())
       .then((responseJson) => {
         const link = document.createElement("a");

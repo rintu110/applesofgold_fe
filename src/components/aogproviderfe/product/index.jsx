@@ -13,7 +13,7 @@ import StatusMode from "components/UI/StatusMode";
 import EditProduct from "components/aogproviderfe/product/editProduct";
 
 function ProductComp(props) {
-  const [_id, setValue] = React.useState({ _id: "", label: "" });
+  const [_id, setValue] = React.useState("");
   const [category, setCategory] = React.useState("");
   const {
     setProductName,
@@ -111,10 +111,7 @@ function ProductComp(props) {
       cellClassName: "table-row",
       renderCell: (params) => (
         <>
-          {parseInt(params.row.cat_id) === 0
-            ? "Non"
-            : params.row.category.length > 0 &&
-              params.row.category[0].category_nm}
+          {parseInt(params.row.cat_id) === 0 ? "Non" : params.row.category_nm}
         </>
       ),
     },
@@ -131,7 +128,10 @@ function ProductComp(props) {
             size="small"
             onClick={() => {
               setEditProduct(params.row);
-              setCategory(params.row.category);
+              setCategory({
+                _id: params.row.cat_id,
+                label: params.row.category_nm,
+              });
             }}
           >
             <Icon fontSize="small" color="secondary">
@@ -307,8 +307,8 @@ function ProductComp(props) {
             <Autocomplete
               value={_id}
               options={allCatgory}
-              autoComplete={true}
-              filterSelectedOptions
+              freeSolo
+              autoComplete
               isOptionEqualToValue={(option, value) => true}
               onInputChange={(event, value) =>
                 value !== null &&
@@ -330,7 +330,6 @@ function ProductComp(props) {
                 />
               )}
               disableListWrap
-              disablePortal
               renderOption={(props, option) => (
                 <li {...props} key={option._id}>
                   {option.label}
