@@ -11,6 +11,8 @@ import StatusMode from "components/UI/StatusMode";
 import Pagination from "components/UI/Pagination";
 import EditCategory from "components/aogproviderfe/category/editCategory";
 import Autocomplete from "@mui/material/Autocomplete";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function CategoryComp(props) {
   const [_id, setValue] = React.useState("");
@@ -20,7 +22,6 @@ function CategoryComp(props) {
     setCategoryCode,
     setCategoryContent,
     setCategoryParentId,
-    setCategoryKeyWord,
     setAssignUnassignCategory,
     setEditCategory,
     viewCategory,
@@ -29,11 +30,10 @@ function CategoryComp(props) {
     unassignedCategory,
     category,
     login,
-    setCategoryLimit,
-    setCategoryStartingAfter,
     viewAllCategory,
     uploadCSV,
     exportCSV,
+    universal,
   } = props;
 
   const columns = [
@@ -113,8 +113,8 @@ function CategoryComp(props) {
   ];
 
   React.useEffect(() => {
-    viewCategory(login.user_token, category);
-  }, [login.user_token]);
+    viewCategory(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -238,7 +238,7 @@ function CategoryComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addCategory(login.user_token, category);
+                addCategory(login.user_token, category, universal);
                 setValue({ _id: "", label: "" });
               }}
             >
@@ -254,27 +254,10 @@ function CategoryComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Category"
-              value={category.categoryKeyWord}
-              onChange={(event) => setCategoryKeyWord(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => viewCategory(login.user_token, category)}
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewCategory(login.user_token, universal)}
+            searchBy={"Category"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
@@ -282,7 +265,9 @@ function CategoryComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => assignedCategory(login.user_token, category)}
+              onClick={() =>
+                assignedCategory(login.user_token, category, universal)
+              }
             >
               ASSIGNED
             </Button>
@@ -291,31 +276,15 @@ function CategoryComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => unassignedCategory(login.user_token, category)}
+                onClick={() =>
+                  unassignedCategory(login.user_token, category, universal)
+                }
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="category-csv-file">
-                <input
-                  accept=".csv"
-                  id="category-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], category)
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
@@ -331,7 +300,7 @@ function CategoryComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={category.categoryStore}
+            rows={universal.store}
             columns={columns}
             selectionModel={category.categoryAssign}
             onSelectionModelChange={(row) => setAssignUnassignCategory(row)}
@@ -339,28 +308,7 @@ function CategoryComp(props) {
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={category.statingAfter}
-              total={category.total}
-              limit={category.limit}
-              nextPage={() =>
-                setCategoryStartingAfter(
-                  login.user_token,
-                  category,
-                  parseInt(category.statingAfter) + parseInt(category.limit)
-                )
-              }
-              previousPage={() =>
-                setCategoryStartingAfter(
-                  login.user_token,
-                  category,
-                  parseInt(category.statingAfter) - parseInt(category.limit)
-                )
-              }
-              setLimit={(event) =>
-                setCategoryLimit(login.user_token, category, event)
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>

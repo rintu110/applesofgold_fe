@@ -20,6 +20,7 @@ function EditCategory(props) {
     viewAllCategory,
     category,
     login,
+    universal,
   } = props;
 
   React.useEffect(() => {
@@ -119,7 +120,7 @@ function EditCategory(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateCategory(login.user_token, category);
+            updateCategory(login.user_token, category, universal);
             setValue({ _id: "", label: "" });
           }}
         >

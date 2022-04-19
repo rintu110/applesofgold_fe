@@ -1,36 +1,16 @@
 import * as constant from "constants/state";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 
-export const setStateStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    dispatch(
-      viewState(token, startingAfter, payload.limit, payload.countryKeyWord)
-    );
-  };
-};
-
-export const setStateLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch(
-      viewState(token, payload.startingAfter, limit, payload.countryKeyWord)
-    );
-    dispatch({
-      type: constant.SET_STATE_LIMIT,
-      payload: limit,
-    });
-  };
-};
-
 export const setStateAssignUnassing = (payload) => ({
   type: constant.SET_ASSIGNED_UNASSIGNED_STATE,
-  payload: payload,
-});
-
-export const setSearchKeyWord = (payload) => ({
-  type: constant.SET_STATE_KEYWORD,
   payload: payload,
 });
 
@@ -48,22 +28,12 @@ export const resetStateData = () => ({
   type: constant.RESET_STATE_DATA,
 });
 
-export const setStateStore = (payload) => ({
-  type: constant.SET_STATE_STORE,
-  payload: payload,
-});
-
-export const setTotalState = (payload) => ({
-  type: constant.SET_TOTAL_STATE,
-  payload: payload,
-});
-
 export const setEditState = (payload) => ({
   type: constant.SET_EDIT_STATE,
   payload: payload,
 });
 
-export const viewState = (token, startingAfter, limit, searchKeyWord) => {
+export const viewState = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -75,16 +45,16 @@ export const viewState = (token, startingAfter, limit, searchKeyWord) => {
       },
       body: JSON.stringify({
         user_token: token,
-        startingAfter: startingAfter,
-        limit: limit,
-        searchKeyWord: searchKeyWord,
+        startingAfter: universal.startingAfter,
+        limit: universal.limit,
+        searchKeyWord: universal.searchKeyword,
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setStateStore(responseJson.result));
-          dispatch(setTotalState(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -115,7 +85,7 @@ export const viewState = (token, startingAfter, limit, searchKeyWord) => {
   };
 };
 
-export const addState = (token, payload) => {
+export const addState = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -143,14 +113,7 @@ export const addState = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetStateData());
-              dispatch(
-                viewState(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.stateKeyWord
-                )
-              );
+              dispatch(viewState(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -193,7 +156,7 @@ export const addState = (token, payload) => {
   };
 };
 
-export const assignedState = (token, payload) => {
+export const assignedState = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -231,14 +194,7 @@ export const assignedState = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetStateData());
-              dispatch(
-                viewState(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.stateKeyWord
-                )
-              );
+              dispatch(viewState(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -281,7 +237,7 @@ export const assignedState = (token, payload) => {
   };
 };
 
-export const unassignedState = (token, payload) => {
+export const unassignedState = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -319,14 +275,7 @@ export const unassignedState = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetStateData());
-              dispatch(
-                viewState(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.stateKeyWord
-                )
-              );
+              dispatch(viewState(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -369,7 +318,7 @@ export const unassignedState = (token, payload) => {
   };
 };
 
-export const updateState = (token, payload) => {
+export const updateState = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -403,14 +352,7 @@ export const updateState = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetStateData());
-              dispatch(
-                viewState(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.stateKeyWord
-                )
-              );
+              dispatch(viewState(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -453,7 +395,7 @@ export const updateState = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -486,14 +428,8 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(
-                viewState(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.stateKeyWord
-                )
-              );
+              dispatch(resetStateData());
+              dispatch(viewState(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

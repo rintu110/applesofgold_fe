@@ -7,13 +7,8 @@ const categoryState = {
   categoryContent: "",
   categoryID: "",
   categoryEdit: false,
-  categoryStore: [],
-  statingAfter: 0,
-  limit: 10,
-  total: 0,
   categoryAssign: [],
   allCatgory: [],
-  categoryKeyWord: "",
 };
 
 function categoryReducer(state = categoryState, action) {
@@ -24,8 +19,6 @@ function categoryReducer(state = categoryState, action) {
         label: category_nm,
       }));
       return (state = { ...state, allCatgory: allcategory });
-    case constant.SET_CATEGORY_STORE:
-      return (state = { ...state, categoryStore: action.payload });
     case constant.SET_CATEGORY_NAME:
       return (state = { ...state, categoryName: action.payload });
     case constant.SET_CATEGORY_CODE:
@@ -40,19 +33,12 @@ function categoryReducer(state = categoryState, action) {
       });
     case constant.SET_CATEGORY_CONTENT:
       return (state = { ...state, categoryContent: action.payload });
-    case constant.SET_TOTAL_CATEGORY:
-      return (state = { ...state, total: action.payload });
-    case constant.SET_CATEGORY_LIMIT:
-      return (state = { ...state, limit: action.payload });
-    case constant.SET_STARTING_AFTER:
-      return (state = { ...state, statingAfter: action.payload });
     case constant.SET_ASSIGNED_UNASSIGNED_CATEGORY:
       return (state = { ...state, categoryAssign: action.payload });
     case constant.RESET_CATEGORY:
       return (state = {
         ...state,
         categoryAssign: [],
-        categoryKeyWord: "",
         categoryName: "",
         categoryCode: "",
         categoryParentId: 0,
@@ -70,8 +56,6 @@ function categoryReducer(state = categoryState, action) {
         categoryID: action.payload._id,
         categoryEdit: true,
       });
-    case constant.SET_CATEGORY_KEYWORD:
-      return (state = { ...state, categoryKeyWord: action.payload });
     default:
       return state;
   }

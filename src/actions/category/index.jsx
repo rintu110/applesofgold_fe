@@ -1,5 +1,11 @@
 import * as constant from "constants/category";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
@@ -47,23 +53,6 @@ export const viewAllCategory = (token, searchKeyWord) => {
   };
 };
 
-export const setCategoryStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    payload.statingAfter = startingAfter;
-    dispatch(viewCategory(token, payload));
-  };
-};
-
-export const setCategoryLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_CATEGORY_LIMIT, payload: limit });
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: 0 });
-    payload.limit = limit;
-    dispatch(viewCategory(token, payload));
-  };
-};
-
 export const setCategoryName = (payload) => ({
   type: constant.SET_CATEGORY_NAME,
   payload: payload,
@@ -84,21 +73,6 @@ export const setCategoryParentId = (payload) => ({
   payload: payload,
 });
 
-export const setCategoryKeyWord = (payload) => ({
-  type: constant.SET_CATEGORY_KEYWORD,
-  payload: payload,
-});
-
-export const setCategoryStore = (payload) => ({
-  type: constant.SET_CATEGORY_STORE,
-  payload: payload,
-});
-
-export const setTotalCategory = (payload) => ({
-  type: constant.SET_TOTAL_CATEGORY,
-  payload: payload,
-});
-
 export const setAssignUnassignCategory = (payload) => ({
   type: constant.SET_ASSIGNED_UNASSIGNED_CATEGORY,
   payload: payload,
@@ -113,7 +87,7 @@ export const setEditCategory = (payload) => ({
   payload: payload,
 });
 
-export const viewCategory = (token, payload) => {
+export const viewCategory = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -125,16 +99,16 @@ export const viewCategory = (token, payload) => {
       },
       body: JSON.stringify({
         user_token: token,
-        limit: payload.limit,
-        startingAfter: payload.statingAfter,
-        searchKeyWord: payload.categoryKeyWord,
+        startingAfter: universal.startingAfter,
+        limit: universal.limit,
+        searchKeyWord: universal.searchKeyword,
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setCategoryStore(responseJson.result));
-          dispatch(setTotalCategory(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -165,7 +139,7 @@ export const viewCategory = (token, payload) => {
   };
 };
 
-export const addCategory = (token, payload) => {
+export const addCategory = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -205,7 +179,7 @@ export const addCategory = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCategory());
-              dispatch(viewCategory(token, payload));
+              dispatch(viewCategory(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -248,7 +222,7 @@ export const addCategory = (token, payload) => {
   };
 };
 
-export const updateCategory = (token, payload) => {
+export const updateCategory = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -294,7 +268,7 @@ export const updateCategory = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCategory());
-              dispatch(viewCategory(token, payload));
+              dispatch(viewCategory(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -338,7 +312,7 @@ export const updateCategory = (token, payload) => {
   };
 };
 
-export const assignedCategory = (token, payload) => {
+export const assignedCategory = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -376,7 +350,7 @@ export const assignedCategory = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCategory());
-              dispatch(viewCategory(token, payload));
+              dispatch(viewCategory(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -420,7 +394,7 @@ export const assignedCategory = (token, payload) => {
   };
 };
 
-export const unassignedCategory = (token, payload) => {
+export const unassignedCategory = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -458,7 +432,7 @@ export const unassignedCategory = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCategory());
-              dispatch(viewCategory(token, payload));
+              dispatch(viewCategory(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -502,7 +476,7 @@ export const unassignedCategory = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -538,7 +512,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewCategory(token, payload));
+              dispatch(viewCategory(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

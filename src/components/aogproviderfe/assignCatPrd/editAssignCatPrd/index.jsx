@@ -22,6 +22,7 @@ function EditAssignCatPrd(props) {
     assign,
     allProduct,
     allCatgory,
+    universal,
   } = props;
 
   React.useEffect(() => {
@@ -130,7 +131,7 @@ function EditAssignCatPrd(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateAssignCatPrd(login.user_token, assign);
+            updateAssignCatPrd(login.user_token, assign, universal);
             setValue("");
             setCategoryValue("");
           }}

@@ -1,24 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import CategoryMetaComp from "components/aogproviderfe/category_meta";
+import CategoryMetaComp from "components/aogproviderfe/categoryMeta";
+import {
+  viewMeta,
+  addMeta,
+  updateMeta,
+  uploadCSV,
+  exportCSV,
+} from "actions/categoryMeta";
 import {
   setMetaTitle,
   setMetaDesc,
   setMetaKeyword,
-  setCategoryId,
-  setMetaSearchKeyword,
+  setForeginId,
   setEditMeta,
   resetMeta,
-  viewMeta,
-  addMeta,
-  updateMeta,
-  deleteMeta,
-  uploadCSV,
-  exportCSV,
-  setMetaStartingAfter,
-  setMetaLimit,
   setMetaContent,
-} from "actions/categoryMeta";
+} from "actions/meta";
 import { viewAllCategory } from "actions/category";
 
 class CategoryMetaCont extends Component {
@@ -28,41 +26,33 @@ class CategoryMetaCont extends Component {
 }
 
 const mapStateToProps = (store) => ({
-  meta: store.categoryMetaReducer,
+  meta: store.metaReducer,
   login: store.loginReducer,
   allCatgory: store.categoryReducer.allCatgory,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setMetaContent: (payload) => {
     dispatch(setMetaContent(payload));
   },
-  setMetaStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setMetaStartingAfter(token, payload, startingAfter));
-  },
-  setMetaLimit: (token, payload, limit) => {
-    dispatch(setMetaLimit(token, payload, limit));
-  },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
   viewAllCategory: (token, searchKeyWord) => {
     dispatch(viewAllCategory(token, searchKeyWord));
   },
-  addMeta: (token, payload) => {
-    dispatch(addMeta(token, payload));
+  addMeta: (token, payload, universal) => {
+    dispatch(addMeta(token, payload, universal));
   },
-  updateMeta: (token, payload) => {
-    dispatch(updateMeta(token, payload));
+  updateMeta: (token, payload, universal) => {
+    dispatch(updateMeta(token, payload, universal));
   },
-  deleteMeta: (token, payload) => {
-    dispatch(deleteMeta(token, payload));
-  },
-  viewMeta: (token, payload) => {
-    dispatch(viewMeta(token, payload));
+  viewMeta: (token, universal) => {
+    dispatch(viewMeta(token, universal));
   },
   setMetaTitle: (payload) => {
     dispatch(setMetaTitle(payload));
@@ -73,11 +63,8 @@ const mapDispatchToProps = (dispatch) => ({
   setMetaKeyword: (payload) => {
     dispatch(setMetaKeyword(payload));
   },
-  setCategoryId: (payload) => {
-    dispatch(setCategoryId(payload));
-  },
-  setMetaSearchKeyword: (payload) => {
-    dispatch(setMetaSearchKeyword(payload));
+  setForeginId: (payload) => {
+    dispatch(setForeginId(payload));
   },
   setEditMeta: (payload) => {
     dispatch(setEditMeta(payload));
@@ -88,4 +75,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategoryMetaCont);
-

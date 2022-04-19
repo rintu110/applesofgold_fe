@@ -19,9 +19,10 @@ function EditCategoryMeta(props) {
     setMetaTitle,
     setMetaDesc,
     setMetaKeyword,
-    setCategoryId,
+    setForeginId,
     setMetaContent,
     viewAllCategory,
+    universal,
   } = props;
 
   React.useEffect(() => {
@@ -65,7 +66,7 @@ function EditCategoryMeta(props) {
             }
             onChange={(event, value) => {
               setValue(value);
-              setCategoryId(value);
+              setForeginId(value);
             }}
             renderInput={(params) => (
               <TextField
@@ -131,7 +132,7 @@ function EditCategoryMeta(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateMeta(login.user_token, meta);
+            updateMeta(login.user_token, meta, universal);
             setValue("");
           }}
         >

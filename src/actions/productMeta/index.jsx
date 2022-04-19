@@ -1,10 +1,16 @@
-import { setMetaStore, setTotalMeta, resetMeta } from "actions/meta";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import { resetMeta } from "actions/meta";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
 
-export const viewProductMeta = (token, payload) => {
+export const viewProductMeta = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -18,17 +24,17 @@ export const viewProductMeta = (token, payload) => {
         },
         body: JSON.stringify({
           user_token: token,
-          limit: payload.limit,
-          startingAfter: payload.startingAfter,
-          searchKeyWord: payload.metaSearchKeyword,
+          startingAfter: universal.startingAfter,
+          limit: universal.limit,
+          searchKeyWord: universal.searchKeyword,
         }),
       }
     )
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setMetaStore(responseJson.result));
-          dispatch(setTotalMeta(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -59,7 +65,7 @@ export const viewProductMeta = (token, payload) => {
   };
 };
 
-export const addProductMeta = (token, payload) => {
+export const addProductMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -104,7 +110,7 @@ export const addProductMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewProductMeta(token, payload));
+              dispatch(viewProductMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -148,7 +154,7 @@ export const addProductMeta = (token, payload) => {
   };
 };
 
-export const updateProductMeta = (token, payload) => {
+export const updateProductMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -199,7 +205,7 @@ export const updateProductMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewProductMeta(token, payload));
+              dispatch(viewProductMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -243,7 +249,7 @@ export const updateProductMeta = (token, payload) => {
   };
 };
 
-export const deleteProductMeta = (token, payload) => {
+export const deleteProductMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -276,7 +282,7 @@ export const deleteProductMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewProductMeta(token, payload));
+              dispatch(viewProductMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -320,7 +326,7 @@ export const deleteProductMeta = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -357,7 +363,8 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewProductMeta(token, payload));
+              dispatch(resetMeta());
+              dispatch(viewProductMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

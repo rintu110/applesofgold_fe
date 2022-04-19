@@ -21,6 +21,7 @@ function EditProductMeta(props) {
     viewAllProduct,
     updateProductMeta,
     resetMeta,
+    universal,
   } = props;
 
   React.useEffect(() => {
@@ -118,7 +119,7 @@ function EditProductMeta(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateProductMeta(login.user_token, meta);
+            updateProductMeta(login.user_token, meta, universal);
             setValue("");
           }}
         >

@@ -11,13 +11,8 @@ const productState = {
   productId: "",
   productTaxable: "",
   productAssign: [],
-  productStore: [],
   allProduct: [],
   productEdit: false,
-  startingAfter: 0,
-  limit: 10,
-  total: 0,
-  productKeyword: "",
 };
 
 function productReducer(state = productState, action) {
@@ -46,8 +41,6 @@ function productReducer(state = productState, action) {
       });
     case constant.SET_PRODUCT_ASSIGN_UNASSIGNED:
       return (state = { ...state, productAssign: action.payload });
-    case constant.SET_PRODUCT_STORE:
-      return (state = { ...state, productStore: action.payload });
     case constant.SET_EDIT_PRODUCT:
       return (state = {
         ...state,
@@ -62,12 +55,6 @@ function productReducer(state = productState, action) {
         productId: action.payload._id,
         productEdit: true,
       });
-    case constant.SET_STARTING_AFTER:
-      return (state = { ...state, startingAfter: action.payload });
-    case constant.SET_PRODUCT_LIMIT:
-      return (state = { ...state, limit: action.payload });
-    case constant.SET_TOTAL_PRODUCT:
-      return (state = { ...state, total: action.payload });
     case constant.RESET_PRODUCT:
       return (state = {
         ...state,
@@ -81,11 +68,8 @@ function productReducer(state = productState, action) {
         productTaxable: "",
         productAssign: [],
         productEdit: false,
-        productKeyword: "",
         productId: "",
       });
-    case constant.SET_PRODUCT_KEYWORD:
-      return (state = { ...state, productKeyword: action.payload });
     case constant.SET_ALL_PRODUCT:
       const allproduct = action.payload.map(({ _id, product_nm }) => ({
         _id: _id,

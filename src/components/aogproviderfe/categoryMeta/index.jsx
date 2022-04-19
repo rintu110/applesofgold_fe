@@ -8,8 +8,10 @@ import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
-import EditCategoryMeta from "components/aogproviderfe/category_meta/editCategoryMeta";
+import EditCategoryMeta from "components/aogproviderfe/categoryMeta/editCategoryMeta";
 import Autocomplete from "@mui/material/Autocomplete";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function CategoryMetaComp(props) {
   const [_id, setValue] = React.useState({ _id: "", label: "" });
@@ -18,8 +20,7 @@ function CategoryMetaComp(props) {
     setMetaTitle,
     setMetaDesc,
     setMetaKeyword,
-    setCategoryId,
-    setMetaSearchKeyword,
+    setForeginId,
     setEditMeta,
     setMetaContent,
     viewMeta,
@@ -29,9 +30,8 @@ function CategoryMetaComp(props) {
     allCatgory,
     uploadCSV,
     exportCSV,
-    setMetaStartingAfter,
-    setMetaLimit,
     viewAllCategory,
+    universal,
   } = props;
 
   const columns = [
@@ -93,7 +93,7 @@ function CategoryMetaComp(props) {
           <IconButton
             size="small"
             onClick={() => {
-              setEditMeta(params.row);
+              setEditMeta({ ...params.row, foregin_id: params.row.cat_id });
               setCategory({
                 _id: params.row.cat_id,
                 label: params.row.category_nm,
@@ -110,8 +110,8 @@ function CategoryMetaComp(props) {
   ];
 
   React.useEffect(() => {
-    viewMeta(login.user_token, meta);
-  }, [login.user_token]);
+    viewMeta(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -227,7 +227,7 @@ function CategoryMetaComp(props) {
               }
               onChange={(event, value) => {
                 setValue(value);
-                setCategoryId(value);
+                setForeginId(value);
               }}
               renderInput={(params) => (
                 <TextField
@@ -254,7 +254,7 @@ function CategoryMetaComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addMeta(login.user_token, meta);
+                addMeta(login.user_token, meta, universal);
                 setValue({ _id: "", label: "" });
               }}
             >
@@ -270,50 +270,15 @@ function CategoryMetaComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Category Meta"
-              value={meta.metaSearchKeyword}
-              onChange={(event) => setMetaSearchKeyword(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => viewMeta(login.user_token, meta)}
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewMeta(login.user_token, universal)}
+            searchBy={"Category Meta"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="category-meta-csv-file">
-                <input
-                  accept=".csv"
-                  id="category-meta-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], meta)
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
@@ -329,7 +294,7 @@ function CategoryMetaComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={meta.metaStore}
+            rows={universal.store}
             columns={columns}
             disableSelectionOnClick
             checkboxSelection={false}
@@ -337,26 +302,7 @@ function CategoryMetaComp(props) {
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={meta.startingAfter}
-              total={meta.total}
-              limit={meta.limit}
-              nextPage={() =>
-                setMetaStartingAfter(
-                  login.user_token,
-                  meta,
-                  parseInt(meta.startingAfter) + parseInt(meta.limit)
-                )
-              }
-              previousPage={() =>
-                setMetaStartingAfter(
-                  login.user_token,
-                  meta,
-                  parseInt(meta.startingAfter) - parseInt(meta.limit)
-                )
-              }
-              setLimit={(event) => setMetaLimit(login.user_token, meta, event)}
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>

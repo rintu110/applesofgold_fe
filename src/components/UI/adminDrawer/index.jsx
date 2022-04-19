@@ -11,6 +11,8 @@ import Icon from "@mui/material/Icon";
 import ListItemButton from "@mui/material/ListItemButton";
 import Link from "next/link";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { resetEverythingUniveral } from "actions/universal";
 
 const FlexBox = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -59,6 +61,12 @@ const CustomDrawer = styled(Drawer)(({ theme }) => ({
 const drawerWidth = 340;
 
 function AdminDrawer({ Components }) {
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(resetEverythingUniveral());
+  }, []);
+
   const [open, setOpen] = React.useState(-1);
 
   const handleClick = (event) => {
@@ -127,6 +135,26 @@ function AdminDrawer({ Components }) {
       name: "Assign Category & Product",
       link: "/admin/assign-category&product",
       color: "#f5ad05",
+    },
+    {
+      icon: "attribution",
+      name: "Attribute Type",
+      link: "/admin/attributes",
+      color: "#eb4034",
+      expand: [
+        {
+          icon: "assignment_turned_in",
+          name: "Attributes",
+          link: "/admin/attributes",
+          color: "#34eb3a",
+        },
+        // {
+        //   icon: "view_agenda",
+        //   name: "Product meta",
+        //   link: "/admin/product-meta",
+        //   color: "#ff1100",
+        // },
+      ],
     },
   ];
 

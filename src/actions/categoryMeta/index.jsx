@@ -1,76 +1,16 @@
-import * as constant from "constants/categoryMeta";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import { resetMeta } from "actions/meta";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
 
-export const setMetaStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    payload.startingAfter = startingAfter;
-    dispatch(viewMeta(token, payload));
-  };
-};
-
-export const setMetaLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_META_LIMIT, payload: limit });
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: 0 });
-    payload.limit = limit;
-    dispatch(viewMeta(token, payload));
-  };
-};
-
-export const setMetaContent = (payload) => ({
-  type: constant.SET_META_CONTENT,
-  payload: payload,
-});
-
-export const setMetaTitle = (payload) => ({
-  type: constant.SET_META_TITLE,
-  payload: payload,
-});
-
-export const setMetaDesc = (payload) => ({
-  type: constant.SET_META_DESC,
-  payload: payload,
-});
-
-export const setMetaKeyword = (payload) => ({
-  type: constant.SET_META_KEYWORD,
-  payload: payload,
-});
-
-export const setCategoryId = (payload) => ({
-  type: constant.SET_CATEGORY_ID,
-  payload: payload,
-});
-
-export const setMetaStore = (payload) => ({
-  type: constant.SET_META_STORE,
-  payload: payload,
-});
-
-export const setMetaSearchKeyword = (payload) => ({
-  type: constant.SET_META_SEARCH_KEYWORD,
-  payload: payload,
-});
-
-export const setEditMeta = (payload) => ({
-  type: constant.SET_EDIT_META,
-  payload: payload,
-});
-
-export const setTotalMeta = (payload) => ({
-  type: constant.SET_TOTAL_META,
-  payload: payload,
-});
-
-export const resetMeta = () => ({
-  type: constant.RESET_META,
-});
-
-export const viewMeta = (token, payload) => {
+export const viewMeta = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -84,17 +24,17 @@ export const viewMeta = (token, payload) => {
         },
         body: JSON.stringify({
           user_token: token,
-          limit: payload.limit,
-          startingAfter: payload.startingAfter,
-          searchKeyWord: payload.metaSearchKeyword,
+          startingAfter: universal.startingAfter,
+          limit: universal.limit,
+          searchKeyWord: universal.searchKeyword,
         }),
       }
     )
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setMetaStore(responseJson.result));
-          dispatch(setTotalMeta(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -126,7 +66,7 @@ export const viewMeta = (token, payload) => {
   };
 };
 
-export const addMeta = (token, payload) => {
+export const addMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -140,7 +80,7 @@ export const addMeta = (token, payload) => {
         .trim()
         .required("Please enter a meta description!"),
       metaKeyword: yup.string().trim().required("Please enter a meta keyword!"),
-      metaCategoryId: yup
+      metaForeignId: yup
         .string()
         .trim()
         .matches(schemaConst.OBJECT_ID, "Invalid category id!")
@@ -161,7 +101,7 @@ export const addMeta = (token, payload) => {
             },
             body: JSON.stringify({
               user_token: token,
-              cat_id: payload.metaCategoryId,
+              cat_id: payload.metaForeignId,
               meta_keyword: payload.metaKeyword,
               meta_desc: payload.metaDesc,
               meta_title: payload.metaTitle,
@@ -173,7 +113,7 @@ export const addMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -217,7 +157,7 @@ export const addMeta = (token, payload) => {
   };
 };
 
-export const updateMeta = (token, payload) => {
+export const updateMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -231,7 +171,7 @@ export const updateMeta = (token, payload) => {
         .trim()
         .required("Please enter a meta description!"),
       metaKeyword: yup.string().trim().required("Please enter a meta keyword!"),
-      metaCategoryId: yup
+      metaForeignId: yup
         .string()
         .trim()
         .matches(schemaConst.OBJECT_ID, "Invalid category id!")
@@ -257,7 +197,7 @@ export const updateMeta = (token, payload) => {
             },
             body: JSON.stringify({
               user_token: token,
-              cat_id: payload.metaCategoryId,
+              cat_id: payload.metaForeignId,
               meta_keyword: payload.metaKeyword,
               meta_desc: payload.metaDesc,
               meta_title: payload.metaTitle,
@@ -270,7 +210,7 @@ export const updateMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -314,7 +254,7 @@ export const updateMeta = (token, payload) => {
   };
 };
 
-export const deleteMeta = (token, payload) => {
+export const deleteMeta = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -347,7 +287,7 @@ export const deleteMeta = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetMeta());
-              dispatch(viewMeta(token, payload));
+              dispatch(viewMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -391,7 +331,7 @@ export const deleteMeta = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -427,7 +367,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewMeta(token, payload));
+              dispatch(viewMeta(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

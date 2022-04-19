@@ -4,12 +4,14 @@ import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import Autocomplete from "@mui/material/Autocomplete";
 import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import EditProductMeta from "components/aogproviderfe/productMeta/editProductMeta";
-import Autocomplete from "@mui/material/Autocomplete";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function ProductMetaComp(props) {
   const [_id, setValue] = React.useState("");
@@ -19,7 +21,6 @@ function ProductMetaComp(props) {
     setMetaDesc,
     setMetaKeyword,
     setForeginId,
-    setMetaSearchKeyword,
     setEditMeta,
     viewProductMeta,
     addProductMeta,
@@ -28,10 +29,8 @@ function ProductMetaComp(props) {
     allProduct,
     uploadCSV,
     exportCSV,
-    setMetaStartingAfter,
-    setMetaLimit,
     viewAllProduct,
-    resetEverythingMeta,
+    universal,
   } = props;
 
   const columns = [
@@ -95,9 +94,8 @@ function ProductMetaComp(props) {
   ];
 
   React.useEffect(() => {
-    resetEverythingMeta();
-    viewProductMeta(login.user_token, meta);
-  }, [login.user_token]);
+    viewProductMeta(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -219,7 +217,7 @@ function ProductMetaComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addProductMeta(login.user_token, meta);
+                addProductMeta(login.user_token, meta, universal);
                 setValue("");
               }}
             >
@@ -235,50 +233,15 @@ function ProductMetaComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Product Meta"
-              value={meta.metaSearchKeyword}
-              onChange={(event) => setMetaSearchKeyword(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => viewProductMeta(login.user_token, meta)}
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewProductMeta(login.user_token, universal)}
+            searchBy={"Product Meta"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="category-meta-csv-file">
-                <input
-                  accept=".csv"
-                  id="category-meta-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], meta)
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
@@ -294,7 +257,7 @@ function ProductMetaComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={meta.metaStore}
+            rows={universal.store}
             columns={columns}
             disableSelectionOnClick
             checkboxSelection={false}
@@ -302,35 +265,7 @@ function ProductMetaComp(props) {
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={meta.startingAfter}
-              total={meta.total}
-              limit={meta.limit}
-              nextPage={() =>
-                setMetaStartingAfter(
-                  login.user_token,
-                  meta,
-                  parseInt(meta.startingAfter) + parseInt(meta.limit),
-                  viewProductMeta(login.user_token, meta)
-                )
-              }
-              previousPage={() =>
-                setMetaStartingAfter(
-                  login.user_token,
-                  meta,
-                  parseInt(meta.startingAfter) - parseInt(meta.limit),
-                  viewProductMeta(login.user_token, meta)
-                )
-              }
-              setLimit={(event) =>
-                setMetaLimit(
-                  login.user_token,
-                  meta,
-                  event,
-                  viewProductMeta(login.user_token, meta)
-                )
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>

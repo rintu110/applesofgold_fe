@@ -6,11 +6,8 @@ import { viewAllProduct } from "actions/product";
 import {
   setAssignCatId,
   setAssignPrdId,
-  setAssignCatPrdSearchKeyword,
   setAssignedUnassignedCatPrd,
   setEditAssignCatPrd,
-  setAssignStartingAfter,
-  setAssignLimit,
   resetCatPrd,
   viewAssignCatPrd,
   addAssignCatPrd,
@@ -32,38 +29,30 @@ const mapStateToProps = (store) => ({
   assign: store.assignCatPrdReducer,
   allProduct: store.productReducer.allProduct,
   allCatgory: store.categoryReducer.allCatgory,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  viewAssignCatPrd: (token, payload) => {
-    dispatch(viewAssignCatPrd(token, payload));
+  viewAssignCatPrd: (token, universal) => {
+    dispatch(viewAssignCatPrd(token, universal));
   },
-  addAssignCatPrd: (token, payload) => {
-    dispatch(addAssignCatPrd(token, payload));
+  addAssignCatPrd: (token, payload, universal) => {
+    dispatch(addAssignCatPrd(token, payload, universal));
   },
-  updateAssignCatPrd: (token, payload) => {
-    dispatch(updateAssignCatPrd(token, payload));
+  updateAssignCatPrd: (token, payload, universal) => {
+    dispatch(updateAssignCatPrd(token, payload, universal));
   },
-  assignedCatPrd: (token, payload) => {
-    dispatch(assignedCatPrd(token, payload));
+  assignedCatPrd: (token, payload, universal) => {
+    dispatch(assignedCatPrd(token, payload, universal));
   },
-  unassignedCatPrd: (token, payload) => {
-    dispatch(unassignedCatPrd(token, payload));
-  },
-  setAssignStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setAssignStartingAfter(token, payload, startingAfter));
-  },
-  setAssignLimit: (token, payload, limit) => {
-    dispatch(setAssignLimit(token, payload, limit));
+  unassignedCatPrd: (token, payload, universal) => {
+    dispatch(unassignedCatPrd(token, payload, universal));
   },
   setAssignCatId: (payload) => {
     dispatch(setAssignCatId(payload));
   },
   setAssignPrdId: (payload) => {
     dispatch(setAssignPrdId(payload));
-  },
-  setAssignCatPrdSearchKeyword: (payload) => {
-    dispatch(setAssignCatPrdSearchKeyword(payload));
   },
   setAssignedUnassignedCatPrd: (payload) => {
     dispatch(setAssignedUnassignedCatPrd(payload));
@@ -74,12 +63,11 @@ const mapDispatchToProps = (dispatch) => ({
   setEditAssignCatPrd: (payload) => {
     dispatch(setEditAssignCatPrd(payload));
   },
-
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
   viewAllCategory: (token, searchKeyWord) => {
     dispatch(viewAllCategory(token, searchKeyWord));

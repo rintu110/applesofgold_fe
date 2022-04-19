@@ -1,5 +1,11 @@
 import * as constant from "constants/product";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
@@ -49,18 +55,8 @@ export const setProductAssignUnassigned = (payload) => ({
   payload: payload,
 });
 
-export const setProductStore = (payload) => ({
-  type: constant.SET_PRODUCT_STORE,
-  payload: payload,
-});
-
 export const setEditProduct = (payload) => ({
   type: constant.SET_EDIT_PRODUCT,
-  payload: payload,
-});
-
-export const setTotalProduct = (payload) => ({
-  type: constant.SET_TOTAL_PRODUCT,
   payload: payload,
 });
 
@@ -68,34 +64,12 @@ export const resetProduct = () => ({
   type: constant.RESET_PRODUCT,
 });
 
-export const setProductKeyword = (payload) => ({
-  type: constant.SET_PRODUCT_KEYWORD,
-  payload: payload,
-});
-
 export const setAllProduct = (payload) => ({
   type: constant.SET_ALL_PRODUCT,
   payload: payload,
 });
 
-export const setProductStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    payload.startingAfter = startingAfter;
-    dispatch(viewProduct(token, payload));
-  };
-};
-
-export const setProductLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_CATEGORY_LIMIT, payload: limit });
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: 0 });
-    payload.limit = limit;
-    dispatch(viewProduct(token, payload));
-  };
-};
-
-export const viewProduct = (token, payload) => {
+export const viewProduct = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -107,16 +81,16 @@ export const viewProduct = (token, payload) => {
       },
       body: JSON.stringify({
         user_token: token,
-        limit: payload.limit,
-        startingAfter: payload.startingAfter,
-        searchKeyWord: payload.productKeyword,
+        startingAfter: universal.startingAfter,
+        limit: universal.limit,
+        searchKeyWord: universal.searchKeyword,
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setProductStore(responseJson.result));
-          dispatch(setTotalProduct(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -147,7 +121,7 @@ export const viewProduct = (token, payload) => {
   };
 };
 
-export const addProduct = (token, payload) => {
+export const addProduct = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -212,7 +186,7 @@ export const addProduct = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetProduct());
-              dispatch(viewProduct(token, payload));
+              dispatch(viewProduct(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -255,7 +229,7 @@ export const addProduct = (token, payload) => {
   };
 };
 
-export const updateProduct = (token, payload) => {
+export const updateProduct = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -326,7 +300,7 @@ export const updateProduct = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetProduct());
-              dispatch(viewProduct(token, payload));
+              dispatch(viewProduct(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -370,7 +344,7 @@ export const updateProduct = (token, payload) => {
   };
 };
 
-export const assignProduct = (token, payload) => {
+export const assignProduct = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -408,7 +382,7 @@ export const assignProduct = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetProduct());
-              dispatch(viewProduct(token, payload));
+              dispatch(viewProduct(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -452,7 +426,7 @@ export const assignProduct = (token, payload) => {
   };
 };
 
-export const unassignProduct = (token, payload) => {
+export const unassignProduct = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -493,7 +467,7 @@ export const unassignProduct = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetProduct());
-              dispatch(viewProduct(token, payload));
+              dispatch(viewProduct(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -537,7 +511,7 @@ export const unassignProduct = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -573,7 +547,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewProduct(token, payload));
+              dispatch(viewProduct(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

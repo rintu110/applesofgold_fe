@@ -11,6 +11,7 @@ function EditState(props) {
   const {
     state,
     login,
+    universal,
     updateState,
     resetStateData,
     setStateName,
@@ -56,7 +57,7 @@ function EditState(props) {
           variant="contained"
           color="secondary"
           size="small"
-          onClick={() => updateState(login.user_token, state)}
+          onClick={() => updateState(login.user_token, state, universal)}
         >
           Update
         </Button>

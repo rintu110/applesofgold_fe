@@ -25,6 +25,7 @@ function EditProduct(props) {
     login,
     allCatgory,
     viewAllCategory,
+    universal,
   } = props;
 
   React.useEffect(() => {
@@ -162,7 +163,7 @@ function EditProduct(props) {
           color="secondary"
           size="small"
           onClick={() => {
-            updateProduct(login.user_token, product);
+            updateProduct(login.user_token, product, universal);
             setValue({ _id: "", label: "" });
           }}
         >

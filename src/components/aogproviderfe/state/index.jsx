@@ -10,6 +10,8 @@ import StatusMode from "components/UI/StatusMode";
 import EditState from "components/aogproviderfe/state/editState";
 import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function StateComp(props) {
   const columns = [
@@ -63,14 +65,24 @@ function StateComp(props) {
     },
   ];
 
+  const {
+    viewState,
+    setStateName,
+    setStateCode,
+    addState,
+    setStateAssignUnassing,
+    unassignedState,
+    assignedState,
+    uploadCSV,
+    exportCSV,
+    state,
+    login,
+    universal,
+  } = props;
+
   React.useEffect(() => {
-    props.viewState(
-      props.login.user_token,
-      props.state.startingAfter,
-      props.state.limit,
-      props.state.stateKeyWord
-    );
-  }, [props.login.user_token]);
+    viewState(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -106,8 +118,8 @@ function StateComp(props) {
               fullWidth
               color="secondary"
               placeholder="State name"
-              value={props.state.stateName}
-              onChange={(event) => props.setStateName(event.target.value)}
+              value={state.stateName}
+              onChange={(event) => setStateName(event.target.value)}
             />
           </Box>
         </Grid>
@@ -118,8 +130,8 @@ function StateComp(props) {
               fullWidth
               color="secondary"
               placeholder="State code"
-              value={props.state.stateCode}
-              onChange={(event) => props.setStateCode(event.target.value)}
+              value={state.stateCode}
+              onChange={(event) => setStateCode(event.target.value)}
             />
           </Box>
         </Grid>
@@ -129,9 +141,7 @@ function StateComp(props) {
               color="info"
               fullWidth
               variant="contained"
-              onClick={() =>
-                props.addState(props.login.user_token, props.state)
-              }
+              onClick={() => addState(login.user_token, state, universal)}
             >
               ADD
             </Button>
@@ -145,34 +155,10 @@ function StateComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by State"
-              value={props.state.stateKeyWord}
-              onChange={(event) => props.setSearchKeyWord(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() =>
-                      props.viewState(
-                        props.login.user_token,
-                        props.state.startingAfter,
-                        props.state.limit,
-                        props.state.stateKeyWord
-                      )
-                    }
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewState(login.user_token, universal)}
+            searchBy={"State"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
@@ -180,9 +166,7 @@ function StateComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() =>
-                props.assignedState(props.login.user_token, props.state)
-              }
+              onClick={() => assignedState(login.user_token, state, universal)}
             >
               ASSIGNED
             </Button>
@@ -192,43 +176,21 @@ function StateComp(props) {
                 color="secondary"
                 variant="contained"
                 onClick={() =>
-                  props.unassignedState(props.login.user_token, props.state)
+                  unassignedState(login.user_token, state, universal)
                 }
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="state-csv-file">
-                <input
-                  accept=".csv"
-                  id="state-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    props.uploadCSV(
-                      props.login.user_token,
-                      event.target.files[0],
-                      props.state
-                    )
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => props.exportCSV(props.login.user_token)}
+                onClick={() => exportCSV(login.user_token)}
               >
                 Export
               </Button>
@@ -237,46 +199,19 @@ function StateComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={props.state.stateStore}
+            rows={universal.store}
             columns={columns}
-            selectionModel={props.state.stateAssign}
-            onSelectionModelChange={(row) => props.setStateAssignUnassing(row)}
+            selectionModel={state.stateAssign}
+            onSelectionModelChange={(row) => setStateAssignUnassing(row)}
           />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={props.state.startingAfter}
-              total={props.state.total}
-              limit={props.state.limit}
-              nextPage={() =>
-                props.setStateStartingAfter(
-                  props.login.user_token,
-                  props.state,
-                  parseInt(props.state.startingAfter) +
-                    parseInt(props.state.limit)
-                )
-              }
-              previousPage={() =>
-                props.setStateStartingAfter(
-                  props.login.user_token,
-                  props.state,
-                  parseInt(props.state.startingAfter) -
-                    parseInt(props.state.limit)
-                )
-              }
-              setLimit={(event) =>
-                props.setStateLimit(
-                  props.login.user_token,
-                  props.state,
-                  event.target.value
-                )
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>
-      {props.state.editState && <EditState {...props} />}
+      {state.editState && <EditState {...props} />}
     </>
   );
 }

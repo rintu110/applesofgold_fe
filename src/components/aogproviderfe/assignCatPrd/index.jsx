@@ -11,6 +11,8 @@ import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import StatusMode from "components/UI/StatusMode";
 import EditAssignCatPrd from "components/aogproviderfe/assignCatPrd/editAssignCatPrd";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function AssignCategoryProductComp(props) {
   const [_id, setValue] = React.useState("");
@@ -22,11 +24,8 @@ function AssignCategoryProductComp(props) {
     viewAllProduct,
     setAssignCatId,
     setAssignPrdId,
-    setAssignCatPrdSearchKeyword,
     setAssignedUnassignedCatPrd,
     setEditAssignCatPrd,
-    setAssignStartingAfter,
-    setAssignLimit,
     viewAssignCatPrd,
     addAssignCatPrd,
     assignedCatPrd,
@@ -37,6 +36,7 @@ function AssignCategoryProductComp(props) {
     assign,
     allProduct,
     allCatgory,
+    universal,
   } = props;
 
   const columns = [
@@ -97,8 +97,8 @@ function AssignCategoryProductComp(props) {
   ];
 
   React.useEffect(() => {
-    viewAssignCatPrd(login.user_token, assign);
-  }, [login.user_token]);
+    viewAssignCatPrd(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -206,7 +206,7 @@ function AssignCategoryProductComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addAssignCatPrd(login.user_token, assign);
+                addAssignCatPrd(login.user_token, assign, universal);
                 setValue("");
                 setCategoryValue("");
               }}
@@ -223,29 +223,10 @@ function AssignCategoryProductComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Assing Category and Product"
-              value={assign.assignCatPrdSearchKeyWord}
-              onChange={(event) =>
-                setAssignCatPrdSearchKeyword(event.target.value)
-              }
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => viewAssignCatPrd(login.user_token, assign)}
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewAssignCatPrd(login.user_token, universal)}
+            searchBy={"Assing Category and Product"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
@@ -253,7 +234,9 @@ function AssignCategoryProductComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => assignedCatPrd(login.user_token, assign)}
+              onClick={() =>
+                assignedCatPrd(login.user_token, assign, universal)
+              }
             >
               ASSIGNED
             </Button>
@@ -262,31 +245,15 @@ function AssignCategoryProductComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => unassignedCatPrd(login.user_token, assign)}
+                onClick={() =>
+                  unassignedCatPrd(login.user_token, assign, universal)
+                }
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="assign-csv-file">
-                <input
-                  accept=".csv"
-                  id="assign-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], assign)
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
@@ -302,7 +269,7 @@ function AssignCategoryProductComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={assign.assignCatPrdStore}
+            rows={universal.store}
             columns={columns}
             selectionModel={assign.assignUnAssignStore}
             onSelectionModelChange={(row) => setAssignedUnassignedCatPrd(row)}
@@ -310,28 +277,7 @@ function AssignCategoryProductComp(props) {
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={assign.startingAfter}
-              total={assign.total}
-              limit={assign.limit}
-              nextPage={() =>
-                setAssignStartingAfter(
-                  login.user_token,
-                  assign,
-                  parseInt(assign.startingAfter) + parseInt(assign.limit)
-                )
-              }
-              previousPage={() =>
-                setAssignStartingAfter(
-                  login.user_token,
-                  assign,
-                  parseInt(assign.startingAfter) - parseInt(assign.limit)
-                )
-              }
-              setLimit={(event) =>
-                setAssignLimit(login.user_token, assign, event)
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>

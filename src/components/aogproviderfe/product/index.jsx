@@ -11,6 +11,8 @@ import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import StatusMode from "components/UI/StatusMode";
 import EditProduct from "components/aogproviderfe/product/editProduct";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function ProductComp(props) {
   const [_id, setValue] = React.useState("");
@@ -26,7 +28,6 @@ function ProductComp(props) {
     setProductCategoryId,
     setProductAssignUnassigned,
     setEditProduct,
-    setProductKeyword,
     viewProduct,
     addProduct,
     assignProduct,
@@ -37,8 +38,7 @@ function ProductComp(props) {
     login,
     allCatgory,
     viewAllCategory,
-    setProductStartingAfter,
-    setProductLimit,
+    universal,
   } = props;
 
   const columns = [
@@ -144,8 +144,8 @@ function ProductComp(props) {
   ];
 
   React.useEffect(() => {
-    viewProduct(login.user_token, product);
-  }, [login.user_token]);
+    viewProduct(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -345,7 +345,7 @@ function ProductComp(props) {
               fullWidth
               variant="contained"
               onClick={() => {
-                addProduct(login.user_token, product);
+                addProduct(login.user_token, product, universal);
                 setValue({ _id: "", label: "" });
               }}
             >
@@ -361,27 +361,10 @@ function ProductComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Product"
-              value={product.productKeyword}
-              onChange={(event) => setProductKeyword(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => viewProduct(login.user_token, product)}
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewProduct(login.user_token, universal)}
+            searchBy={"Product"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
@@ -389,7 +372,9 @@ function ProductComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => assignProduct(login.user_token, product)}
+              onClick={() =>
+                assignProduct(login.user_token, product, universal)
+              }
             >
               ASSIGNED
             </Button>
@@ -398,31 +383,15 @@ function ProductComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => unassignProduct(login.user_token, product)}
+                onClick={() =>
+                  unassignProduct(login.user_token, product, universal)
+                }
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="product-csv-file">
-                <input
-                  accept=".csv"
-                  id="product-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    uploadCSV(login.user_token, event.target.files[0], product)
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
@@ -438,7 +407,7 @@ function ProductComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={product.productStore}
+            rows={universal.store}
             columns={columns}
             selectionModel={product.productAssign}
             onSelectionModelChange={(row) => setProductAssignUnassigned(row)}
@@ -446,28 +415,7 @@ function ProductComp(props) {
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={product.startingAfter}
-              total={product.total}
-              limit={product.limit}
-              nextPage={() =>
-                setProductStartingAfter(
-                  login.user_token,
-                  product,
-                  parseInt(product.startingAfter) + parseInt(product.limit)
-                )
-              }
-              previousPage={() =>
-                setProductStartingAfter(
-                  login.user_token,
-                  product,
-                  parseInt(product.startingAfter) - parseInt(product.limit)
-                )
-              }
-              setLimit={(event) =>
-                setProductLimit(login.user_token, product, event)
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>

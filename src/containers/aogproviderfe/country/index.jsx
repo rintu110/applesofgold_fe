@@ -6,13 +6,10 @@ import {
   setCountryName,
   setCountryCode,
   resetCountryData,
-  setSearchKeyWord,
   addCountry,
   setCountryAssignUnassing,
   unassignedCountry,
   assignedCountry,
-  setCountryLimit,
-  setCountryStartingAfter,
   setEditCountry,
   updateCountry,
   uploadCSV,
@@ -28,50 +25,42 @@ class CountryCont extends Component {
 const mapStateToProps = (store) => ({
   country: store.countryReducer,
   login: store.loginReducer,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
-  updateCountry: (token, payload) => {
-    dispatch(updateCountry(token, payload));
+  updateCountry: (token, payload, universal) => {
+    dispatch(updateCountry(token, payload, universal));
   },
   setEditCountry: (payload) => {
     dispatch(setEditCountry(payload));
   },
-  setCountryLimit: (token, payload, limit) => {
-    dispatch(setCountryLimit(token, payload, limit));
+  assignedCountry: (token, payload, universal) => {
+    dispatch(assignedCountry(token, payload, universal));
   },
-  setCountryStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setCountryStartingAfter(token, payload, startingAfter));
-  },
-  assignedCountry: (token, payload) => {
-    dispatch(assignedCountry(token, payload));
-  },
-  unassignedCountry: (token, payload) => {
-    dispatch(unassignedCountry(token, payload));
+  unassignedCountry: (token, payload, universal) => {
+    dispatch(unassignedCountry(token, payload, universal));
   },
   setCountryAssignUnassing: (payload) => {
     dispatch(setCountryAssignUnassing(payload));
   },
-  addCountry: (token, payload) => {
-    dispatch(addCountry(token, payload));
+  addCountry: (token, payload, universal) => {
+    dispatch(addCountry(token, payload, universal));
   },
-  viewCountry: (token, startingAfter, limit, searchKeyWord) => {
-    dispatch(viewCountry(token, startingAfter, limit, searchKeyWord));
+  viewCountry: (token, universal) => {
+    dispatch(viewCountry(token, universal));
   },
   setCountryName: (payload) => {
     dispatch(setCountryName(payload));
   },
   setCountryCode: (payload) => {
     dispatch(setCountryCode(payload));
-  },
-  setSearchKeyWord: (payload) => {
-    dispatch(setSearchKeyWord(payload));
   },
   resetCountryData: () => {
     dispatch(resetCountryData());

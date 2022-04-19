@@ -10,6 +10,8 @@ import StatusMode from "components/UI/StatusMode";
 import EditCountry from "components/aogproviderfe/country/editCountry";
 import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
+import Search from "components/UI/Search";
+import CSVFileUpload from "components/UI/CsvFileUpload";
 
 function CountryComp(props) {
   const columns = [
@@ -50,10 +52,7 @@ function CountryComp(props) {
       disableSelectionOnClick: true,
       renderCell: (params) => (
         <>
-          <IconButton
-            size="small"
-            onClick={() => props.setEditCountry(params.row)}
-          >
+          <IconButton size="small" onClick={() => setEditCountry(params.row)}>
             <Icon fontSize="small" color="secondary">
               edit
             </Icon>
@@ -63,14 +62,27 @@ function CountryComp(props) {
     },
   ];
 
+  const {
+    viewCountry,
+    setCountryName,
+    setCountryCode,
+    resetCountryData,
+    addCountry,
+    setCountryAssignUnassing,
+    unassignedCountry,
+    assignedCountry,
+    setEditCountry,
+    updateCountry,
+    uploadCSV,
+    exportCSV,
+    country,
+    login,
+    universal,
+  } = props;
+
   React.useEffect(() => {
-    props.viewCountry(
-      props.login.user_token,
-      props.country.startingAfter,
-      props.country.limit,
-      props.country.countryKeyWord
-    );
-  }, [props.login.user_token]);
+    viewCountry(login.user_token, universal);
+  }, [universal.startingAfter, universal.limit]);
 
   return (
     <>
@@ -106,8 +118,8 @@ function CountryComp(props) {
               fullWidth
               color="secondary"
               placeholder="Country name"
-              value={props.country.countryName}
-              onChange={(event) => props.setCountryName(event.target.value)}
+              value={country.countryName}
+              onChange={(event) => setCountryName(event.target.value)}
             />
           </Box>
         </Grid>
@@ -118,8 +130,8 @@ function CountryComp(props) {
               fullWidth
               color="secondary"
               placeholder="Country code"
-              value={props.country.countryCode}
-              onChange={(event) => props.setCountryCode(event.target.value)}
+              value={country.countryCode}
+              onChange={(event) => setCountryCode(event.target.value)}
             />
           </Box>
         </Grid>
@@ -129,9 +141,7 @@ function CountryComp(props) {
               color="info"
               fullWidth
               variant="contained"
-              onClick={() =>
-                props.addCountry(props.login.user_token, props.country)
-              }
+              onClick={() => addCountry(login.user_token, country, universal)}
             >
               ADD
             </Button>
@@ -145,34 +155,10 @@ function CountryComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="primary"
-              placeholder="Search by Country"
-              value={props.country.countryKeyWord}
-              onChange={(event) => props.setSearchKeyWord(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() =>
-                      props.viewCountry(
-                        props.login.user_token,
-                        props.country.startingAfter,
-                        props.country.limit,
-                        props.country.countryKeyWord
-                      )
-                    }
-                  >
-                    Search
-                  </Button>
-                ),
-              }}
-            />
-          </Box>
+          <Search
+            CallBack={() => viewCountry(login.user_token, universal)}
+            searchBy={"Country"}
+          />
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
@@ -181,7 +167,7 @@ function CountryComp(props) {
               color="secondary"
               variant="contained"
               onClick={() =>
-                props.assignedCountry(props.login.user_token, props.country)
+                assignedCountry(login.user_token, country, universal)
               }
             >
               ASSIGNED
@@ -192,43 +178,21 @@ function CountryComp(props) {
                 color="secondary"
                 variant="contained"
                 onClick={() =>
-                  props.unassignedCountry(props.login.user_token, props.country)
+                  unassignedCountry(login.user_token, country, universal)
                 }
               >
                 UNASSIGNED
               </Button>
             </Box>
             <Box sx={{ mr: 2 }}>
-              <label htmlFor="state-csv-file">
-                <input
-                  accept=".csv"
-                  id="state-csv-file"
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(event) =>
-                    props.uploadCSV(
-                      props.login.user_token,
-                      event.target.files[0],
-                      props.country
-                    )
-                  }
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  component="span"
-                >
-                  Import
-                </Button>
-              </label>
+              <CSVFileUpload uploadCSV={uploadCSV} />
             </Box>
             <Box>
               <Button
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() => props.exportCSV(props.login.user_token)}
+                onClick={() => exportCSV(login.user_token)}
               >
                 Export
               </Button>
@@ -237,48 +201,19 @@ function CountryComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={props.country.countryStore}
+            rows={universal.store}
             columns={columns}
-            selectionModel={props.country.countryAssign}
-            onSelectionModelChange={(row) =>
-              props.setCountryAssignUnassing(row)
-            }
+            selectionModel={country.countryAssign}
+            onSelectionModelChange={(row) => setCountryAssignUnassing(row)}
           />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
-            <Pagination
-              startingAfter={props.country.startingAfter}
-              total={props.country.total}
-              limit={props.country.limit}
-              nextPage={() =>
-                props.setCountryStartingAfter(
-                  props.login.user_token,
-                  props.country,
-                  parseInt(props.country.startingAfter) +
-                    parseInt(props.country.limit)
-                )
-              }
-              previousPage={() =>
-                props.setCountryStartingAfter(
-                  props.login.user_token,
-                  props.country,
-                  parseInt(props.country.startingAfter) -
-                    parseInt(props.country.limit)
-                )
-              }
-              setLimit={(event) =>
-                props.setCountryLimit(
-                  props.login.user_token,
-                  props.country,
-                  event
-                )
-              }
-            />
+            <Pagination />
           </Grid>
         </Grid>
       </Grid>
-      {props.country.editCountry && <EditCountry {...props} />}
+      {country.editCountry && <EditCountry {...props} />}
     </>
   );
 }

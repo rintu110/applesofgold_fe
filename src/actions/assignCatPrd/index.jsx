@@ -1,5 +1,11 @@
 import * as constant from "constants/assignCatPrd";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
@@ -14,16 +20,6 @@ export const setAssignPrdId = (payload) => ({
   payload: payload,
 });
 
-export const setAssignCatPrdSearchKeyword = (payload) => ({
-  type: constant.SET_ASSIGN_CAT_PRD_SEARCH_KEYWORD,
-  payload: payload,
-});
-
-export const setAssignCatPrdStore = (payload) => ({
-  type: constant.SET_ASSIGN_CAT_PRD_STORE,
-  payload: payload,
-});
-
 export const setAssignedUnassignedCatPrd = (payload) => ({
   type: constant.SET_ASSIGNED_UNASSIGNED_CAT_PRD,
   payload: payload,
@@ -34,36 +30,11 @@ export const setEditAssignCatPrd = (payload) => ({
   payload: payload,
 });
 
-export const setTotalAssignCatPrd = (payload) => ({
-  type: constant.SET_TOTAL_ASSIGN_CAT_PRD,
-  payload: payload,
-});
-
-export const setAssignStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({
-      type: constant.SET_ASSIGN_STARTING_AFTER,
-      payload: startingAfter,
-    });
-    payload.startingAfter = startingAfter;
-    dispatch(viewAssignCatPrd(token, payload));
-  };
-};
-
-export const setAssignLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_ASSIGN_LIMIT, payload: limit });
-    dispatch({ type: constant.SET_ASSIGN_STARTING_AFTER, payload: 0 });
-    payload.limit = limit;
-    dispatch(viewAssignCatPrd(token, payload));
-  };
-};
-
 export const resetCatPrd = () => ({
   type: constant.RESET_CAT_PRD,
 });
 
-export const viewAssignCatPrd = (token, payload) => {
+export const viewAssignCatPrd = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -77,17 +48,17 @@ export const viewAssignCatPrd = (token, payload) => {
         },
         body: JSON.stringify({
           user_token: token,
-          limit: payload.limit,
-          startingAfter: payload.startingAfter,
-          searchKeyWord: payload.assignCatPrdSearchKeyWord,
+          startingAfter: universal.startingAfter,
+          limit: universal.limit,
+          searchKeyWord: universal.searchKeyword,
         }),
       }
     )
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setAssignCatPrdStore(responseJson.result));
-          dispatch(setTotalAssignCatPrd(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -119,7 +90,7 @@ export const viewAssignCatPrd = (token, payload) => {
   };
 };
 
-export const addAssignCatPrd = (token, payload) => {
+export const addAssignCatPrd = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -158,7 +129,7 @@ export const addAssignCatPrd = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, payload));
+              dispatch(viewAssignCatPrd(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -202,7 +173,7 @@ export const addAssignCatPrd = (token, payload) => {
   };
 };
 
-export const updateAssignCatPrd = (token, payload) => {
+export const updateAssignCatPrd = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -247,7 +218,7 @@ export const updateAssignCatPrd = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, payload));
+              dispatch(viewAssignCatPrd(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -291,7 +262,7 @@ export const updateAssignCatPrd = (token, payload) => {
   };
 };
 
-export const assignedCatPrd = (token, payload) => {
+export const assignedCatPrd = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -330,7 +301,7 @@ export const assignedCatPrd = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, payload));
+              dispatch(viewAssignCatPrd(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -374,7 +345,7 @@ export const assignedCatPrd = (token, payload) => {
   };
 };
 
-export const unassignedCatPrd = (token, payload) => {
+export const unassignedCatPrd = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -413,7 +384,7 @@ export const unassignedCatPrd = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, payload));
+              dispatch(viewAssignCatPrd(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -457,7 +428,7 @@ export const unassignedCatPrd = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -494,7 +465,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(viewAssignCatPrd(token, payload));
+              dispatch(viewAssignCatPrd(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

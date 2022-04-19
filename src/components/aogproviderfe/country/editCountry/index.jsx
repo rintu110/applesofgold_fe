@@ -15,6 +15,7 @@ function EditCountry(props) {
     resetCountryData,
     setCountryName,
     setCountryCode,
+    universal,
   } = props;
   return (
     <Dialog maxWidth="xs" fullWidth open={country.editCountry}>
@@ -56,7 +57,7 @@ function EditCountry(props) {
           variant="contained"
           color="secondary"
           size="small"
-          onClick={() => updateCountry(login.user_token, country)}
+          onClick={() => updateCountry(login.user_token, country, universal)}
         >
           Update
         </Button>

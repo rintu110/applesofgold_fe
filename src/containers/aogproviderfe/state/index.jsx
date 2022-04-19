@@ -6,13 +6,10 @@ import {
   setStateName,
   setStateCode,
   resetStateData,
-  setSearchKeyWord,
   addState,
   setStateAssignUnassing,
   unassignedState,
   assignedState,
-  setStateLimit,
-  setStateStartingAfter,
   setEditState,
   updateState,
   uploadCSV,
@@ -28,50 +25,42 @@ class StateCont extends Component {
 const mapStateToProps = (store) => ({
   state: store.stateReducer,
   login: store.loginReducer,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
-  updateState: (token, payload) => {
-    dispatch(updateState(token, payload));
+  updateState: (token, payload, universal) => {
+    dispatch(updateState(token, payload, universal));
   },
   setEditState: (payload) => {
     dispatch(setEditState(payload));
   },
-  setStateLimit: (token, payload, limit) => {
-    dispatch(setStateLimit(token, payload, limit));
+  assignedState: (token, payload, universal) => {
+    dispatch(assignedState(token, payload, universal));
   },
-  setStateStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setStateStartingAfter(token, payload, startingAfter));
-  },
-  assignedState: (token, payload) => {
-    dispatch(assignedState(token, payload));
-  },
-  unassignedState: (token, payload) => {
-    dispatch(unassignedState(token, payload));
+  unassignedState: (token, payload, universal) => {
+    dispatch(unassignedState(token, payload, universal));
   },
   setStateAssignUnassing: (payload) => {
     dispatch(setStateAssignUnassing(payload));
   },
-  addState: (token, payload) => {
-    dispatch(addState(token, payload));
+  addState: (token, payload, universal) => {
+    dispatch(addState(token, payload, universal));
   },
-  viewState: (token, startingAfter, limit, searchKeyWord) => {
-    dispatch(viewState(token, startingAfter, limit, searchKeyWord));
+  viewState: (token, universal) => {
+    dispatch(viewState(token, universal));
   },
   setStateName: (payload) => {
     dispatch(setStateName(payload));
   },
   setStateCode: (payload) => {
     dispatch(setStateCode(payload));
-  },
-  setSearchKeyWord: (payload) => {
-    dispatch(setSearchKeyWord(payload));
   },
   resetStateData: () => {
     dispatch(resetStateData());

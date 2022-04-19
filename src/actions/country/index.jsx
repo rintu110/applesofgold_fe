@@ -1,36 +1,16 @@
 import * as constant from "constants/country";
-import { setLoader, setSnackBar, unsetLoader } from "actions/universal";
+import {
+  setLoader,
+  setSnackBar,
+  unsetLoader,
+  setDataStore,
+  setTotal,
+} from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
 
-export const setCountryStartingAfter = (token, payload, startingAfter) => {
-  return (dispatch) => {
-    dispatch({ type: constant.SET_STARTING_AFTER, payload: startingAfter });
-    dispatch(
-      viewCountry(token, startingAfter, payload.limit, payload.countryKeyWord)
-    );
-  };
-};
-
-export const setCountryLimit = (token, payload, limit) => {
-  return (dispatch) => {
-    dispatch(
-      viewCountry(token, payload.startingAfter, limit, payload.countryKeyWord)
-    );
-    dispatch({
-      type: constant.SET_COUNTRY_LIMIT,
-      payload: limit,
-    });
-  };
-};
-
 export const setCountryAssignUnassing = (payload) => ({
   type: constant.SET_ASSIGNED_UNASSIGNED_COUNTRY,
-  payload: payload,
-});
-
-export const setSearchKeyWord = (payload) => ({
-  type: constant.SET_COUNTRY_KEYWORD,
   payload: payload,
 });
 
@@ -48,22 +28,12 @@ export const resetCountryData = () => ({
   type: constant.RESET_COUNTRY_DATA,
 });
 
-export const setCountryStore = (payload) => ({
-  type: constant.SET_COUNTRY_STORE,
-  payload: payload,
-});
-
-export const setTotalCountry = (payload) => ({
-  type: constant.SET_TOTAL_COUNTRY,
-  payload: payload,
-});
-
 export const setEditCountry = (payload) => ({
   type: constant.SET_EDIT_COUNTRY,
   payload: payload,
 });
 
-export const viewCountry = (token, startingAfter, limit, searchKeyWord) => {
+export const viewCountry = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -75,16 +45,16 @@ export const viewCountry = (token, startingAfter, limit, searchKeyWord) => {
       },
       body: JSON.stringify({
         user_token: token,
-        startingAfter: startingAfter,
-        limit: limit,
-        searchKeyWord: searchKeyWord,
+        startingAfter: universal.startingAfter,
+        limit: universal.limit,
+        searchKeyWord: universal.searchKeyword,
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          dispatch(setCountryStore(responseJson.result));
-          dispatch(setTotalCountry(responseJson.total));
+          dispatch(setDataStore(responseJson.result));
+          dispatch(setTotal(responseJson.total));
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -115,7 +85,7 @@ export const viewCountry = (token, startingAfter, limit, searchKeyWord) => {
   };
 };
 
-export const addCountry = (token, payload) => {
+export const addCountry = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -143,14 +113,7 @@ export const addCountry = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCountryData());
-              dispatch(
-                viewCountry(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.countryKeyWord
-                )
-              );
+              dispatch(viewCountry(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -193,7 +156,7 @@ export const addCountry = (token, payload) => {
   };
 };
 
-export const assignedCountry = (token, payload) => {
+export const assignedCountry = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -231,14 +194,7 @@ export const assignedCountry = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCountryData());
-              dispatch(
-                viewCountry(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.countryKeyWord
-                )
-              );
+              dispatch(viewCountry(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -282,7 +238,7 @@ export const assignedCountry = (token, payload) => {
   };
 };
 
-export const unassignedCountry = (token, payload) => {
+export const unassignedCountry = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -323,14 +279,7 @@ export const unassignedCountry = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCountryData());
-              dispatch(
-                viewCountry(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.countryKeyWord
-                )
-              );
+              dispatch(viewCountry(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -374,7 +323,7 @@ export const unassignedCountry = (token, payload) => {
   };
 };
 
-export const updateCountry = (token, payload) => {
+export const updateCountry = (token, payload, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -408,14 +357,7 @@ export const updateCountry = (token, payload) => {
           .then((responseJson) => {
             if (responseJson.status) {
               dispatch(resetCountryData());
-              dispatch(
-                viewCountry(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.countryKeyWord
-                )
-              );
+              dispatch(viewCountry(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,
@@ -459,7 +401,7 @@ export const updateCountry = (token, payload) => {
   };
 };
 
-export const uploadCSV = (token, csv, payload) => {
+export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
 
@@ -495,14 +437,7 @@ export const uploadCSV = (token, csv, payload) => {
           .then((response) => response.json())
           .then((responseJson) => {
             if (responseJson.status) {
-              dispatch(
-                viewCountry(
-                  token,
-                  payload.startingAfter,
-                  payload.limit,
-                  payload.countryKeyWord
-                )
-              );
+              dispatch(viewCountry(token, universal));
               dispatch(
                 setSnackBar({
                   status: responseJson.status,

@@ -6,12 +6,8 @@ import {
   setMetaDesc,
   setMetaKeyword,
   setForeginId,
-  setMetaSearchKeyword,
   setEditMeta,
   resetMeta,
-  setMetaStartingAfter,
-  setMetaLimit,
-  resetEverythingMeta,
 } from "actions/meta";
 import {
   viewProductMeta,
@@ -33,35 +29,30 @@ const mapStateToProps = (store) => ({
   meta: store.metaReducer,
   login: store.loginReducer,
   allProduct: store.productReducer.allProduct,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   viewAllProduct: (token, searchKeyWord) => {
     dispatch(viewAllProduct(token, searchKeyWord));
   },
-  setMetaStartingAfter: (token, payload, startingAfter, callBack) => {
-    dispatch(setMetaStartingAfter(token, payload, startingAfter, callBack));
-  },
-  setMetaLimit: (token, payload, limit, callBack) => {
-    dispatch(setMetaLimit(token, payload, limit, callBack));
-  },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
-  addProductMeta: (token, payload) => {
-    dispatch(addProductMeta(token, payload));
+  addProductMeta: (token, payload, universal) => {
+    dispatch(addProductMeta(token, payload, universal));
   },
-  updateProductMeta: (token, payload) => {
-    dispatch(updateProductMeta(token, payload));
+  updateProductMeta: (token, payload, universal) => {
+    dispatch(updateProductMeta(token, payload, universal));
   },
-  deleteProductMeta: (token, payload) => {
-    dispatch(deleteProductMeta(token, payload));
+  deleteProductMeta: (token, payload, universal) => {
+    dispatch(deleteProductMeta(token, payload, universal));
   },
-  viewProductMeta: (token, payload) => {
-    dispatch(viewProductMeta(token, payload));
+  viewProductMeta: (token, payload, universal) => {
+    dispatch(viewProductMeta(token, payload, universal));
   },
   setMetaTitle: (payload) => {
     dispatch(setMetaTitle(payload));
@@ -75,17 +66,11 @@ const mapDispatchToProps = (dispatch) => ({
   setForeginId: (payload) => {
     dispatch(setForeginId(payload));
   },
-  setMetaSearchKeyword: (payload) => {
-    dispatch(setMetaSearchKeyword(payload));
-  },
   setEditMeta: (payload) => {
     dispatch(setEditMeta(payload));
   },
   resetMeta: () => {
     dispatch(resetMeta());
-  },
-  resetEverythingMeta: () => {
-    dispatch(resetEverythingMeta());
   },
 });
 

@@ -5,10 +5,34 @@ const universalState = {
   load: false,
   status: false,
   message: "",
+  store: [],
+  startingAfter: 0,
+  searchKeyword: "",
+  limit: 10,
+  total: 0,
 };
 
 function universalReducer(state = universalState, action) {
   switch (action.type) {
+    case constant.SET_SEARCH_KEYWORD:
+      return (state = { ...state, searchKeyword: action.payload });
+    case constant.SET_DATA_STORE:
+      return (state = { ...state, store: action.payload });
+    case constant.SET_TOTAL:
+      return (state = { ...state, total: action.payload });
+    case constant.SET_LIMIT:
+      return (state = { ...state, limit: action.payload });
+    case constant.SET_STARTING_AFTER:
+      return (state = { ...state, startingAfter: action.payload });
+    case constant.RESET_EVERYTHING:
+      return (state = {
+        ...state,
+        store: [],
+        startingAfter: 0,
+        limit: 10,
+        total: 0,
+        searchKeyword: "",
+      });
     case constant.SET_SNACKBAR:
       return (state = {
         ...state,

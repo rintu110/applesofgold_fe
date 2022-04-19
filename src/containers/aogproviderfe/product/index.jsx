@@ -13,7 +13,6 @@ import {
   setProductAssignUnassigned,
   setEditProduct,
   resetProduct,
-  setProductKeyword,
   viewProduct,
   addProduct,
   updateProduct,
@@ -21,8 +20,6 @@ import {
   unassignProduct,
   uploadCSV,
   exportCSV,
-  setProductStartingAfter,
-  setProductLimit,
 } from "actions/product";
 import { viewAllCategory } from "actions/category";
 
@@ -36,44 +33,36 @@ const mapStateToProps = (store) => ({
   product: store.productReducer,
   login: store.loginReducer,
   allCatgory: store.categoryReducer.allCatgory,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setProductLimit: (token, payload, limit) => {
-    dispatch(setProductLimit(token, payload, limit));
-  },
-  setProductStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setProductStartingAfter(token, payload, startingAfter));
-  },
   viewAllCategory: (token, searchKeyWord) => {
     dispatch(viewAllCategory(token, searchKeyWord));
   },
-  viewProduct: (token, payload) => {
-    dispatch(viewProduct(token, payload));
+  viewProduct: (token, universal) => {
+    dispatch(viewProduct(token, universal));
   },
-  addProduct: (token, payload) => {
-    dispatch(addProduct(token, payload));
+  addProduct: (token, payload, universal) => {
+    dispatch(addProduct(token, payload, universal));
   },
-  updateProduct: (token, payload) => {
-    dispatch(updateProduct(token, payload));
+  updateProduct: (token, payload, universal) => {
+    dispatch(updateProduct(token, payload, universal));
   },
-  assignProduct: (token, payload) => {
-    dispatch(assignProduct(token, payload));
+  assignProduct: (token, payload, universal) => {
+    dispatch(assignProduct(token, payload, universal));
   },
-  unassignProduct: (token, payload) => {
-    dispatch(unassignProduct(token, payload));
+  unassignProduct: (token, payload, universal) => {
+    dispatch(unassignProduct(token, payload, universal));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
   resetProduct: () => {
     dispatch(resetProduct());
-  },
-  setProductKeyword: (payload) => {
-    dispatch(setProductKeyword(payload));
   },
   setEditProduct: (payload) => {
     dispatch(setEditProduct(payload));

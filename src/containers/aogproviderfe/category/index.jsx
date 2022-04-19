@@ -6,7 +6,6 @@ import {
   setCategoryCode,
   setCategoryContent,
   setCategoryParentId,
-  setCategoryKeyWord,
   setAssignUnassignCategory,
   resetCategory,
   setEditCategory,
@@ -15,8 +14,6 @@ import {
   updateCategory,
   assignedCategory,
   unassignedCategory,
-  setCategoryLimit,
-  setCategoryStartingAfter,
   viewAllCategory,
   uploadCSV,
   exportCSV,
@@ -31,23 +28,18 @@ class CategoryCont extends Component {
 const mapStateToProps = (store) => ({
   category: store.categoryReducer,
   login: store.loginReducer,
+  universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },
-  uploadCSV: (token, csv, payload) => {
-    dispatch(uploadCSV(token, csv, payload));
+  uploadCSV: (token, csv, universal) => {
+    dispatch(uploadCSV(token, csv, universal));
   },
   viewAllCategory: (token, searchKeyWord) => {
     dispatch(viewAllCategory(token, searchKeyWord));
-  },
-  setCategoryLimit: (token, payload, limit) => {
-    dispatch(setCategoryLimit(token, payload, limit));
-  },
-  setCategoryStartingAfter: (token, payload, startingAfter) => {
-    dispatch(setCategoryStartingAfter(token, payload, startingAfter));
   },
   setCategoryName: (payload) => {
     dispatch(setCategoryName(payload));
@@ -61,9 +53,6 @@ const mapDispatchToProps = (dispatch) => ({
   setCategoryParentId: (payload) => {
     dispatch(setCategoryParentId(payload));
   },
-  setCategoryKeyWord: (payload) => {
-    dispatch(setCategoryKeyWord(payload));
-  },
   setAssignUnassignCategory: (payload) => {
     dispatch(setAssignUnassignCategory(payload));
   },
@@ -73,20 +62,20 @@ const mapDispatchToProps = (dispatch) => ({
   resetCategory: () => {
     dispatch(resetCategory());
   },
-  viewCategory: (token, payload) => {
-    dispatch(viewCategory(token, payload));
+  viewCategory: (token, universal) => {
+    dispatch(viewCategory(token, universal));
   },
-  addCategory: (token, payload) => {
-    dispatch(addCategory(token, payload));
+  addCategory: (token, payload, universal) => {
+    dispatch(addCategory(token, payload, universal));
   },
-  updateCategory: (token, payload) => {
-    dispatch(updateCategory(token, payload));
+  updateCategory: (token, payload, universal) => {
+    dispatch(updateCategory(token, payload, universal));
   },
-  assignedCategory: (token, payload) => {
-    dispatch(assignedCategory(token, payload));
+  assignedCategory: (token, payload, universal) => {
+    dispatch(assignedCategory(token, payload, universal));
   },
-  unassignedCategory: (token, payload) => {
-    dispatch(unassignedCategory(token, payload));
+  unassignedCategory: (token, payload, universal) => {
+    dispatch(unassignedCategory(token, payload, universal));
   },
 });
 
