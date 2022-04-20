@@ -11,6 +11,9 @@ import {
   updateAttribute,
   uploadCSV,
   exportCSV,
+  setAttributeLabel,
+  setAttributeImage,
+  setAttributeType,
 } from "actions/attribute";
 
 class AttributeCont extends Component {
@@ -26,6 +29,15 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  setAttributeLabel: (payload) => {
+    dispatch(setAttributeLabel(payload));
+  },
+  setAttributeImage: (payload) => {
+    dispatch(setAttributeImage(payload));
+  },
+  setAttributeType: (payload) => {
+    dispatch(setAttributeType(payload));
+  },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },

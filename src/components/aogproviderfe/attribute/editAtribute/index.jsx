@@ -6,6 +6,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
+import Icon from "@mui/material/Icon";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
 
 function EditAttributes(props) {
   const {
@@ -16,6 +20,9 @@ function EditAttributes(props) {
     universal,
     login,
     attribute,
+    setAttributeLabel,
+    setAttributeImage,
+    setAttributeType,
   } = props;
 
   return (
@@ -41,6 +48,75 @@ function EditAttributes(props) {
             value={attribute.code}
             onChange={(event) => setAttributeCode(event.target.value)}
           />
+        </Box>
+        <Box sx={{ my: 3 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            label="Attribute label"
+            value={attribute.label}
+            onChange={(event) => setAttributeLabel(event.target.value)}
+          />
+        </Box>
+        <Box sx={{ my: 3, display: "flex", alignItems: "center" }}>
+          <Avatar
+            src={attribute.image}
+            alt="attribute img"
+            variant="rounded"
+            sx={{ mr: 0.5 }}
+          />
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            label="Attribute image"
+            value={attribute.image}
+            onChange={(event) => setAttributeImage(event.target.value)}
+          />
+          <Box sx={{ ml: 0.5 }}>
+            <label htmlFor="attribute-images">
+              <input
+                accept="image/*"
+                id="attribute-images"
+                type="file"
+                style={{ display: "none" }}
+                // onChange={(event) =>
+                //   uploadCSV(
+                //     state.login.user_token,
+                //     event.target.files[0],
+                //     state.universal
+                //   )
+                // }
+              />
+              <IconButton size="small" component="span">
+                <Icon color="info">cloud_upload</Icon>
+              </IconButton>
+            </label>
+          </Box>
+        </Box>
+        <Box sx={{ my: 3 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            select
+            label="Attribute type"
+            value={attribute.type}
+            onChange={(event) => setAttributeType(event.target.value)}
+          >
+            {[
+              { code: "checkBox", label: "checkbox" },
+              { code: "radioButton", label: "radio Button" },
+              { code: "dropdownList", label: "Dropdown list" },
+              { code: "textBox", label: "Textbox" },
+              { code: "textArea", label: "Text Area" },
+            ].map((data, index) => (
+              <MenuItem value={data.code} key={index}>
+                {data.label}
+              </MenuItem>
+            ))}
+          </TextField>
         </Box>
       </DialogContent>
       <DialogActions>

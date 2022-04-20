@@ -28,6 +28,21 @@ export const resetAttribute = () => ({
   type: constant.RESET_ATTRIBUTE_DATA,
 });
 
+export const setAttributeLabel = (payload) => ({
+  type: constant.SET_ATTRIBUTE_LABEL,
+  payload: payload,
+});
+
+export const setAttributeImage = (payload) => ({
+  type: constant.SET_ATTRIBUTE_IMAGE,
+  payload: payload,
+});
+
+export const setAttributeType = (payload) => ({
+  type: constant.SET_ATTRIBUTE_TYPE,
+  payload: payload,
+});
+
 export const viewAttribute = (token, universal) => {
   return (dispatch) => {
     dispatch(setLoader());
@@ -87,6 +102,23 @@ export const addAttribute = (token, payload, universal) => {
     const schema = yup.object({
       prompt: yup.string().trim().required("Please enter a attribute name."),
       code: yup.string().trim().required("Please enter a attribute code"),
+      image: yup
+        .string()
+        .trim()
+        .url()
+        .required("Please enter you attribute image"),
+      type: yup
+        .string()
+        .trim()
+        .oneOf([
+          "checkBox",
+          "radioButton",
+          "dropdownList",
+          "textBox",
+          "textArea",
+        ])
+        .required("Please select your attribute type"),
+      label: yup.string().trim().required("Please enter your attribute label"),
     });
 
     schema
@@ -104,6 +136,9 @@ export const addAttribute = (token, payload, universal) => {
               user_token: token,
               prompt: payload.prompt,
               code: payload.code,
+              image: payload.image,
+              attr_type: payload.type,
+              label: payload.label,
             }),
           }
         )
@@ -170,6 +205,23 @@ export const updateAttribute = (token, payload, universal) => {
           "Invalid attribute id!"
         )
         .required("Please enter a attribute _id"),
+      image: yup
+        .string()
+        .trim()
+        .url()
+        .required("Please enter you attribute image"),
+      type: yup
+        .string()
+        .trim()
+        .oneOf([
+          "checkBox",
+          "radioButton",
+          "dropdownList",
+          "textBox",
+          "textArea",
+        ])
+        .required("Please select your attribute type"),
+      label: yup.string().trim().required("Please enter your attribute label"),
     });
 
     schema
@@ -188,6 +240,9 @@ export const updateAttribute = (token, payload, universal) => {
               prompt: payload.prompt,
               code: payload.code,
               attribute_id: payload.attributeId,
+              image: payload.image,
+              attr_type: payload.type,
+              label: payload.label,
             }),
           }
         )

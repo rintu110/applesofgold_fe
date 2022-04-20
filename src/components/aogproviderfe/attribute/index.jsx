@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import EditAttributes from "components/aogproviderfe/attribute/editAtribute";
@@ -24,6 +26,39 @@ function AttributeComp(props) {
     {
       field: "code",
       headerName: "ATTRIBUTE CODE",
+      flex: 1,
+      headerClassName: "table-header",
+      cellClassName: "table-row",
+    },
+    {
+      field: "label",
+      headerName: "ATTRIBUTE LABEL",
+      flex: 1,
+      headerClassName: "table-header",
+      cellClassName: "table-row",
+    },
+    {
+      field: "image",
+      headerName: "ATTRIBUTE IMAGE",
+      flex: 1,
+      headerClassName: "table-header",
+      cellClassName: "table-row",
+      renderCell: (params) =>
+        !params.row.image &&
+        params.row.image !== null &&
+        params.row.image !== "" ? (
+          "Non"
+        ) : (
+          <Avatar
+            src={params.row.image}
+            variant="rounded"
+            sx={{ mx: "auto", p: 0.5 }}
+          />
+        ),
+    },
+    {
+      field: "attr_type",
+      headerName: "ATTRIBUTE TYPE",
       flex: 1,
       headerClassName: "table-header",
       cellClassName: "table-row",
@@ -58,6 +93,9 @@ function AttributeComp(props) {
     universal,
     login,
     attribute,
+    setAttributeLabel,
+    setAttributeImage,
+    setAttributeType,
   } = props;
 
   React.useEffect(() => {
@@ -75,23 +113,44 @@ function AttributeComp(props) {
           </Box>
         </Grid>
         <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={5}>
+          <Grid item xs={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE PROMPT
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE CODE
               </Typography>
             </Box>
           </Grid>
+          <Grid item xs={2}>
+            <Box sx={{ m: 1 }}>
+              <Typography variant="body1" sx={{ color: "#8898aa" }}>
+                ATTRIBUTE LABEL
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box sx={{ m: 1 }}>
+              <Typography variant="body1" sx={{ color: "#8898aa" }}>
+                ATTRIBUTE IMAGE
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box sx={{ m: 1 }}>
+              <Typography variant="body1" sx={{ color: "#8898aa" }}>
+                ATTRIBUTE TYPE
+              </Typography>
+            </Box>
+          </Grid>
           <Grid item xs={2} />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -103,7 +162,7 @@ function AttributeComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -113,6 +172,75 @@ function AttributeComp(props) {
               value={attribute.code}
               onChange={(event) => setAttributeCode(event.target.value)}
             />
+          </Box>
+        </Grid>
+        <Grid item xs={2}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Attribute label"
+              value={attribute.label}
+              onChange={(event) => setAttributeLabel(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={2}>
+          <Box sx={{ m: 1, display: "flex", alignItems: "center" }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Attribute image"
+              value={attribute.image}
+              onChange={(event) => setAttributeImage(event.target.value)}
+            />
+            <Box sx={{ ml: 1 }}>
+              <label htmlFor="attribute-images">
+                <input
+                  accept="image/*"
+                  id="attribute-images"
+                  type="file"
+                  style={{ display: "none" }}
+                  // onChange={(event) =>
+                  //   uploadCSV(
+                  //     state.login.user_token,
+                  //     event.target.files[0],
+                  //     state.universal
+                  //   )
+                  // }
+                />
+                <IconButton size="small" component="span">
+                  <Icon color="info">cloud_upload</Icon>
+                </IconButton>
+              </label>
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={2}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              select
+              label="Attribute type"
+              value={attribute.type}
+              onChange={(event) => setAttributeType(event.target.value)}
+            >
+              {[
+                { code: "checkBox", label: "checkbox" },
+                { code: "radioButton", label: "radio Button" },
+                { code: "dropdownList", label: "Dropdown list" },
+                { code: "textBox", label: "Textbox" },
+                { code: "textArea", label: "Text Area" },
+              ].map((data, index) => (
+                <MenuItem value={data.code} key={index}>
+                  {data.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Box>
         </Grid>
         <Grid item xs={2}>
