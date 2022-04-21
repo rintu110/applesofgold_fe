@@ -1,4 +1,5 @@
 import * as constant from "constants/universal";
+import UNIVERSAL from "@/config";
 
 export const setLoader = (payload) => ({
   type: constant.SET_LOADER,
@@ -48,3 +49,61 @@ export const setSearchKeyword = (payload) => ({
   type: constant.SET_SEARCH_KEYWORD,
   payload: payload,
 });
+
+export const setAssignedUnassignedStore = (payload) => ({
+  type: constant.SET_ASSIGNED_AND_UNASSIGNED_STORE,
+  payload: payload,
+});
+
+export const ApiAction = (url, body, error, callBack) => {
+  return (dispatch) => {
+    dispatch(setLoader());
+
+    return fetch(UNIVERSAL.BASEURL + url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if (responseJson.status) {
+          callBack(
+            responseJson.status,
+            responseJson.message,
+            responseJson.result,
+            responseJson.total
+          );
+          dispatch(
+            setSnackBar({
+              status: responseJson.status,
+              message: responseJson.message,
+            })
+          );
+        } else {
+          dispatch(
+            setSnackBar({
+              status: responseJson.status,
+              message: responseJson.message,
+            })
+          );
+          callBack(responseJson.status, responseJson.message, [], 0);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: error,
+          })
+        );
+        callBack(responseJson.status, responseJson.message, [], 0);
+      })
+      .finally(() => {
+        dispatch(unsetLoader());
+      });
+  };
+};

@@ -23,6 +23,7 @@ function EditAttributes(props) {
     setAttributeLabel,
     setAttributeImage,
     setAttributeType,
+    setAttributeLabelCode,
   } = props;
 
   return (
@@ -57,6 +58,16 @@ function EditAttributes(props) {
             label="Attribute label"
             value={attribute.label}
             onChange={(event) => setAttributeLabel(event.target.value)}
+          />
+        </Box>
+        <Box sx={{ my: 3 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            label="Label code"
+            value={attribute.labelCode}
+            onChange={(event) => setAttributeLabelCode(event.target.value)}
           />
         </Box>
         <Box sx={{ my: 3, display: "flex", alignItems: "center" }}>

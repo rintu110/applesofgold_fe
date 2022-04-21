@@ -10,10 +10,13 @@ const universalState = {
   searchKeyword: "",
   limit: 10,
   total: 0,
+  assignUnassignedStore: [],
 };
 
 function universalReducer(state = universalState, action) {
   switch (action.type) {
+    case constant.SET_ASSIGNED_AND_UNASSIGNED_STORE:
+      return (state = { ...state, assignUnassignedStore: action.payload });
     case constant.SET_SEARCH_KEYWORD:
       return (state = { ...state, searchKeyword: action.payload });
     case constant.SET_DATA_STORE:
@@ -32,6 +35,7 @@ function universalReducer(state = universalState, action) {
         limit: 10,
         total: 0,
         searchKeyword: "",
+        assignUnassignedStore: [],
       });
     case constant.SET_SNACKBAR:
       return (state = {

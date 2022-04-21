@@ -14,6 +14,9 @@ import {
   setAttributeLabel,
   setAttributeImage,
   setAttributeType,
+  setAttributeLabelCode,
+  assignAttribute,
+  unassignAttribute,
 } from "actions/attribute";
 
 class AttributeCont extends Component {
@@ -29,6 +32,15 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  assignAttribute: (token, universal) => {
+    dispatch(assignAttribute(token, universal));
+  },
+  unassignAttribute: (token, universal) => {
+    dispatch(unassignAttribute(token, universal));
+  },
+  setAttributeLabelCode: (payload) => {
+    dispatch(setAttributeLabelCode(payload));
+  },
   setAttributeLabel: (payload) => {
     dispatch(setAttributeLabel(payload));
   },

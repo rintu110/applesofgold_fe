@@ -5,9 +5,16 @@ import {
   unsetLoader,
   setDataStore,
   setTotal,
+  setAssignedUnassignedStore,
+  ApiAction,
 } from "actions/universal";
 import UNIVERSAL from "@/config";
 import * as yup from "yup";
+
+export const setAttributeLabelCode = (payload) => ({
+  type: constant.SET_ATTRIBUTE_LABEL_CODE,
+  payload: payload,
+});
 
 export const setAttributePrompt = (payload) => ({
   type: constant.SET_ATTRIBUTE_PROMPT,
@@ -45,53 +52,60 @@ export const setAttributeType = (payload) => ({
 
 export const viewAttribute = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      startingAfter: universal.startingAfter,
+      limit: universal.limit,
+      searchKeyWord: universal.searchKeyword,
+    };
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/attributes/view_attributes", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-        startingAfter: universal.startingAfter,
-        limit: universal.limit,
-        searchKeyWord: universal.searchKeyword,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status) {
-          dispatch(setDataStore(responseJson.result));
-          dispatch(setTotal(responseJson.total));
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
-        } else {
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
+    dispatch(
+      ApiAction(
+        "admin/api/attributes/view_attributes",
+        body,
+        "Can't view attributes right now please try again later",
+        (status, message, result, total) => {
+          dispatch(setDataStore(result));
+          dispatch(setTotal(total));
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't view attributes right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+      )
+    );
+  };
+};
+
+export const assignAttribute = (token, universal) => {
+  return (dispatch) => {
+    dispatch(
+      ApiAction(
+        "admin/api/attributes/assigned_attributes",
+        { user_token: token, _id: universal.assignUnassignedStore },
+        "Can't view assign attributes right now please try again later",
+        (status, message, result) => {
+          if (status) {
+            dispatch(viewAttribute(token, universal));
+          }
+          dispatch(setAssignedUnassignedStore([]));
+        }
+      )
+    );
+  };
+};
+
+export const unassignAttribute = (token, universal) => {
+  return (dispatch) => {
+    dispatch(
+      ApiAction(
+        "admin/api/attributes/unassigned_attributes",
+        { user_token: token, _id: universal.assignUnassignedStore },
+        "Can't view unassign attributes right now please try again later",
+        (status, message, result) => {
+          if (status) {
+            dispatch(viewAttribute(token, universal));
+          }
+          dispatch(setAssignedUnassignedStore([]));
+        }
+      )
+    );
   };
 };
 
@@ -119,6 +133,10 @@ export const addAttribute = (token, payload, universal) => {
         ])
         .required("Please select your attribute type"),
       label: yup.string().trim().required("Please enter your attribute label"),
+      labelCode: yup
+        .string()
+        .trim()
+        .required("Please enter your attribute label code"),
     });
 
     schema
@@ -139,6 +157,7 @@ export const addAttribute = (token, payload, universal) => {
               image: payload.image,
               attr_type: payload.type,
               label: payload.label,
+              labelcode: payload.labelCode,
             }),
           }
         )
@@ -222,6 +241,10 @@ export const updateAttribute = (token, payload, universal) => {
         ])
         .required("Please select your attribute type"),
       label: yup.string().trim().required("Please enter your attribute label"),
+      labelCode: yup
+        .string()
+        .trim()
+        .required("Please enter your attribute label code"),
     });
 
     schema
@@ -243,6 +266,7 @@ export const updateAttribute = (token, payload, universal) => {
               image: payload.image,
               attr_type: payload.type,
               label: payload.label,
+              labelcode: payload.labelCode,
             }),
           }
         )

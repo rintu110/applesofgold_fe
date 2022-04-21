@@ -4,6 +4,7 @@ const attributeState = {
   prompt: "",
   code: "",
   label: "",
+  labelCode: "",
   image: "",
   type: "",
   attributeId: "",
@@ -12,6 +13,8 @@ const attributeState = {
 
 function attributeReducer(state = attributeState, action) {
   switch (action.type) {
+    case constant.SET_ATTRIBUTE_LABEL_CODE:
+      return (state = { ...state, labelCode: action.payload });
     case constant.SET_ATTRIBUTE_TYPE:
       return (state = { ...state, type: action.payload });
     case constant.SET_ATTRIBUTE_IMAGE:
@@ -31,6 +34,7 @@ function attributeReducer(state = attributeState, action) {
         label: action.payload.label,
         image: action.payload.image,
         type: action.payload.attr_type,
+        labelCode: action.payload.labelcode,
         editAttribute: true,
       });
     case constant.RESET_ATTRIBUTE_DATA:
@@ -42,6 +46,7 @@ function attributeReducer(state = attributeState, action) {
         label: "",
         image: "",
         type: "",
+        labelCode: "",
         editAttribute: false,
       });
     default:
