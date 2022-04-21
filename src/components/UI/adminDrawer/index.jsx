@@ -148,12 +148,12 @@ function AdminDrawer({ Components }) {
           link: "/admin/attributes",
           color: "#34eb3a",
         },
-        // {
-        //   icon: "view_agenda",
-        //   name: "Product meta",
-        //   link: "/admin/product-meta",
-        //   color: "#ff1100",
-        // },
+        {
+          icon: "format_list_numbered",
+          name: "Attributes Options",
+          link: "/admin/attributes-options",
+          color: "#4287f5",
+        },
       ],
     },
   ];
