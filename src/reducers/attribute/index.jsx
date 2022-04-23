@@ -7,12 +7,46 @@ const attributeState = {
   labelCode: "",
   image: "",
   type: "",
+  price: "",
+  cost: "",
   attributeId: "",
+  optionId: "",
+  allAttribute: [],
   editAttribute: false,
 };
 
 function attributeReducer(state = attributeState, action) {
   switch (action.type) {
+    case constant.SET_ALL_ATTRIBUTES:
+      const allattribute = action.payload.map(({ _id, prompt }) => ({
+        _id: _id,
+        label: prompt,
+      }));
+      return (state = { ...state, allAttribute: allattribute });
+    case constant.SET_ATTRIBUTE_ID:
+      return (state = {
+        ...state,
+        attributeId:
+          action.payload !== null &&
+          action.payload !== undefined &&
+          action.payload._id,
+      });
+    case constant.SET_EDIT_ATTRIBUTE_OPTION:
+      return (state = {
+        ...state,
+        prompt: action.payload.prompt,
+        code: action.payload.code,
+        attributeId: action.payload.attr_id,
+        image: action.payload.image,
+        price: action.payload.price,
+        cost: action.payload.cost,
+        optionId: action.payload._id,
+        editAttribute: true,
+      });
+    case constant.SET_OPTION_PRICE:
+      return (state = { ...state, price: action.payload });
+    case constant.SET_OPTION_COST:
+      return (state = { ...state, cost: action.payload });
     case constant.SET_ATTRIBUTE_LABEL_CODE:
       return (state = { ...state, labelCode: action.payload });
     case constant.SET_ATTRIBUTE_TYPE:
@@ -47,6 +81,10 @@ function attributeReducer(state = attributeState, action) {
         image: "",
         type: "",
         labelCode: "",
+        price: "",
+        cost: "",
+        optionId: "",
+        allAttribute: [],
         editAttribute: false,
       });
     default:
