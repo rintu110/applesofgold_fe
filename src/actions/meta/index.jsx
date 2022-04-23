@@ -20,11 +20,6 @@ export const setMetaKeyword = (payload) => ({
   payload: payload,
 });
 
-export const setMetaStore = (payload) => ({
-  type: constant.SET_META_STORE,
-  payload: payload,
-});
-
 export const setEditMeta = (payload) => ({
   type: constant.SET_EDIT_META,
   payload: payload,
