@@ -176,6 +176,7 @@ function AdminDrawer({ Components }) {
                 src={"/images/adminDrawer/apples-of-gold-jewelry.png"}
                 width={300}
                 height={80}
+                alt="logo"
               />
             </Box>
             <DrawerList>
