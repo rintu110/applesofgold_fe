@@ -92,66 +92,66 @@ function AdminDrawer({ Components }) {
 
   const router = [
     {
-      icon: <EmojiFlagsIcon color="#eaf536" />,
+      icon: <EmojiFlagsIcon sx={{ color: "#eaf536" }} />,
       name: "Country",
       link: "/admin/country",
     },
     {
-      icon: <DomainAddIcon color="#36f5bf" />,
+      icon: <DomainAddIcon sx={{ color: "#36f5bf" }} />,
       name: "State",
       link: "/admin/state",
     },
     {
-      icon: <FormatListBulletedIcon color="#f3a4b5" />,
+      icon: <FormatListBulletedIcon sx={{ color: "#f3a4b5" }} />,
       name: "Category Types",
       link: "#",
       expand: [
         {
-          icon: <CategoryIcon color="#c40808" />,
+          icon: <CategoryIcon sx={{ color: "#c40808" }} />,
           name: "Category",
           link: "/admin/category",
         },
         {
-          icon: <ViewAgendaIcon color="#1292ff" />,
+          icon: <ViewAgendaIcon sx={{ color: "#1292ff" }} />,
           name: "Category meta",
           link: "/admin/category-meta",
         },
       ],
     },
     {
-      icon: <ShoppingBagIcon color="#0c34ab" />,
+      icon: <ShoppingBagIcon sx={{ color: "#0c34ab" }} />,
       name: "Product Types",
       link: "#",
       expand: [
         {
-          icon: <LocalMallIcon color="#a0d411" />,
+          icon: <LocalMallIcon sx={{ color: "#a0d411" }} />,
           name: "Product",
           link: "/admin/product",
         },
         {
-          icon: <ViewAgendaIcon color="#ff1100" />,
+          icon: <ViewAgendaIcon sx={{ color: "#ff1100" }} />,
           name: "Product meta",
           link: "/admin/product-meta",
         },
       ],
     },
     {
-      icon: <AssignmentIcon color="#f5ad05" />,
+      icon: <AssignmentIcon sx={{ color: "#f5ad05" }} />,
       name: "Assign Category & Product",
       link: "/admin/assign-category&product",
     },
     {
-      icon: <AttributionIcon color="#eb4034" />,
+      icon: <AttributionIcon sx={{ color: "#eb4034" }} />,
       name: "Attribute Type",
       link: "/admin/attributes",
       expand: [
         {
-          icon: <AssignmentTurnedInIcon color="#34eb3a" />,
+          icon: <AssignmentTurnedInIcon sx={{ color: "#34eb3a" }} />,
           name: "Attributes",
           link: "/admin/attributes",
         },
         {
-          icon: <FormatListNumberedIcon color="#4287f5" />,
+          icon: <FormatListNumberedIcon sx={{ color: "#4287f5" }} />,
           name: "Attributes Options",
           link: "/admin/attributes-options",
         },
