@@ -12,7 +12,6 @@ import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
-import EditIcon from "@mui/icons-material/Edit";
 
 function StateComp(props) {
   const columns = [
