@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Icon from "@mui/material/Icon";
-import InputAdornment from '@mui/material/InputAdornment';
+import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import Button from "components/UI/Button";
@@ -18,6 +18,7 @@ import { login } from "actions/login";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useRouter } from "next/router";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 const CustomCard = styled(Card)(({ theme }) => ({
   position: "relative",
@@ -109,13 +110,15 @@ function AdminLogin() {
   const logins = useSelector((store) => store.loginReducer);
 
   React.useEffect(() => {
-    if (logins.user_token !== "" && (logins.user_type === "A" || logins.user_type === "SA")) {
+    if (
+      logins.user_token !== "" &&
+      (logins.user_type === "A" || logins.user_type === "SA")
+    ) {
       router.push("/admin");
     } else if (logins.user_token !== "" && logins.user_type === "U") {
       router.push("/");
     }
   }, [logins]);
-
 
   return (
     <>
@@ -179,7 +182,9 @@ function AdminLogin() {
                           </Typography>
                         </Box>
                         <CardContent>
-                          <Box sx={{ mx: { xs: 1, sm: 2, md: 3, lg: 4, xl: 4 } }}>
+                          <Box
+                            sx={{ mx: { xs: 1, sm: 2, md: 3, lg: 4, xl: 4 } }}
+                          >
                             <Box sx={{ py: 2 }}>
                               <Paper>
                                 <TextField
@@ -226,41 +231,44 @@ function AdminLogin() {
                                   onBlur={formik.handleBlur}
                                   error={
                                     formik.touched.password &&
-                                      formik.errors.password
+                                    formik.errors.password
                                       ? true
                                       : false
                                   }
                                   hiddenLabel
                                   InputProps={{
                                     startAdornment: (
-                                      <InputAdornment position="start" >
-                                        <Icon color="action" sx={{ mr: 1 }}>
-                                          lock_open
-                                        </Icon>
+                                      <InputAdornment position="start">
+                                        <LockOpenIcon sx={{ mr: 1 }} />
                                       </InputAdornment>
-
                                     ),
                                     endAdornment: (
-                                      <InputAdornment position="end" >
+                                      <InputAdornment position="end">
                                         <IconButton
                                           onClick={handleClickShowPassword}
                                           onMouseDown={handleMouseDownPassword}
                                           edge="end"
                                         >
-                                          {showPassword ? <Icon>visibility_off</Icon> : <Icon>visibility</Icon>}
+                                          {showPassword ? (
+                                            <Icon>visibility_off</Icon>
+                                          ) : (
+                                            <Icon>visibility</Icon>
+                                          )}
                                         </IconButton>
                                       </InputAdornment>
-                                    )
+                                    ),
                                   }}
-
                                 />
                               </Paper>
                             </Box>
                             <Typography variant="caption" color="error">
-                              {formik.touched.password && formik.errors.password}
+                              {formik.touched.password &&
+                                formik.errors.password}
                             </Typography>
                             <Box sx={{ mb: 4 }}>
-                              <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
                                 <Box>
                                   <Checkbox size="medium" />
                                 </Box>
@@ -309,7 +317,6 @@ function AdminLogin() {
                         </Grid>
                       </CardFoot>
                     </Box>
-
                   </Grid>
                 </Grid>
               </Box>
