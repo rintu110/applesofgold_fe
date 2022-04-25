@@ -13,6 +13,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { resetEverythingUniveral } from "actions/universal";
+import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
+import DomainAddIcon from "@mui/icons-material/DomainAdd";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import CategoryIcon from "@mui/icons-material/Category";
+import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import LocalMallIcon from "@mui/icons-material/LocalMall";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import AttributionIcon from "@mui/icons-material/Attribution";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const FlexBox = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -79,80 +92,68 @@ function AdminDrawer({ Components }) {
 
   const router = [
     {
-      icon: "outlined_flag",
+      icon: <EmojiFlagsIcon color="#eaf536" />,
       name: "Country",
       link: "/admin/country",
-      color: "#eaf536",
     },
     {
-      icon: "domain_add",
+      icon: <DomainAddIcon color="#36f5bf" />,
       name: "State",
       link: "/admin/state",
-      color: "#36f5bf",
     },
     {
-      icon: "format_list_bulleted",
+      icon: <FormatListBulletedIcon color="#f3a4b5" />,
       name: "Category Types",
       link: "#",
-      color: "#f3a4b5",
       expand: [
         {
-          icon: "category",
+          icon: <CategoryIcon color="#c40808" />,
           name: "Category",
           link: "/admin/category",
-          color: "#c40808",
         },
         {
-          icon: "view_agenda",
+          icon: <ViewAgendaIcon color="#1292ff" />,
           name: "Category meta",
           link: "/admin/category-meta",
-          color: "#1292ff",
         },
       ],
     },
     {
-      icon: "shopping_bag",
+      icon: <ShoppingBagIcon color="#0c34ab" />,
       name: "Product Types",
       link: "#",
-      color: "#0c34ab",
       expand: [
         {
-          icon: "local_mall",
+          icon: <LocalMallIcon color="#a0d411" />,
           name: "Product",
           link: "/admin/product",
-          color: "#a0d411",
         },
         {
-          icon: "view_agenda",
+          icon: <ViewAgendaIcon color="#ff1100" />,
           name: "Product meta",
           link: "/admin/product-meta",
-          color: "#ff1100",
         },
       ],
     },
     {
-      icon: "assignment",
+      icon: <AssignmentIcon color="#f5ad05" />,
       name: "Assign Category & Product",
       link: "/admin/assign-category&product",
-      color: "#f5ad05",
     },
     {
-      icon: "attribution",
+      icon: <AttributionIcon color="#eb4034" />,
       name: "Attribute Type",
       link: "/admin/attributes",
-      color: "#eb4034",
       expand: [
         {
-          icon: "assignment_turned_in",
+          icon: <AssignmentTurnedInIcon color="#34eb3a" />,
           name: "Attributes",
           link: "/admin/attributes",
-          color: "#34eb3a",
         },
         {
-          icon: "format_list_numbered",
+          icon: <FormatListNumberedIcon color="#4287f5" />,
           name: "Attributes Options",
           link: "/admin/attributes-options",
-          color: "#4287f5",
         },
       ],
     },
@@ -185,14 +186,12 @@ function AdminDrawer({ Components }) {
                   <DrawerList key={index}>
                     <ListItem>
                       <ListItemButton onClick={() => handleClick(index)}>
-                        <ListItemIcon>
-                          <Icon sx={{ color: item.color }}>{item.icon}</Icon>
-                        </ListItemIcon>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
                         <ListItemText primary={item.name} />
                         {open === index ? (
-                          <Icon>expand_less</Icon>
+                          <ExpandLessIcon />
                         ) : (
-                          <Icon>expand_more</Icon>
+                          <ExpandMoreIcon />
                         )}
                       </ListItemButton>
                     </ListItem>
@@ -211,11 +210,7 @@ function AdminDrawer({ Components }) {
                               passHref={true}
                             >
                               <ListItemButton>
-                                <ListItemIcon>
-                                  <Icon sx={{ color: exp.color }}>
-                                    {exp.icon}
-                                  </Icon>
-                                </ListItemIcon>
+                                <ListItemIcon>{exp.icon}</ListItemIcon>
                                 <ListItemText primary={exp.name} />
                               </ListItemButton>
                             </Link>
@@ -237,9 +232,7 @@ function AdminDrawer({ Components }) {
                       passHref={true}
                     >
                       <ListItemButton>
-                        <ListItemIcon>
-                          <Icon sx={{ color: item.color }}>{item.icon}</Icon>
-                        </ListItemIcon>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
                         <ListItemText primary={item.name} />
                       </ListItemButton>
                     </Link>
