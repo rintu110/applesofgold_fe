@@ -56,7 +56,7 @@ function StateComp(props) {
             size="small"
             onClick={() => props.setEditState(params.row)}
           >
-            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
+            <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
         </>
       ),
