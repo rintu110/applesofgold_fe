@@ -19,6 +19,9 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useRouter } from "next/router";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import EmailIcon from "@mui/icons-material/Email";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const CustomCard = styled(Card)(({ theme }) => ({
   position: "relative",
@@ -205,9 +208,10 @@ function AdminLogin() {
                                   }
                                   InputProps={{
                                     startAdornment: (
-                                      <Icon color="action" sx={{ mr: 1 }}>
-                                        email
-                                      </Icon>
+                                      <EmailIcon
+                                        color="action"
+                                        sx={{ mr: 1 }}
+                                      />
                                     ),
                                   }}
                                 />
@@ -250,9 +254,9 @@ function AdminLogin() {
                                           edge="end"
                                         >
                                           {showPassword ? (
-                                            <Icon>visibility_off</Icon>
+                                            <VisibilityOffIcon />
                                           ) : (
-                                            <Icon>visibility</Icon>
+                                            <VisibilityIcon />
                                           )}
                                         </IconButton>
                                       </InputAdornment>
