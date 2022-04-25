@@ -1,7 +1,6 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -12,6 +11,7 @@ import Pagination from "components/UI/Pagination";
 import EditProductMeta from "components/aogproviderfe/productMeta/editProductMeta";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import EditIcon from "@mui/icons-material/Edit";
 
 function ProductMetaComp(props) {
   const [_id, setValue] = React.useState("");
@@ -84,9 +84,7 @@ function ProductMetaComp(props) {
               });
             }}
           >
-            <Icon fontSize="small" color="secondary">
-              edit
-            </Icon>
+            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
           </IconButton>
         </>
       ),

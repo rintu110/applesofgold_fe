@@ -1,8 +1,8 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
@@ -12,6 +12,7 @@ import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import EditIcon from "@mui/icons-material/Edit";
 
 function StateComp(props) {
   const columns = [
@@ -56,9 +57,7 @@ function StateComp(props) {
             size="small"
             onClick={() => props.setEditState(params.row)}
           >
-            <Icon fontSize="small" color="secondary">
-              edit
-            </Icon>
+            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
           </IconButton>
         </>
       ),

@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
+import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Table from "components/UI/Table";
@@ -103,9 +103,7 @@ function CategoryComp(props) {
               setCategory(params.row.parent);
             }}
           >
-            <Icon fontSize="small" color="secondary">
-              edit
-            </Icon>
+            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
           </IconButton>
         </>
       ),

@@ -1,7 +1,8 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
+import EditIcon from "@mui/icons-material/Edit";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -92,9 +93,7 @@ function AttributeComp(props) {
       renderCell: (params) => (
         <>
           <IconButton size="small" onClick={() => setAttributeEdit(params.row)}>
-            <Icon fontSize="small" color="secondary">
-              edit
-            </Icon>
+            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
           </IconButton>
         </>
       ),
@@ -260,7 +259,7 @@ function AttributeComp(props) {
                     // }
                   />
                   <IconButton size="small" component="span">
-                    <Icon color="info">cloud_upload</Icon>
+                    <CloudUploadIcon sx={{ color: "#03a5fc" }} />
                   </IconButton>
                 </label>
               </Box>

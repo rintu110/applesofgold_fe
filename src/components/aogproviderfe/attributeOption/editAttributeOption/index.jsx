@@ -8,7 +8,7 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 import Avatar from "@mui/material/Avatar";
-import Icon from "@mui/material/Icon";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import IconButton from "@mui/material/IconButton";
 
 function EditAttributeOption(props) {
@@ -147,7 +147,7 @@ function EditAttributeOption(props) {
                 // }
               />
               <IconButton size="small" component="span">
-                <Icon color="info">cloud_upload</Icon>
+                <CloudUploadIcon sx={{ color: "#03a5fc" }} />
               </IconButton>
             </label>
           </Box>

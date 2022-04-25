@@ -1,7 +1,6 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -13,6 +12,7 @@ import StatusMode from "components/UI/StatusMode";
 import EditAssignCatPrd from "components/aogproviderfe/assignCatPrd/editAssignCatPrd";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import EditIcon from "@mui/icons-material/Edit";
 
 function AssignCategoryProductComp(props) {
   const [_id, setValue] = React.useState("");
@@ -87,9 +87,7 @@ function AssignCategoryProductComp(props) {
               });
             }}
           >
-            <Icon fontSize="small" color="secondary">
-              edit
-            </Icon>
+            <EditIcon sx={{ fontSize: 14, color: "#03a5fc" }} />
           </IconButton>
         </>
       ),

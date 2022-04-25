@@ -6,7 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
-import Icon from "@mui/material/Icon";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
@@ -101,7 +101,7 @@ function EditAttributes(props) {
                 // }
               />
               <IconButton size="small" component="span">
-                <Icon color="info">cloud_upload</Icon>
+                <CloudUploadIcon sx={{ color: "#03a5fc" }} />
               </IconButton>
             </label>
           </Box>

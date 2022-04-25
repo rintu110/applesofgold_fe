@@ -7,7 +7,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import { styled } from "@mui/material/styles";
-import Icon from "@mui/material/Icon";
 import ListItemButton from "@mui/material/ListItemButton";
 import Link from "next/link";
 import Image from "next/image";
