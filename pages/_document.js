@@ -2,7 +2,7 @@ import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import ServerStyleSheets from "@mui/styles/ServerStyleSheets";
 
-class AppleOfGoldDocument extends Document {
+class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const sheets = new ServerStyleSheets();
 
@@ -51,4 +51,4 @@ class AppleOfGoldDocument extends Document {
   }
 }
 
-export default AppleOfGoldDocument;
+export default MyDocument;
