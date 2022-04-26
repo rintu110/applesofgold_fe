@@ -1,3 +1,7 @@
+/**
+ * @type {import('next').NextConfig}
+ */
+
 const nextConfig = {
   pageExtensions: ["jsx"],
   eslint: {
@@ -5,7 +9,9 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  presets: ["next/babel"],
+  devIndicators: {
+    autoPrerender: false,
+  },
 };
 
 module.exports = nextConfig;
