@@ -2,7 +2,6 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -10,11 +9,12 @@ import Avatar from "@mui/material/Avatar";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import StatusMode from "components/UI/StatusMode";
-import EditAttributes from "components/aogproviderfe/attribute/editAtribute";
 import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
+import AddIcon from "@mui/icons-material/Add";
 
 function AttributeComp(props) {
   const columns = [
@@ -104,6 +104,8 @@ function AttributeComp(props) {
     setAttributePrompt,
     setAttributeCode,
     setAttributeEdit,
+    resetAttribute,
+    updateAttribute,
     viewAttribute,
     addAttribute,
     uploadCSV,
@@ -129,53 +131,109 @@ function AttributeComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Attribute
+              Add Global Attribute
             </Typography>
           </Box>
         </Grid>
         <Grid
           item
-          xs={11}
+          xs={12}
           container
           justifyContent="center"
           sx={{ bgcolor: "#e9ecef" }}
         >
-          <Grid item xs={12} md={4} lg={2}>
+          <Grid item xs={12} md={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE PROMPT
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} lg={2}>
+          <Grid item xs={12} md={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE CODE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} lg={2}>
+          <Grid item xs={12} md={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 LABEL
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} lg={2}>
+          <Grid item xs={12} md={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 LABEL CODE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} lg={2}>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Attribute prompt"
+              value={attribute.prompt}
+              onChange={(event) => setAttributePrompt(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Attribute code"
+              value={attribute.code}
+              onChange={(event) => setAttributeCode(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Label"
+              value={attribute.label}
+              onChange={(event) => setAttributeLabel(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              placeholder="Label code"
+              value={attribute.labelCode}
+              onChange={(event) => setAttributeLabelCode(event.target.value)}
+            />
+          </Box>
+        </Grid>
+        <Grid
+          item
+          xs={10}
+          container
+          justifyContent="center"
+          sx={{ bgcolor: "#e9ecef" }}
+        >
+          <Grid item xs={12} md={6}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE IMAGE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} lg={2}>
+          <Grid item xs={12} md={6}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE TYPE
@@ -183,125 +241,94 @@ function AttributeComp(props) {
             </Box>
           </Grid>
         </Grid>
-        <Grid item xs={1} sx={{ bgcolor: "#e9ecef" }} />
-        <Grid item xs={11} container justifyContent="center">
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1 }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Attribute prompt"
-                value={attribute.prompt}
-                onChange={(event) => setAttributePrompt(event.target.value)}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1 }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Attribute code"
-                value={attribute.code}
-                onChange={(event) => setAttributeCode(event.target.value)}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1 }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Label"
-                value={attribute.label}
-                onChange={(event) => setAttributeLabel(event.target.value)}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1 }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Label code"
-                value={attribute.labelCode}
-                onChange={(event) => setAttributeLabelCode(event.target.value)}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1, display: "flex", alignItems: "center" }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Attribute image"
-                value={attribute.image}
-                onChange={(event) => setAttributeImage(event.target.value)}
-              />
-              <Box sx={{ ml: 1 }}>
-                <label htmlFor="attribute-images">
-                  <input
-                    accept="image/*"
-                    id="attribute-images"
-                    type="file"
-                    style={{ display: "none" }}
-                    // onChange={(event) =>
-                    //   uploadCSV(
-                    //     state.login.user_token,
-                    //     event.target.files[0],
-                    //     state.universal
-                    //   )
-                    // }
-                  />
-                  <IconButton size="small" component="span">
-                    <CloudUploadIcon sx={{ color: "#03a5fc" }} />
-                  </IconButton>
-                </label>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4} lg={2}>
-            <Box sx={{ m: 1 }}>
-              <TextField
-                size="small"
-                fullWidth
-                color="secondary"
-                select
-                label="Attribute type"
-                value={attribute.type}
-                onChange={(event) => setAttributeType(event.target.value)}
-              >
-                {[
-                  { code: "checkBox", label: "checkbox" },
-                  { code: "radioButton", label: "radio Button" },
-                  { code: "dropdownList", label: "Dropdown list" },
-                  { code: "textBox", label: "Textbox" },
-                  { code: "textArea", label: "Text Area" },
-                ].map((data, index) => (
-                  <MenuItem value={data.code} key={index}>
-                    {data.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} md={4} lg={1}>
-          <Box sx={{ m: 1 }}>
-            <Button
-              color="info"
+        <Grid item xs={2} sx={{ bgcolor: "#e9ecef" }} />
+        <Grid item xs={12} md={5}>
+          <Box sx={{ m: 1, display: "flex", alignItems: "center" }}>
+            <TextField
+              size="small"
               fullWidth
-              variant="contained"
-              onClick={() =>
-                addAttribute(login.user_token, attribute, universal)
-              }
+              color="secondary"
+              placeholder="Attribute image"
+              value={attribute.image}
+              onChange={(event) => setAttributeImage(event.target.value)}
+            />
+            <label htmlFor="attribute-images" style={{ padding: 0 }}>
+              <input
+                accept="image/*"
+                id="attribute-images"
+                type="file"
+                style={{ display: "none" }}
+                // onChange={(event) =>
+                //   uploadCSV(
+                //     state.login.user_token,
+                //     event.target.files[0],
+                //     state.universal
+                //   )
+                // }
+              />
+              <Button color="secondary" variant="contained" component="span">
+                <PhotoSizeSelectActualIcon />
+              </Button>
+            </label>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Box sx={{ m: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              color="secondary"
+              select
+              label="Attribute type"
+              value={attribute.type}
+              onChange={(event) => setAttributeType(event.target.value)}
             >
-              ADD
+              {[
+                { code: "checkBox", label: "checkbox" },
+                { code: "radioButton", label: "radio Button" },
+                { code: "dropdownList", label: "Dropdown list" },
+                { code: "textBox", label: "Textbox" },
+                { code: "textArea", label: "Text Area" },
+              ].map((data, index) => (
+                <MenuItem value={data.code} key={index}>
+                  {data.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <Box sx={{ m: 1 }}>
+            {attribute.editAttribute ? (
+              <Button
+                sx={{ mr: 1 }}
+                variant="contained"
+                color="info"
+                onClick={() =>
+                  updateAttribute(login.user_token, attribute, universal)
+                }
+              >
+                Update
+              </Button>
+            ) : (
+              <Button
+                sx={{ mr: 1 }}
+                startIcon={<AddIcon />}
+                color="info"
+                variant="contained"
+                onClick={() =>
+                  addAttribute(login.user_token, attribute, universal)
+                }
+              >
+                ADD
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => resetAttribute()}
+            >
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -354,7 +381,7 @@ function AttributeComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table rows={universal.store} columns={columns} />
+          <Table columns={columns} />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
@@ -362,7 +389,6 @@ function AttributeComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {attribute.editAttribute && <EditAttributes {...props} />}
     </>
   );
 }

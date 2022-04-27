@@ -6,7 +6,6 @@ import { viewAllProduct } from "actions/product";
 import {
   setAssignCatId,
   setAssignPrdId,
-  setAssignedUnassignedCatPrd,
   setEditAssignCatPrd,
   resetCatPrd,
   viewAssignCatPrd,
@@ -42,20 +41,17 @@ const mapDispatchToProps = (dispatch) => ({
   updateAssignCatPrd: (token, payload, universal) => {
     dispatch(updateAssignCatPrd(token, payload, universal));
   },
-  assignedCatPrd: (token, payload, universal) => {
-    dispatch(assignedCatPrd(token, payload, universal));
+  assignedCatPrd: (token, universal) => {
+    dispatch(assignedCatPrd(token, universal));
   },
-  unassignedCatPrd: (token, payload, universal) => {
-    dispatch(unassignedCatPrd(token, payload, universal));
+  unassignedCatPrd: (token, universal) => {
+    dispatch(unassignedCatPrd(token, universal));
   },
   setAssignCatId: (payload) => {
     dispatch(setAssignCatId(payload));
   },
   setAssignPrdId: (payload) => {
     dispatch(setAssignPrdId(payload));
-  },
-  setAssignedUnassignedCatPrd: (payload) => {
-    dispatch(setAssignedUnassignedCatPrd(payload));
   },
   resetCatPrd: () => {
     dispatch(resetCatPrd());

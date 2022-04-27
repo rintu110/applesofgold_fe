@@ -8,15 +8,16 @@ import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
-import EditCategoryMeta from "components/aogproviderfe/categoryMeta/editCategoryMeta";
 import Autocomplete from "@mui/material/Autocomplete";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 function CategoryMetaComp(props) {
-  const [_id, setValue] = React.useState({ _id: "", label: "" });
-  const [category, setCategory] = React.useState("");
+  const [_id, setValue] = React.useState("");
   const {
+    resetMeta,
+    updateMeta,
     setMetaTitle,
     setMetaDesc,
     setMetaKeyword,
@@ -94,7 +95,7 @@ function CategoryMetaComp(props) {
             size="small"
             onClick={() => {
               setEditMeta({ ...params.row, foregin_id: params.row.cat_id });
-              setCategory({
+              setValue({
                 _id: params.row.cat_id,
                 label: params.row.category_nm,
               });
@@ -247,16 +248,38 @@ function CategoryMetaComp(props) {
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
+            {meta.metaEdit ? (
+              <Button
+                color="info"
+                variant="contained"
+                sx={{ mr: 1 }}
+                onClick={() => {
+                  updateMeta(login.user_token, meta, universal);
+                  setValue("");
+                }}
+              >
+                Update
+              </Button>
+            ) : (
+              <Button
+                color="info"
+                variant="contained"
+                startIcon={<AddIcon />}
+                sx={{ mr: 1 }}
+                onClick={() => {
+                  addMeta(login.user_token, meta, universal);
+                  setValue("");
+                }}
+              >
+                ADD
+              </Button>
+            )}
             <Button
-              color="info"
-              fullWidth
               variant="contained"
-              onClick={() => {
-                addMeta(login.user_token, meta, universal);
-                setValue({ _id: "", label: "" });
-              }}
+              color="secondary"
+              onClick={() => resetMeta()}
             >
-              ADD
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -292,7 +315,6 @@ function CategoryMetaComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={universal.store}
             columns={columns}
             disableSelectionOnClick
             checkboxSelection={false}
@@ -304,7 +326,6 @@ function CategoryMetaComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {meta.metaEdit && <EditCategoryMeta {...props} category={category} />}
     </>
   );
 }

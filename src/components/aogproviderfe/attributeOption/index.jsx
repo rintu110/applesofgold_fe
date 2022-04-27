@@ -2,7 +2,6 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -13,11 +12,11 @@ import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
-import EditAttributeOption from "components/aogproviderfe/attributeOption/editAttributeOption";
+import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
+import AddIcon from "@mui/icons-material/Add";
 
 function AttributeOptionComp(props) {
   const [_id, setValue] = React.useState("");
-  const [attributeData, setAttributeData] = React.useState("");
   const {
     setAttributePrompt,
     setAttributeCode,
@@ -34,6 +33,8 @@ function AttributeOptionComp(props) {
     attribute,
     login,
     universal,
+    updateAttributeOption,
+    resetAttribute,
   } = props;
 
   React.useEffect(() => {
@@ -108,7 +109,7 @@ function AttributeOptionComp(props) {
             size="small"
             onClick={() => {
               setEditAttributeOption(params.row);
-              setAttributeData({
+              setValue({
                 _id: params.row.attr_id,
                 label: params.row.attribute,
               });
@@ -127,7 +128,7 @@ function AttributeOptionComp(props) {
         <Grid item xs={12}>
           <Box sx={{ m: 2 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Attribute Option
+              Add Global Attribute Option
             </Typography>
           </Box>
         </Grid>
@@ -236,7 +237,7 @@ function AttributeOptionComp(props) {
               value={attribute.image}
               onChange={(event) => setAttributeImage(event.target.value)}
             />
-            <Box sx={{ ml: 1 }}>
+            <Box>
               <label htmlFor="attribute-images">
                 <input
                   accept="image/*"
@@ -251,9 +252,9 @@ function AttributeOptionComp(props) {
                   //   )
                   // }
                 />
-                <IconButton size="small" component="span">
-                  <CloudUploadIcon sx={{ color: "#03a5fc" }} />
-                </IconButton>
+                <Button color="secondary" variant="contained" component="span">
+                  <PhotoSizeSelectActualIcon />
+                </Button>
               </label>
             </Box>
           </Box>
@@ -296,15 +297,41 @@ function AttributeOptionComp(props) {
         </Grid>
         <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
+            {attribute.editAttribute ? (
+              <Button
+                color="info"
+                variant="contained"
+                sx={{ mr: 1 }}
+                onClick={() => {
+                  setValue("");
+                  updateAttributeOption(login.user_token, attribute, universal);
+                }}
+              >
+                UPDATE
+              </Button>
+            ) : (
+              <Button
+                color="info"
+                variant="contained"
+                sx={{ mr: 1 }}
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  addAttributeOption(login.user_token, attribute, universal);
+                  setValue("");
+                }}
+              >
+                ADD
+              </Button>
+            )}
             <Button
-              color="info"
-              fullWidth
               variant="contained"
-              onClick={() =>
-                addAttributeOption(login.user_token, attribute, universal)
-              }
+              color="secondary"
+              onClick={() => {
+                resetAttribute();
+                setValue("");
+              }}
             >
-              ADD
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -340,7 +367,6 @@ function AttributeOptionComp(props) {
         </Grid>
         <Grid item xs={12}>
           <Table
-            rows={universal.store}
             columns={columns}
             disableSelectionOnClick
             checkboxSelection={false}
@@ -352,9 +378,6 @@ function AttributeOptionComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {attribute.editAttribute && (
-        <EditAttributeOption {...props} attributeData={attributeData} />
-      )}
     </>
   );
 }

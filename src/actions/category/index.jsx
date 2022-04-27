@@ -1,14 +1,17 @@
 import * as constant from "constants/category";
 import {
-  setLoader,
   setSnackBar,
-  unsetLoader,
   setDataStore,
   setTotal,
+  setAssignedUnassignedStore,
+  ApiAction,
+  ApiFileAction,
+  ApiFileDownLoadAction,
+  ApiSearchAction,
 } from "actions/universal";
-import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
+import { assignUnassignSchema, csvSchema } from "@/schema/universal";
 
 export const setAllCategoryStore = (payload) => ({
   type: constant.SET_ALL_CATEGORY,
@@ -17,39 +20,19 @@ export const setAllCategoryStore = (payload) => ({
 
 export const viewAllCategory = (token, searchKeyWord) => {
   return (dispatch) => {
-    return fetch(UNIVERSAL.BASEURL + "admin/api/category/view_all_category", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-        searchKeyWord: searchKeyWord,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status) {
-          dispatch(setAllCategoryStore(responseJson.result));
-        } else {
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
+    dispatch(
+      ApiSearchAction(
+        "admin/api/category/view_all_category",
+        {
+          user_token: token,
+          searchKeyWord: searchKeyWord,
+        },
+        "Can't view all category right now please try again later",
+        (status, message, result) => {
+          dispatch(setAllCategoryStore(result));
         }
-      })
-      .catch((e) => {
-        console.error(e);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't view all category right now please try again later",
-          })
-        );
-      });
+      )
+    );
   };
 };
 
@@ -73,11 +56,6 @@ export const setCategoryParentId = (payload) => ({
   payload: payload,
 });
 
-export const setAssignUnassignCategory = (payload) => ({
-  type: constant.SET_ASSIGNED_UNASSIGNED_CATEGORY,
-  payload: payload,
-});
-
 export const resetCategory = () => ({
   type: constant.RESET_CATEGORY,
 });
@@ -89,60 +67,29 @@ export const setEditCategory = (payload) => ({
 
 export const viewCategory = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      startingAfter: universal.startingAfter,
+      limit: universal.limit,
+      searchKeyWord: universal.searchKeyword,
+    };
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/category/view_category", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-        startingAfter: universal.startingAfter,
-        limit: universal.limit,
-        searchKeyWord: universal.searchKeyword,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status) {
-          dispatch(setDataStore(responseJson.result));
-          dispatch(setTotal(responseJson.total));
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
-        } else {
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
+    dispatch(
+      ApiAction(
+        "admin/api/category/view_category",
+        body,
+        "Can't view category right now please try again later",
+        (status, message, result, total) => {
+          dispatch(setDataStore(result));
+          dispatch(setTotal(total));
         }
-      })
-      .catch((e) => {
-        console.error(e);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't view category right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+      )
+    );
   };
 };
 
 export const addCategory = (token, payload, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
     const schema = yup.object({
       categoryName: yup
         .string()
@@ -161,52 +108,27 @@ export const addCategory = (token, payload, universal) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/category/add_category", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            category_nm: payload.categoryName,
-            code: payload.categoryCode,
-            page_content: payload.categoryContent,
-            parent_id: payload.categoryParentId,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCategory());
-              dispatch(viewCategory(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        let body = {
+          user_token: token,
+          category_nm: payload.categoryName,
+          code: payload.categoryCode,
+          page_content: payload.categoryContent,
+          parent_id: payload.categoryParentId,
+        };
+
+        dispatch(
+          ApiAction(
+            "admin/api/category/add_category",
+            body,
+            "Can't add category right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(resetCategory());
+                dispatch(viewCategory(token, universal));
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't add category right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -215,17 +137,12 @@ export const addCategory = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
 export const updateCategory = (token, payload, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
     const schema = yup.object({
       categoryName: yup
         .string()
@@ -249,54 +166,28 @@ export const updateCategory = (token, payload, universal) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/category/edit_category", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            category_nm: payload.categoryName,
-            code: payload.categoryCode,
-            page_content: payload.categoryContent,
-            parent_id: payload.categoryParentId,
-            category_id: payload.categoryID,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCategory());
-              dispatch(viewCategory(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        let body = {
+          user_token: token,
+          category_nm: payload.categoryName,
+          code: payload.categoryCode,
+          page_content: payload.categoryContent,
+          parent_id: payload.categoryParentId,
+          category_id: payload.categoryID,
+        };
+
+        dispatch(
+          ApiAction(
+            "admin/api/category/edit_category",
+            body,
+            "Can't update category right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(resetCategory());
+                dispatch(viewCategory(token, universal));
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't update category right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -305,292 +196,105 @@ export const updateCategory = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
-export const assignedCategory = (token, payload, universal) => {
+export const assignedCategory = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      categoryAssign: yup
-        .array()
-        .min(1, "Please select at least one category!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaConst.OBJECT_ID, "Invalid category _id !")
-        )
-        .required("Please select at least one category!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category/assigned_category",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              category_id: payload.categoryAssign,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCategory());
-              dispatch(viewCategory(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't assign category right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/category/assigned_category",
+              {
+                user_token: token,
+                category_id: universal.assignUnassignedStore,
+              },
+              "Can't assign category right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewCategory(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
-export const unassignedCategory = (token, payload, universal) => {
+export const unassignedCategory = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      categoryAssign: yup
-        .array()
-        .min(1, "Please select at least one category!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaConst.OBJECT_ID, "Invalid category _id !")
-        )
-        .required("Please select at least one category!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category/unassigned_category",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              category_id: payload.categoryAssign,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCategory());
-              dispatch(viewCategory(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't unassign category right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/category/unassigned_category",
+              {
+                user_token: token,
+                category_id: universal.assignUnassignedStore,
+              },
+              "Can't unassign category right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewCategory(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
 export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    var formdata = new FormData();
 
-    const schema = yup.object({
-      csv: yup
-        .object()
-        .nullable()
-        .shape({
-          name: yup.string().trim().required("Please select one csv file"),
-          size: yup
-            .number()
-            .max(1100000, "file size is too large")
-            .required("Please select you csv file"),
-        }),
-    });
+    formdata.append("user_token", token);
 
-    schema
-      .validate({ csv: csv })
-      .then(() => {
-        var formdata = new FormData();
+    formdata.append("csv", csv);
 
-        formdata.append("user_token", token);
-
-        formdata.append("csv", csv);
-
-        return fetch(
-          UNIVERSAL.BASEURL + "admin/api/category/add_category_from_csv",
-          {
-            method: "POST",
-            body: formdata,
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(viewCategory(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't upload category right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      csvSchema(csv, (csvstatus) => {
+        if (csvstatus) {
+          dispatch(
+            ApiFileAction(
+              "admin/api/category/add_category_from_csv",
+              formdata,
+              "Can't upload category right now please try again later",
+              (status, message, result, total) => {
+                if (status) {
+                  dispatch(viewCategory(token, universal));
+                }
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
 export const exportCSV = (token) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    return fetch(
-      UNIVERSAL.BASEURL + "admin/api/category/export_category_to_csv",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    dispatch(
+      ApiFileDownLoadAction(
+        "admin/api/category/export_category_to_csv",
+        {
           user_token: token,
-        }),
-      }
-    )
-      .then((response) => response.blob())
-      .then((responseJson) => {
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(responseJson);
-        link.download = `category_${new Date()}.csv`;
-        link.click();
-        dispatch(unsetLoader());
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't export category right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+        },
+        "Can't export category right now please try again later",
+        "category",
+        ".csv"
+      )
+    );
   };
 };

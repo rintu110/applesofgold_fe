@@ -24,9 +24,7 @@ const DataGridBox = styled(Box)(({ theme }) => ({
 }));
 
 function Table(props) {
-  const universal = useSelector(
-    (store) => store.universalReducer.assignUnassignedStore
-  );
+  const universal = useSelector((store) => store.universalReducer);
 
   const dispatch = useDispatch();
 
@@ -41,10 +39,12 @@ function Table(props) {
         hideFooterSelectedRowCount
         hideFooterPagination
         getRowId={(row) => row._id}
-        selectionModel={universal}
+        selectionModel={universal.assignUnassignedStore}
+        rows={universal.store}
         onSelectionModelChange={(row) =>
           dispatch(setAssignedUnassignedStore(row))
         }
+        disableSelectionOnClick
         {...props}
       />
     </DataGridBox>

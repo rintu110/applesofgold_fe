@@ -7,25 +7,27 @@ import withSSR from "@/wrapper";
 import cookies from "next-cookies";
 
 function Home() {
-  return (<>
-    <Snackbar />
-    <AdminLogin />
-    <Loader />
-  </>);
+  return (
+    <>
+      <Snackbar />
+      <AdminLogin />
+      <Loader />
+    </>
+  );
 }
 
 Home.getInitialProps = store.getInitialPageProps((store) => async (ctx) => {
   const token = cookies(ctx).applesofgoldObject;
   const type = cookies(ctx).type;
 
-  if (token !== "" && (type === "A" || type === "SA")) {
+  if (token && type && token !== "" && (type === "A" || type === "SA")) {
     ctx.res.writeHead(301, {
-      Location: "/admin"
+      Location: "/admin",
     });
     ctx.res.end();
-  } else if (token !== "" && type === "U") {
+  } else if (token && type && token !== "" && type === "U") {
     ctx.res.writeHead(301, {
-      Location: "/user"
+      Location: "/user",
     });
     ctx.res.end();
   }

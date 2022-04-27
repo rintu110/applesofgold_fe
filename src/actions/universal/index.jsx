@@ -157,8 +157,7 @@ export const ApiFileAction = (url, body, error, callBack) => {
           callBack(
             responseJson.status,
             responseJson.message,
-            responseJson.result,
-            responseJson.total
+            responseJson.result
           );
           dispatch(
             setSnackBar({
@@ -173,7 +172,7 @@ export const ApiFileAction = (url, body, error, callBack) => {
               message: responseJson.message,
             })
           );
-          callBack(responseJson.status, responseJson.message, [], 0);
+          callBack(responseJson.status, responseJson.message, []);
         }
       })
       .catch((err) => {
@@ -184,7 +183,7 @@ export const ApiFileAction = (url, body, error, callBack) => {
             message: error,
           })
         );
-        callBack(500, error, [], 0);
+        callBack(500, error, []);
       })
       .finally(() => {
         dispatch(unsetLoader());

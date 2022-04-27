@@ -7,7 +7,6 @@ const categoryState = {
   categoryContent: "",
   categoryID: "",
   categoryEdit: false,
-  categoryAssign: [],
   allCatgory: [],
 };
 
@@ -33,8 +32,6 @@ function categoryReducer(state = categoryState, action) {
       });
     case constant.SET_CATEGORY_CONTENT:
       return (state = { ...state, categoryContent: action.payload });
-    case constant.SET_ASSIGNED_UNASSIGNED_CATEGORY:
-      return (state = { ...state, categoryAssign: action.payload });
     case constant.RESET_CATEGORY:
       return (state = {
         ...state,

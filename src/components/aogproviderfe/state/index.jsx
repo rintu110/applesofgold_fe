@@ -7,13 +7,20 @@ import Box from "@mui/material/Box";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import StatusMode from "components/UI/StatusMode";
-import EditState from "components/aogproviderfe/state/editState";
 import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 function StateComp(props) {
+  const [state, setStateData] = React.useState({
+    stateName: "",
+    stateCode: "",
+    stateId: "",
+    editState: false,
+  });
+
   const columns = [
     {
       field: "state_nm",
@@ -54,7 +61,15 @@ function StateComp(props) {
         <>
           <IconButton
             size="small"
-            onClick={() => props.setEditState(params.row)}
+            onClick={() =>
+              setStateData({
+                ...state,
+                stateName: params.row.state_nm,
+                stateCode: params.row.code,
+                stateId: params.row._id,
+                editState: true,
+              })
+            }
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
@@ -65,17 +80,14 @@ function StateComp(props) {
 
   const {
     viewState,
-    setStateName,
-    setStateCode,
     addState,
-    setStateAssignUnassing,
     unassignedState,
     assignedState,
     uploadCSV,
     exportCSV,
-    state,
     login,
     universal,
+    updateState,
   } = props;
 
   React.useEffect(() => {
@@ -117,7 +129,9 @@ function StateComp(props) {
               color="secondary"
               placeholder="State name"
               value={state.stateName}
-              onChange={(event) => setStateName(event.target.value)}
+              onChange={(event) =>
+                setStateData({ ...state, stateName: event.target.value })
+              }
             />
           </Box>
         </Grid>
@@ -129,19 +143,79 @@ function StateComp(props) {
               color="secondary"
               placeholder="State code"
               value={state.stateCode}
-              onChange={(event) => setStateCode(event.target.value)}
+              onChange={(event) =>
+                setStateData({ ...state, stateCode: event.target.value })
+              }
             />
           </Box>
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
+            {state.editState ? (
+              <>
+                <Button
+                  variant="contained"
+                  color="info"
+                  sx={{ mr: 1 }}
+                  onClick={() =>
+                    updateState(
+                      login.user_token,
+                      state,
+                      universal,
+                      (updatestatus) => {
+                        if (updatestatus) {
+                          setStateData({
+                            ...state,
+                            stateName: "",
+                            stateCode: "",
+                            stateId: "",
+                            editState: false,
+                          });
+                        }
+                      }
+                    )
+                  }
+                >
+                  Update
+                </Button>
+              </>
+            ) : (
+              <Button
+                color="info"
+                sx={{ mr: 1 }}
+                startIcon={<AddIcon />}
+                variant="contained"
+                onClick={() =>
+                  addState(login.user_token, state, universal, (addstatus) => {
+                    if (addstatus) {
+                      setStateData({
+                        ...state,
+                        stateName: "",
+                        stateCode: "",
+                        stateId: "",
+                        editState: false,
+                      });
+                    }
+                  })
+                }
+              >
+                ADD
+              </Button>
+            )}
             <Button
-              color="info"
-              fullWidth
               variant="contained"
-              onClick={() => addState(login.user_token, state, universal)}
+              color="secondary"
+              onClick={() => {
+                setStateData({
+                  ...state,
+                  stateName: "",
+                  stateCode: "",
+                  stateId: "",
+                  editState: false,
+                });
+              }}
             >
-              ADD
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -164,7 +238,7 @@ function StateComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() => assignedState(login.user_token, state, universal)}
+              onClick={() => assignedState(login.user_token, universal)}
             >
               ASSIGNED
             </Button>
@@ -173,9 +247,7 @@ function StateComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() =>
-                  unassignedState(login.user_token, state, universal)
-                }
+                onClick={() => unassignedState(login.user_token, universal)}
               >
                 UNASSIGNED
               </Button>
@@ -196,12 +268,7 @@ function StateComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table
-            rows={universal.store}
-            columns={columns}
-            selectionModel={state.stateAssign}
-            onSelectionModelChange={(row) => setStateAssignUnassing(row)}
-          />
+          <Table columns={columns} />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
@@ -209,7 +276,6 @@ function StateComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {state.editState && <EditState {...props} />}
     </>
   );
 }

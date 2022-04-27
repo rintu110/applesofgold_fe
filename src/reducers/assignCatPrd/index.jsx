@@ -4,14 +4,11 @@ const assignCatPrdState = {
   prdId: "",
   catId: "",
   assignId: "",
-  assignUnAssignStore: [],
   editAssignCatPrd: false,
 };
 
 function assignCatPrdReducer(state = assignCatPrdState, action) {
   switch (action.type) {
-    case constant.SET_ASSIGNED_UNASSIGNED_CAT_PRD:
-      return (state = { ...state, assignUnAssignStore: action.payload });
     case constant.SET_EDIT_ASSIGN_CAT_PRD:
       return (state = {
         ...state,
@@ -27,7 +24,6 @@ function assignCatPrdReducer(state = assignCatPrdState, action) {
         prdId: "",
         catId: "",
         assignId: "",
-        assignUnAssignStore: [],
       });
     case constant.SET_ASSIGN_CAT_ID:
       return (state = {

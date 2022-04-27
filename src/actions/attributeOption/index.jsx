@@ -7,6 +7,7 @@ import {
   ApiFileDownLoadAction,
 } from "actions/universal";
 import { resetAttribute } from "actions/attribute";
+import { csvSchema } from "@/schema/universal";
 import * as schemaValid from "constants/schema";
 import * as yup from "yup";
 
@@ -155,50 +156,31 @@ export const updateAttributeOption = (token, payload, universal) => {
 
 export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
-    const schema = yup.object({
-      csv: yup
-        .object()
-        .nullable()
-        .shape({
-          name: yup.string().trim().required("Please select one csv file"),
-          size: yup
-            .number()
-            .max(1100000, "file size is too large")
-            .required("Please select you csv file"),
-        }),
-    });
+    var formdata = new FormData();
 
-    schema
-      .validate({ csv: csv })
-      .then(() => {
-        var formdata = new FormData();
+    formdata.append("user_token", token);
 
-        formdata.append("user_token", token);
+    formdata.append("csv", csv);
 
-        formdata.append("csv", csv);
-
-        dispatch(
-          ApiFileAction(
-            "admin/api/attributes_option/add_attributes_options_from_csv",
-            formdata,
-            "Can't upload options right now please try again later",
-            (status, message, result, total) => {
-              if (status) {
-                dispatch(viewAttributeOption(token, universal));
-                dispatch(resetAttribute());
+    dispatch(
+      csvSchema(csv, (csvstatus) => {
+        if (csvstatus) {
+          dispatch(
+            ApiFileAction(
+              "admin/api/attributes_option/add_attributes_options_from_csv",
+              formdata,
+              "Can't upload options right now please try again later",
+              (status, message, result, total) => {
+                if (status) {
+                  dispatch(viewAttributeOption(token, universal));
+                  dispatch(resetAttribute());
+                }
               }
-            }
-          )
-        );
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      });
+    );
   };
 };
 

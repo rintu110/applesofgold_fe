@@ -1,14 +1,16 @@
 import * as constant from "constants/assignCatPrd";
 import {
-  setLoader,
   setSnackBar,
-  unsetLoader,
   setDataStore,
   setTotal,
+  setAssignedUnassignedStore,
+  ApiAction,
+  ApiFileAction,
+  ApiFileDownLoadAction,
 } from "actions/universal";
-import UNIVERSAL from "@/config";
 import * as yup from "yup";
 import * as schemaConst from "constants/schema";
+import { assignUnassignSchema, csvSchema } from "@/schema/universal";
 
 export const setAssignCatId = (payload) => ({
   type: constant.SET_ASSIGN_CAT_ID,
@@ -17,11 +19,6 @@ export const setAssignCatId = (payload) => ({
 
 export const setAssignPrdId = (payload) => ({
   type: constant.SET_ASSIGN_PRD_ID,
-  payload: payload,
-});
-
-export const setAssignedUnassignedCatPrd = (payload) => ({
-  type: constant.SET_ASSIGNED_UNASSIGNED_CAT_PRD,
   payload: payload,
 });
 
@@ -36,64 +33,29 @@ export const resetCatPrd = () => ({
 
 export const viewAssignCatPrd = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      startingAfter: universal.startingAfter,
+      limit: universal.limit,
+      searchKeyWord: universal.searchKeyword,
+    };
 
-    return fetch(
-      UNIVERSAL.BASEURL + "admin/api/assign_cat_prd/view_assign_cat_prd",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_token: token,
-          startingAfter: universal.startingAfter,
-          limit: universal.limit,
-          searchKeyWord: universal.searchKeyword,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status) {
-          dispatch(setDataStore(responseJson.result));
-          dispatch(setTotal(responseJson.total));
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
-        } else {
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
+    dispatch(
+      ApiAction(
+        "admin/api/assign_cat_prd/view_assign_cat_prd",
+        body,
+        "Can't view assign category and product right now please try again later",
+        (status, message, result, total) => {
+          dispatch(setDataStore(result));
+          dispatch(setTotal(total));
         }
-      })
-      .catch((e) => {
-        console.error(e);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message:
-              "Can't view assign category and product right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+      )
+    );
   };
 };
 
 export const addAssignCatPrd = (token, payload, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
     const schema = yup.object({
       prdId: yup
         .string()
@@ -110,54 +72,25 @@ export const addAssignCatPrd = (token, payload, universal) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL + "admin/api/assign_cat_prd/add_assign_cat_prd",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              prd_id: payload.prdId,
-              cat_id: payload.catId,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        let body = {
+          user_token: token,
+          prd_id: payload.prdId,
+          cat_id: payload.catId,
+        };
+
+        dispatch(
+          ApiAction(
+            "admin/api/assign_cat_prd/add_assign_cat_prd",
+            body,
+            "Can't add assign category and product right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(resetCatPrd());
+                dispatch(viewAssignCatPrd(token, universal));
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't add assign category and product right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -166,17 +99,12 @@ export const addAssignCatPrd = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
 export const updateAssignCatPrd = (token, payload, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
     const schema = yup.object({
       prdId: yup
         .string()
@@ -198,55 +126,26 @@ export const updateAssignCatPrd = (token, payload, universal) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL + "admin/api/assign_cat_prd/edit_assign_cat_prd",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              prd_id: payload.prdId,
-              cat_id: payload.catId,
-              assign_id: payload.assignId,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        let body = {
+          user_token: token,
+          prd_id: payload.prdId,
+          cat_id: payload.catId,
+          assign_id: payload.assignId,
+        };
+
+        dispatch(
+          ApiAction(
+            "admin/api/assign_cat_prd/edit_assign_cat_prd",
+            body,
+            "Can't update assign category and product right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(resetCatPrd());
+                dispatch(viewAssignCatPrd(token, universal));
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't update assign category and product right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -255,297 +154,99 @@ export const updateAssignCatPrd = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
-export const assignedCatPrd = (token, payload, universal) => {
+export const assignedCatPrd = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      assignUnAssignStore: yup
-        .array()
-        .min(1, "Please select at least one assign!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaConst.OBJECT_ID, "Invalid assign _id !")
-        )
-        .required("Please select at least one assign!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL +
-            "admin/api/assign_cat_prd/assigned_assign_cat_prd",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              _id: payload.assignUnAssignStore,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't assigned category and product right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/assign_cat_prd/assigned_assign_cat_prd",
+              { user_token: token, _id: universal.assignUnassignedStore },
+              "Can't assigned category and product right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewAssignCatPrd(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
-export const unassignedCatPrd = (token, payload, universal) => {
+export const unassignedCatPrd = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      assignUnAssignStore: yup
-        .array()
-        .min(1, "Please select at least one assign!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaConst.OBJECT_ID, "Invalid assign _id !")
-        )
-        .required("Please select at least one assign!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(
-          UNIVERSAL.BASEURL +
-            "admin/api/assign_cat_prd/unassigned_assign_cat_prd",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_token: token,
-              _id: payload.assignUnAssignStore,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetCatPrd());
-              dispatch(viewAssignCatPrd(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't unassigned category and product right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/assign_cat_prd/unassigned_assign_cat_prd",
+              { user_token: token, _id: universal.assignUnassignedStore },
+              "Can't unassigned category and product right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewAssignCatPrd(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
 export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    var formdata = new FormData();
 
-    const schema = yup.object({
-      csv: yup
-        .object()
-        .nullable()
-        .shape({
-          name: yup.string().trim().required("Please select one csv file"),
-          size: yup
-            .number()
-            .max(1100000, "file size is too large")
-            .required("Please select you csv file"),
-        }),
-    });
+    formdata.append("user_token", token);
 
-    schema
-      .validate({ csv: csv })
-      .then(() => {
-        var formdata = new FormData();
+    formdata.append("csv", csv);
 
-        formdata.append("user_token", token);
-
-        formdata.append("csv", csv);
-
-        return fetch(
-          UNIVERSAL.BASEURL +
-            "admin/api/assign_cat_prd/add_assign_cat_prd_from_csv",
-          {
-            method: "POST",
-            body: formdata,
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(viewAssignCatPrd(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message:
-                  "Can't upload assign category and product right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      csvSchema(csv, (csvstatus) => {
+        if (csvstatus) {
+          dispatch(
+            ApiFileAction(
+              "admin/api/assign_cat_prd/add_assign_cat_prd_from_csv",
+              formdata,
+              "Can't upload assign category and product right now please try again later",
+              (status, message, result, total) => {
+                if (status) {
+                  dispatch(viewAssignCatPrd(token, universal));
+                }
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
 export const exportCSV = (token) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    return fetch(
-      UNIVERSAL.BASEURL +
+    dispatch(
+      ApiFileDownLoadAction(
         "admin/api/assign_cat_prd/send_assign_cat_prd_from_csv",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+        {
           user_token: token,
-        }),
-      }
-    )
-      .then((response) => response.blob())
-      .then((responseJson) => {
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(responseJson);
-        link.download = `assign_cat_prd_${new Date()}.csv`;
-        link.click();
-        dispatch(unsetLoader());
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message:
-              "Can't export  assign category and product right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+        },
+        "Can't export  assign category and product right now please try again later",
+        "assign_cat_prd",
+        ".csv"
+      )
+    );
   };
 };

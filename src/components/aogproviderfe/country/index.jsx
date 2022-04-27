@@ -7,13 +7,20 @@ import Box from "@mui/material/Box";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import StatusMode from "components/UI/StatusMode";
-import EditCountry from "components/aogproviderfe/country/editCountry";
 import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 function CountryComp(props) {
+  const [country, setCountryData] = React.useState({
+    countryName: "",
+    countryCode: "",
+    countryId: "",
+    editCountry: false,
+  });
+
   const columns = [
     {
       field: "country_nm",
@@ -52,7 +59,18 @@ function CountryComp(props) {
       disableSelectionOnClick: true,
       renderCell: (params) => (
         <>
-          <IconButton size="small" onClick={() => setEditCountry(params.row)}>
+          <IconButton
+            size="small"
+            onClick={() =>
+              setCountryData({
+                ...country,
+                countryName: params.row.country_nm,
+                countryCode: params.row.code,
+                countryId: params.row._id,
+                editCountry: true,
+              })
+            }
+          >
             <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
         </>
@@ -62,18 +80,12 @@ function CountryComp(props) {
 
   const {
     viewCountry,
-    setCountryName,
-    setCountryCode,
-    resetCountryData,
     addCountry,
-    setCountryAssignUnassing,
     unassignedCountry,
     assignedCountry,
-    setEditCountry,
     updateCountry,
     uploadCSV,
     exportCSV,
-    country,
     login,
     universal,
   } = props;
@@ -117,7 +129,9 @@ function CountryComp(props) {
               color="secondary"
               placeholder="Country name"
               value={country.countryName}
-              onChange={(event) => setCountryName(event.target.value)}
+              onChange={(event) =>
+                setCountryData({ ...country, countryName: event.target.value })
+              }
             />
           </Box>
         </Grid>
@@ -129,19 +143,82 @@ function CountryComp(props) {
               color="secondary"
               placeholder="Country code"
               value={country.countryCode}
-              onChange={(event) => setCountryCode(event.target.value)}
+              onChange={(event) =>
+                setCountryData({ ...country, countryCode: event.target.value })
+              }
             />
           </Box>
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
+            {country.editCountry ? (
+              <Button
+                variant="contained"
+                color="info"
+                sx={{ mr: 1 }}
+                onClick={() =>
+                  updateCountry(
+                    login.user_token,
+                    country,
+                    universal,
+                    (editstatus) => {
+                      if (editstatus) {
+                        setCountryData({
+                          ...country,
+                          countryName: "",
+                          countryCode: "",
+                          countryId: "",
+                          editCountry: false,
+                        });
+                      }
+                    }
+                  )
+                }
+              >
+                Update
+              </Button>
+            ) : (
+              <Button
+                color="info"
+                sx={{ mr: 1 }}
+                startIcon={<AddIcon />}
+                variant="contained"
+                onClick={() =>
+                  addCountry(
+                    login.user_token,
+                    country,
+                    universal,
+                    (addstatus) => {
+                      if (addstatus) {
+                        setCountryData({
+                          ...country,
+                          countryName: "",
+                          countryCode: "",
+                          countryId: "",
+                          editCountry: false,
+                        });
+                      }
+                    }
+                  )
+                }
+              >
+                ADD
+              </Button>
+            )}
             <Button
-              color="info"
-              fullWidth
               variant="contained"
-              onClick={() => addCountry(login.user_token, country, universal)}
+              color="secondary"
+              onClick={() => {
+                setCountryData({
+                  ...country,
+                  countryName: "",
+                  countryCode: "",
+                  countryId: "",
+                  editCountry: false,
+                });
+              }}
             >
-              ADD
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -164,9 +241,7 @@ function CountryComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() =>
-                assignedCountry(login.user_token, country, universal)
-              }
+              onClick={() => assignedCountry(login.user_token, universal)}
             >
               ASSIGNED
             </Button>
@@ -175,9 +250,7 @@ function CountryComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() =>
-                  unassignedCountry(login.user_token, country, universal)
-                }
+                onClick={() => unassignedCountry(login.user_token, universal)}
               >
                 UNASSIGNED
               </Button>
@@ -198,12 +271,7 @@ function CountryComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table
-            rows={universal.store}
-            columns={columns}
-            selectionModel={country.countryAssign}
-            onSelectionModelChange={(row) => setCountryAssignUnassing(row)}
-          />
+          <Table columns={columns} />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
@@ -211,7 +279,6 @@ function CountryComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {country.editCountry && <EditCountry {...props} />}
     </>
   );
 }

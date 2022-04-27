@@ -7,23 +7,30 @@ const withSSR = (Com) => {
   class ServersideWrapping extends React.Component {
     static getInitialProps = store.getInitialPageProps(
       (store) => async (context) => {
-
         const token = cookies(context).applesofgoldObject;
         const type = cookies(context).type;
 
         var status = store.getState().loginReducer.status;
 
-        if (!status && token !== "" && (type === "A" || type === "SA" || type === "U")) {
+        if (
+          !status &&
+          token !== "" &&
+          (type === "A" || type === "SA" || type === "U")
+        ) {
           if (!store.getState().loginReducer.user_token) {
             await getServerSideUserDetails(token, store);
           }
-        } else if (token === "" || type === "") {
-          context.res.writeHead(308, {
-            Location: "/"
-          })
+        } else if (!token || !type || token === "" || type === "") {
+          if (context.asPath !== "/") {
+            context.res.writeHead(308, {
+              Location: "/",
+            });
+            context.res.end();
+          }
         }
 
-        const props = Com.getInitialProps && (await Com.getInitialProps(context));
+        const props =
+          Com.getInitialProps && (await Com.getInitialProps(context));
 
         return { props };
       }

@@ -8,14 +8,13 @@ import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
-import EditProductMeta from "components/aogproviderfe/productMeta/editProductMeta";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 
 function ProductMetaComp(props) {
   const [_id, setValue] = React.useState("");
-  const [product, setProduct] = React.useState("");
   const {
     setMetaTitle,
     setMetaDesc,
@@ -31,6 +30,8 @@ function ProductMetaComp(props) {
     exportCSV,
     viewAllProduct,
     universal,
+    updateProductMeta,
+    resetMeta,
   } = props;
 
   const columns = [
@@ -78,7 +79,7 @@ function ProductMetaComp(props) {
             size="small"
             onClick={() => {
               setEditMeta({ ...params.row, foregin_id: params.row.prd_id });
-              setProduct({
+              setValue({
                 _id: params.row.prd_id,
                 label: params.row.product_nm,
               });
@@ -96,123 +97,136 @@ function ProductMetaComp(props) {
   }, [universal.startingAfter, universal.limit]);
 
   return (
-    <>
-      <Grid container justifyContent="center">
-        <Grid item xs={12}>
-          <Box sx={{ m: 2 }}>
-            <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Product Meta
+    <Grid container justifyContent="center">
+      <Grid item xs={12}>
+        <Box sx={{ m: 2 }}>
+          <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
+            Add Product Meta
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
+        <Grid item xs={2}>
+          <Box sx={{ m: 1 }}>
+            <Typography variant="body1" sx={{ color: "#8898aa" }}>
+              META TITLE
             </Typography>
           </Box>
         </Grid>
-        <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                META TITLE
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                META DESC
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                META KEYWORD
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2} />
-        </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Meta title"
-              value={meta.metaTitle}
-              onChange={(event) => setMetaTitle(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Meta description"
-              value={meta.metaDesc}
-              onChange={(event) => setMetaDesc(event.target.value)}
-            />
+            <Typography variant="body1" sx={{ color: "#8898aa" }}>
+              META DESC
+            </Typography>
           </Box>
         </Grid>
         <Grid item xs={3}>
           <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Meta keyword"
-              value={meta.metaKeyword}
-              onChange={(event) => setMetaKeyword(event.target.value)}
-            />
+            <Typography variant="body1" sx={{ color: "#8898aa" }}>
+              META KEYWORD
+            </Typography>
           </Box>
         </Grid>
         <Grid item xs={3}>
           <Box sx={{ m: 1 }}>
-            <Autocomplete
-              value={_id}
-              options={allProduct}
-              freeSolo
-              autoComplete
-              isOptionEqualToValue={(option, value) => true}
-              onInputChange={(event, value) =>
-                value !== null &&
-                value !== undefined &&
-                value !== "" &&
-                viewAllProduct(login.user_token, value)
-              }
-              onChange={(event, value) => {
-                setValue(value);
-                setForeginId(value);
+            <Typography variant="body1" sx={{ color: "#8898aa" }}>
+              PRODUCT
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
+      <Grid item xs={2}>
+        <Box sx={{ m: 1 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            placeholder="Meta title"
+            value={meta.metaTitle}
+            onChange={(event) => setMetaTitle(event.target.value)}
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={2}>
+        <Box sx={{ m: 1 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            placeholder="Meta description"
+            value={meta.metaDesc}
+            onChange={(event) => setMetaDesc(event.target.value)}
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={3}>
+        <Box sx={{ m: 1 }}>
+          <TextField
+            size="small"
+            fullWidth
+            color="secondary"
+            placeholder="Meta keyword"
+            value={meta.metaKeyword}
+            onChange={(event) => setMetaKeyword(event.target.value)}
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={3}>
+        <Box sx={{ m: 1 }}>
+          <Autocomplete
+            value={_id}
+            options={allProduct}
+            freeSolo
+            autoComplete
+            isOptionEqualToValue={(option, value) => true}
+            onInputChange={(event, value) =>
+              value !== null &&
+              value !== undefined &&
+              value !== "" &&
+              viewAllProduct(login.user_token, value)
+            }
+            onChange={(event, value) => {
+              setValue(value);
+              setForeginId(value);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                fullWidth
+                color="secondary"
+                placeholder="Choose Product"
+              />
+            )}
+            disableListWrap
+            renderOption={(props, option) => (
+              <li {...props} key={option._id}>
+                {option.label}
+              </li>
+            )}
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={2}>
+        <Box sx={{ m: 1 }}>
+          {meta.metaEdit ? (
+            <Button
+              variant="contained"
+              color="info"
+              sx={{ mr: 1 }}
+              onClick={() => {
+                updateProductMeta(login.user_token, meta, universal);
+                setValue("");
               }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  fullWidth
-                  color="secondary"
-                  placeholder="Choose Product"
-                />
-              )}
-              disableListWrap
-              renderOption={(props, option) => (
-                <li {...props} key={option._id}>
-                  {option.label}
-                </li>
-              )}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
+            >
+              UPDATE
+            </Button>
+          ) : (
             <Button
               color="info"
-              fullWidth
+              startIcon={<AddIcon />}
+              sx={{ mr: 1 }}
               variant="contained"
               onClick={() => {
                 addProductMeta(login.user_token, meta, universal);
@@ -221,54 +235,59 @@ function ProductMetaComp(props) {
             >
               ADD
             </Button>
+          )}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => resetMeta()}
+          >
+            RESET
+          </Button>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box sx={{ m: 2, mt: 5 }}>
+          <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
+            Product Meta List
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Search
+          CallBack={() => viewProductMeta(login.user_token, universal)}
+          searchBy={"Product Meta"}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
+          <Box sx={{ mr: 2 }}>
+            <CSVFileUpload uploadCSV={uploadCSV} />
           </Box>
-        </Grid>
-        <Grid item xs={12}>
-          <Box sx={{ m: 2, mt: 5 }}>
-            <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Product Meta List
-            </Typography>
+          <Box>
+            <Button
+              size="small"
+              color="secondary"
+              variant="contained"
+              onClick={() => exportCSV(login.user_token)}
+            >
+              Export
+            </Button>
           </Box>
-        </Grid>
-        <Grid item xs={12}>
-          <Search
-            CallBack={() => viewProductMeta(login.user_token, universal)}
-            searchBy={"Product Meta"}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Box sx={{ my: 4, mx: 2, display: "flex", alignItems: "center" }}>
-            <Box sx={{ mr: 2 }}>
-              <CSVFileUpload uploadCSV={uploadCSV} />
-            </Box>
-            <Box>
-              <Button
-                size="small"
-                color="secondary"
-                variant="contained"
-                onClick={() => exportCSV(login.user_token)}
-              >
-                Export
-              </Button>
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={12}>
-          <Table
-            rows={universal.store}
-            columns={columns}
-            disableSelectionOnClick
-            checkboxSelection={false}
-          />
-        </Grid>
-        <Grid container sx={{ bgcolor: "#f7f8fa" }}>
-          <Grid item xs={12} md={12}>
-            <Pagination />
-          </Grid>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Table
+          columns={columns}
+          disableSelectionOnClick
+          checkboxSelection={false}
+        />
+      </Grid>
+      <Grid container sx={{ bgcolor: "#f7f8fa" }}>
+        <Grid item xs={12} md={12}>
+          <Pagination />
         </Grid>
       </Grid>
-      {meta.metaEdit && <EditProductMeta {...props} product={product} />}
-    </>
+    </Grid>
   );
 }
 

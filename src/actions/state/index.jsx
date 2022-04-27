@@ -1,93 +1,46 @@
-import * as constant from "constants/state";
 import {
-  setLoader,
   setSnackBar,
-  unsetLoader,
   setDataStore,
   setTotal,
+  setAssignedUnassignedStore,
+  ApiAction,
+  ApiFileAction,
+  ApiFileDownLoadAction,
 } from "actions/universal";
-import UNIVERSAL from "@/config";
 import * as yup from "yup";
-
-export const setStateAssignUnassing = (payload) => ({
-  type: constant.SET_ASSIGNED_UNASSIGNED_STATE,
-  payload: payload,
-});
-
-export const setStateName = (payload) => ({
-  type: constant.SET_STATE_NAME,
-  payload: payload,
-});
-
-export const setStateCode = (payload) => ({
-  type: constant.SET_STATE_CODE,
-  payload: payload,
-});
-
-export const resetStateData = () => ({
-  type: constant.RESET_STATE_DATA,
-});
-
-export const setEditState = (payload) => ({
-  type: constant.SET_EDIT_STATE,
-  payload: payload,
-});
+import * as schemaValid from "constants/schema";
+import { assignUnassignSchema, csvSchema } from "@/schema/universal";
 
 export const viewState = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      startingAfter: universal.startingAfter,
+      limit: universal.limit,
+      searchKeyWord: universal.searchKeyword,
+    };
 
-    return fetch(UNIVERSAL.BASEURL + "admin/api/state/view_state", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-        startingAfter: universal.startingAfter,
-        limit: universal.limit,
-        searchKeyWord: universal.searchKeyword,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status) {
-          dispatch(setDataStore(responseJson.result));
-          dispatch(setTotal(responseJson.total));
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
-        } else {
-          dispatch(
-            setSnackBar({
-              status: responseJson.status,
-              message: responseJson.message,
-            })
-          );
+    dispatch(
+      ApiAction(
+        "admin/api/state/view_state",
+        body,
+        "Can't view state right now please try again later",
+        (status, message, result, total) => {
+          dispatch(setDataStore(result));
+          dispatch(setTotal(total));
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't view state right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+      )
+    );
   };
 };
 
-export const addState = (token, payload, universal) => {
+export const addState = (token, payload, universal, callBack) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      state_nm: payload.stateName,
+      code: payload.stateCode,
+    };
 
     const schema = yup.object({
       stateName: yup.string().trim().required("Please enter a state name."),
@@ -97,50 +50,22 @@ export const addState = (token, payload, universal) => {
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/state/add_state", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            state_nm: payload.stateName,
-            code: payload.stateCode,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetStateData());
-              dispatch(viewState(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        dispatch(
+          ApiAction(
+            "admin/api/state/add_state",
+            body,
+            "Can't add state right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(setAssignedUnassignedStore([]));
+                callBack(true);
+                dispatch(viewState(token, universal));
+              } else {
+                callBack(false);
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't add state right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -149,178 +74,66 @@ export const addState = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
-export const assignedState = (token, payload, universal) => {
+export const assignedState = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      stateAssign: yup
-        .array()
-        .min(1, "Please select at least one state")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(
-              /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i,
-              "Invalid State _id !"
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/state/assigned_state",
+              { user_token: token, state_id: universal.assignUnassignedStore },
+              "Can't assign state right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewState(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
             )
-        )
-        .required("Please select at least one state!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/state/assigned_state", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            state_id: payload.stateAssign,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetStateData());
-              dispatch(viewState(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't assign state right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
-export const unassignedState = (token, payload, universal) => {
+export const unassignedState = (token, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    const schema = yup.object({
-      stateAssign: yup
-        .array()
-        .min(1, "Please select at least one state")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(
-              /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i,
-              "Invalid State _id !"
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/state/unassigned_state",
+              { user_token: token, state_id: universal.assignUnassignedStore },
+              "Can't view unassign right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewState(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
+              }
             )
-        )
-        .required("Please select at least one state!"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/state/unassigned_state", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            state_id: payload.stateAssign,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetStateData());
-              dispatch(viewState(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't view unassign right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
-export const updateState = (token, payload, universal) => {
+export const updateState = (token, payload, universal, callBack) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    let body = {
+      user_token: token,
+      state_nm: payload.stateName,
+      code: payload.stateCode,
+      state_id: payload.stateId,
+    };
 
     const schema = yup.object({
       stateName: yup.string().trim().required("Please enter a state name."),
@@ -328,58 +141,29 @@ export const updateState = (token, payload, universal) => {
       stateId: yup
         .string()
         .trim()
-        .matches(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i, "Invalid state id!")
+        .matches(schemaValid.OBJECT_ID, "Invalid state id!")
         .required("Please enter a state code"),
     });
 
     schema
       .validate({ ...payload })
       .then(() => {
-        return fetch(UNIVERSAL.BASEURL + "admin/api/state/edit_state", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_token: token,
-            state_nm: payload.stateName,
-            code: payload.stateCode,
-            state_id: payload.stateId,
-          }),
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetStateData());
-              dispatch(viewState(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
+        dispatch(
+          ApiAction(
+            "admin/api/state/edit_state",
+            body,
+            "Can't update state right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(setAssignedUnassignedStore([]));
+                callBack(true);
+                dispatch(viewState(token, universal));
+              } else {
+                callBack(false);
+              }
             }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't update state right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+          )
+        );
       })
       .catch((err) => {
         dispatch(
@@ -388,122 +172,52 @@ export const updateState = (token, payload, universal) => {
             message: err.errors[0],
           })
         );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
       });
   };
 };
 
 export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
-    dispatch(setLoader());
+    var formdata = new FormData();
 
-    const schema = yup.object({
-      csv: yup
-        .object()
-        .nullable()
-        .shape({
-          name: yup.string().trim().required("Please select one csv file"),
-          size: yup
-            .number()
-            .max(1100000, "file size is too large")
-            .required("Please select you csv file"),
-        }),
-    });
+    formdata.append("user_token", token);
 
-    schema
-      .validate({ csv: csv })
-      .then(() => {
-        var formdata = new FormData();
+    formdata.append("csv", csv);
 
-        formdata.append("user_token", token);
-
-        formdata.append("csv", csv);
-
-        return fetch(UNIVERSAL.BASEURL + "admin/api/state/add_state_from_csv", {
-          method: "POST",
-          body: formdata,
-        })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.status) {
-              dispatch(resetStateData());
-              dispatch(viewState(token, universal));
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            } else {
-              dispatch(
-                setSnackBar({
-                  status: responseJson.status,
-                  message: responseJson.message,
-                })
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            dispatch(
-              setSnackBar({
-                status: 500,
-                message: "Can't upload state right now please try again later",
-              })
-            );
-          })
-          .finally(() => {
-            dispatch(unsetLoader());
-          });
+    dispatch(
+      csvSchema(csv, (csvstatus) => {
+        if (csvstatus) {
+          dispatch(
+            ApiFileAction(
+              "admin/api/state/add_state_from_csv",
+              formdata,
+              "Can't upload state right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(setAssignedUnassignedStore([]));
+                  dispatch(viewState(token, universal));
+                }
+              }
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    );
   };
 };
 
 export const exportCSV = (token) => {
   return (dispatch) => {
-    dispatch(setLoader());
-
-    return fetch(UNIVERSAL.BASEURL + "admin/api/state/export_state_to_csv", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_token: token,
-      }),
-    })
-      .then((response) => response.blob())
-      .then((responseJson) => {
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(responseJson);
-        link.download = `state_${new Date()}.csv`;
-        link.click();
-        dispatch(unsetLoader());
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: "Can't export state right now please try again later",
-          })
-        );
-      })
-      .finally(() => {
-        dispatch(unsetLoader());
-      });
+    dispatch(
+      ApiFileDownLoadAction(
+        "admin/api/state/export_state_to_csv",
+        {
+          user_token: token,
+        },
+        "Can't export state right now please try again later",
+        "state",
+        ".csv"
+      )
+    );
   };
 };

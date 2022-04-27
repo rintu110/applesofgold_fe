@@ -6,7 +6,6 @@ import {
   setCategoryCode,
   setCategoryContent,
   setCategoryParentId,
-  setAssignUnassignCategory,
   resetCategory,
   setEditCategory,
   viewCategory,
@@ -53,9 +52,6 @@ const mapDispatchToProps = (dispatch) => ({
   setCategoryParentId: (payload) => {
     dispatch(setCategoryParentId(payload));
   },
-  setAssignUnassignCategory: (payload) => {
-    dispatch(setAssignUnassignCategory(payload));
-  },
   setEditCategory: (payload) => {
     dispatch(setEditCategory(payload));
   },
@@ -71,11 +67,11 @@ const mapDispatchToProps = (dispatch) => ({
   updateCategory: (token, payload, universal) => {
     dispatch(updateCategory(token, payload, universal));
   },
-  assignedCategory: (token, payload, universal) => {
-    dispatch(assignedCategory(token, payload, universal));
+  assignedCategory: (token, universal) => {
+    dispatch(assignedCategory(token, universal));
   },
-  unassignedCategory: (token, payload, universal) => {
-    dispatch(unassignedCategory(token, payload, universal));
+  unassignedCategory: (token, universal) => {
+    dispatch(unassignedCategory(token, universal));
   },
 });
 

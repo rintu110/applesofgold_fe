@@ -18,7 +18,9 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import CategoryIcon from "@mui/icons-material/Category";
 import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import LooksIcon from "@mui/icons-material/Looks";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AttributionIcon from "@mui/icons-material/Attribution";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -38,8 +40,8 @@ const DrawerList = styled(List)(({ theme }) => ({
     marginBottom: 10,
     marginLeft: "auto",
     marginRight: "auto",
-    borderRadius: 10,
-    padding: 2,
+    borderRadius: 0,
+    padding: 1,
     backgroundColor: "#fff",
     "&:hover": {
       backgroundColor: "#fff",
@@ -51,11 +53,11 @@ const DrawerList = styled(List)(({ theme }) => ({
   },
   "& .MuiListItemText-primary": {
     color: "#525f7f",
-    fontSize: 18,
+    fontSize: 16,
   },
   "& .MuiListItemText-secondary": {
     color: "#525f7f",
-    fontSize: 15,
+    fontSize: 16,
   },
 }));
 
@@ -102,46 +104,29 @@ function AdminDrawer({ Components }) {
     },
     {
       icon: <FormatListBulletedIcon sx={{ color: "#f3a4b5" }} />,
-      name: "Category Types",
+      name: "Category",
+      link: "/admin/category",
+    },
+    {
+      icon: <LooksIcon sx={{ color: "#172b4d" }} />,
+      name: "Product",
+      link: "/admin/product",
+    },
+    {
+      icon: <AssignmentIcon sx={{ color: "#5e72e4" }} />,
+      name: "Assign",
       link: "#",
       expand: [
         {
-          icon: <CategoryIcon sx={{ color: "#c40808" }} />,
-          name: "Category",
-          link: "/admin/category",
-        },
-        {
-          icon: <ViewAgendaIcon sx={{ color: "#1292ff" }} />,
-          name: "Category meta",
-          link: "/admin/category-meta",
+          icon: <CategoryIcon sx={{ color: "#11cdef" }} />,
+          name: "Category & Product",
+          link: "/admin/assign-category&product",
         },
       ],
     },
     {
-      icon: <ShoppingBagIcon sx={{ color: "#0c34ab" }} />,
-      name: "Product Types",
-      link: "#",
-      expand: [
-        {
-          icon: <LocalMallIcon sx={{ color: "#a0d411" }} />,
-          name: "Product",
-          link: "/admin/product",
-        },
-        {
-          icon: <ViewAgendaIcon sx={{ color: "#ff1100" }} />,
-          name: "Product meta",
-          link: "/admin/product-meta",
-        },
-      ],
-    },
-    {
-      icon: <AssignmentIcon sx={{ color: "#f5ad05" }} />,
-      name: "Assign Category & Product",
-      link: "/admin/assign-category&product",
-    },
-    {
-      icon: <AttributionIcon sx={{ color: "#eb4034" }} />,
-      name: "Attribute Type",
+      icon: <SettingsApplicationsIcon sx={{ color: "#ffd600" }} />,
+      name: "Attribute",
       link: "/admin/attributes",
       expand: [
         {
@@ -153,6 +138,23 @@ function AdminDrawer({ Components }) {
           icon: <FormatListNumberedIcon sx={{ color: "#4287f5" }} />,
           name: "Attributes Options",
           link: "/admin/attributes-options",
+        },
+      ],
+    },
+    {
+      icon: <ViewAgendaIcon sx={{ color: "#ff1100" }} />,
+      name: "Meta",
+      link: "#",
+      expand: [
+        {
+          icon: <ViewAgendaIcon sx={{ color: "#1292ff" }} />,
+          name: "Category meta",
+          link: "/admin/category-meta",
+        },
+        {
+          icon: <ViewAgendaIcon sx={{ color: "#172b4d" }} />,
+          name: "Product meta",
+          link: "/admin/product-meta",
         },
       ],
     },
@@ -174,8 +176,8 @@ function AdminDrawer({ Components }) {
             <Box sx={{ m: "10px" }}>
               <Image
                 src={"/images/adminDrawer/apples-of-gold-jewelry.png"}
-                width={300}
-                height={80}
+                width={220}
+                height={60}
                 alt="logo"
               />
             </Box>

@@ -9,20 +9,20 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import StatusMode from "components/UI/StatusMode";
 import Pagination from "components/UI/Pagination";
-import EditCategory from "components/aogproviderfe/category/editCategory";
 import Autocomplete from "@mui/material/Autocomplete";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 function CategoryComp(props) {
   const [_id, setValue] = React.useState("");
-  const [categorys, setCategory] = React.useState("");
   const {
     setCategoryName,
     setCategoryCode,
     setCategoryContent,
     setCategoryParentId,
-    setAssignUnassignCategory,
+    resetCategory,
+    updateCategory,
     setEditCategory,
     viewCategory,
     addCategory,
@@ -100,7 +100,11 @@ function CategoryComp(props) {
             size="small"
             onClick={() => {
               setEditCategory(params.row);
-              setCategory(params.row.parent);
+              parseInt(params.row.parent_id) !== 0 &&
+                setValue({
+                  _id: params.row.parent[0]._id,
+                  label: params.row.parent[0].category_nm,
+                });
             }}
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
@@ -231,16 +235,38 @@ function CategoryComp(props) {
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
+            {category.categoryEdit ? (
+              <Button
+                sx={{ mr: 1 }}
+                variant="contained"
+                color="info"
+                onClick={() => {
+                  updateCategory(login.user_token, category, universal);
+                  setValue({ _id: "", label: "" });
+                }}
+              >
+                UPDATE
+              </Button>
+            ) : (
+              <Button
+                color="info"
+                variant="contained"
+                startIcon={<AddIcon />}
+                sx={{ mr: 1 }}
+                onClick={() => {
+                  addCategory(login.user_token, category, universal);
+                  setValue({ _id: "", label: "" });
+                }}
+              >
+                ADD
+              </Button>
+            )}
             <Button
-              color="info"
-              fullWidth
               variant="contained"
-              onClick={() => {
-                addCategory(login.user_token, category, universal);
-                setValue({ _id: "", label: "" });
-              }}
+              color="secondary"
+              onClick={() => resetCategory()}
             >
-              ADD
+              RESET
             </Button>
           </Box>
         </Grid>
@@ -263,9 +289,7 @@ function CategoryComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() =>
-                assignedCategory(login.user_token, category, universal)
-              }
+              onClick={() => assignedCategory(login.user_token, universal)}
             >
               ASSIGNED
             </Button>
@@ -274,9 +298,7 @@ function CategoryComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() =>
-                  unassignedCategory(login.user_token, category, universal)
-                }
+                onClick={() => unassignedCategory(login.user_token, universal)}
               >
                 UNASSIGNED
               </Button>
@@ -297,12 +319,7 @@ function CategoryComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table
-            rows={universal.store}
-            columns={columns}
-            selectionModel={category.categoryAssign}
-            onSelectionModelChange={(row) => setAssignUnassignCategory(row)}
-          />
+          <Table columns={columns} />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
@@ -310,9 +327,6 @@ function CategoryComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {category.categoryEdit && (
-        <EditCategory {...props} categorys={categorys} />
-      )}
     </>
   );
 }

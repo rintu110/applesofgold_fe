@@ -11,6 +11,7 @@ import {
 } from "actions/universal";
 import * as yup from "yup";
 import * as schemaValid from "constants/schema";
+import { assignUnassignSchema, csvSchema } from "@/schema/universal";
 
 export const viewAllAttribute = (token, event) => {
   return (dispatch) => {
@@ -117,87 +118,49 @@ export const viewAttribute = (token, universal) => {
 
 export const assignAttribute = (token, universal) => {
   return (dispatch) => {
-    const schema = yup.object({
-      assignUnassignedStore: yup
-        .array()
-        .min(1, "Please select at least one assign!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaValid.OBJECT_ID, "Invalid assign _id !")
-        )
-        .required("Please select at least one assign!"),
-    });
-
-    schema
-      .validate({ ...universal })
-      .then(() => {
-        dispatch(
-          ApiAction(
-            "admin/api/attributes/assigned_attributes",
-            { user_token: token, _id: universal.assignUnassignedStore },
-            "Can't view assign attributes right now please try again later",
-            (status, message, result) => {
-              if (status) {
-                dispatch(viewAttribute(token, universal));
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/attributes/assigned_attributes",
+              { user_token: token, _id: universal.assignUnassignedStore },
+              "Can't view assign attributes right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewAttribute(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
               }
-              dispatch(setAssignedUnassignedStore([]));
-            }
-          )
-        );
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      });
+    );
   };
 };
 
 export const unassignAttribute = (token, universal) => {
   return (dispatch) => {
-    const schema = yup.object({
-      assignUnassignedStore: yup
-        .array()
-        .min(1, "Please select at least one assign!")
-        .of(
-          yup
-            .string()
-            .trim()
-            .matches(schemaValid.OBJECT_ID, "Invalid assign _id !")
-        )
-        .required("Please select at least one assign!"),
-    });
-
-    schema
-      .validate({ ...universal })
-      .then(() => {
-        dispatch(
-          ApiAction(
-            "admin/api/attributes/unassigned_attributes",
-            { user_token: token, _id: universal.assignUnassignedStore },
-            "Can't view unassign attributes right now please try again later",
-            (status, message, result) => {
-              if (status) {
-                dispatch(viewAttribute(token, universal));
+    dispatch(
+      assignUnassignSchema(universal, (assignstatus) => {
+        if (assignstatus) {
+          dispatch(
+            ApiAction(
+              "admin/api/attributes/unassigned_attributes",
+              { user_token: token, _id: universal.assignUnassignedStore },
+              "Can't view unassign attributes right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewAttribute(token, universal));
+                }
+                dispatch(setAssignedUnassignedStore([]));
               }
-              dispatch(setAssignedUnassignedStore([]));
-            }
-          )
-        );
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      });
+    );
   };
 };
 
@@ -341,50 +304,31 @@ export const updateAttribute = (token, payload, universal) => {
 
 export const uploadCSV = (token, csv, universal) => {
   return (dispatch) => {
-    const schema = yup.object({
-      csv: yup
-        .object()
-        .nullable()
-        .shape({
-          name: yup.string().trim().required("Please select one csv file"),
-          size: yup
-            .number()
-            .max(1100000, "file size is too large")
-            .required("Please select you csv file"),
-        }),
-    });
+    var formdata = new FormData();
 
-    schema
-      .validate({ csv: csv })
-      .then(() => {
-        var formdata = new FormData();
+    formdata.append("user_token", token);
 
-        formdata.append("user_token", token);
+    formdata.append("csv", csv);
 
-        formdata.append("csv", csv);
-
-        dispatch(
-          ApiFileAction(
-            "admin/api/attributes/add_attributes_from_csv",
-            formdata,
-            "Can't upload attributes right now please try again later",
-            (status, message, result, total) => {
-              if (status) {
-                dispatch(resetAttribute());
-                dispatch(viewAttribute(token, universal));
+    dispatch(
+      csvSchema(csv, (csvstatus) => {
+        if (csvstatus) {
+          dispatch(
+            ApiFileAction(
+              "admin/api/attributes/add_attributes_from_csv",
+              formdata,
+              "Can't upload attributes right now please try again later",
+              (status, message, result, total) => {
+                if (status) {
+                  dispatch(resetAttribute());
+                  dispatch(viewAttribute(token, universal));
+                }
               }
-            }
-          )
-        );
+            )
+          );
+        }
       })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      });
+    );
   };
 };
 

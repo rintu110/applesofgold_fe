@@ -3,14 +3,9 @@ import { connect } from "react-redux";
 import CountryComp from "components/aogproviderfe/country";
 import {
   viewCountry,
-  setCountryName,
-  setCountryCode,
-  resetCountryData,
   addCountry,
-  setCountryAssignUnassing,
   unassignedCountry,
   assignedCountry,
-  setEditCountry,
   updateCountry,
   uploadCSV,
   exportCSV,
@@ -23,7 +18,6 @@ class CountryCont extends Component {
 }
 
 const mapStateToProps = (store) => ({
-  country: store.countryReducer,
   login: store.loginReducer,
   universal: store.universalReducer,
 });
@@ -35,35 +29,20 @@ const mapDispatchToProps = (dispatch) => ({
   uploadCSV: (token, csv, universal) => {
     dispatch(uploadCSV(token, csv, universal));
   },
-  updateCountry: (token, payload, universal) => {
-    dispatch(updateCountry(token, payload, universal));
+  updateCountry: (token, payload, universal, callBack) => {
+    dispatch(updateCountry(token, payload, universal, callBack));
   },
-  setEditCountry: (payload) => {
-    dispatch(setEditCountry(payload));
+  assignedCountry: (token, universal) => {
+    dispatch(assignedCountry(token, universal));
   },
-  assignedCountry: (token, payload, universal) => {
-    dispatch(assignedCountry(token, payload, universal));
+  unassignedCountry: (token, universal) => {
+    dispatch(unassignedCountry(token, universal));
   },
-  unassignedCountry: (token, payload, universal) => {
-    dispatch(unassignedCountry(token, payload, universal));
-  },
-  setCountryAssignUnassing: (payload) => {
-    dispatch(setCountryAssignUnassing(payload));
-  },
-  addCountry: (token, payload, universal) => {
-    dispatch(addCountry(token, payload, universal));
+  addCountry: (token, payload, universal, callBack) => {
+    dispatch(addCountry(token, payload, universal, callBack));
   },
   viewCountry: (token, universal) => {
     dispatch(viewCountry(token, universal));
-  },
-  setCountryName: (payload) => {
-    dispatch(setCountryName(payload));
-  },
-  setCountryCode: (payload) => {
-    dispatch(setCountryCode(payload));
-  },
-  resetCountryData: () => {
-    dispatch(resetCountryData());
   },
 });
 

@@ -3,14 +3,9 @@ import { connect } from "react-redux";
 import StateComp from "components/aogproviderfe/state";
 import {
   viewState,
-  setStateName,
-  setStateCode,
-  resetStateData,
   addState,
-  setStateAssignUnassing,
   unassignedState,
   assignedState,
-  setEditState,
   updateState,
   uploadCSV,
   exportCSV,
@@ -23,7 +18,6 @@ class StateCont extends Component {
 }
 
 const mapStateToProps = (store) => ({
-  state: store.stateReducer,
   login: store.loginReducer,
   universal: store.universalReducer,
 });
@@ -35,35 +29,20 @@ const mapDispatchToProps = (dispatch) => ({
   uploadCSV: (token, csv, universal) => {
     dispatch(uploadCSV(token, csv, universal));
   },
-  updateState: (token, payload, universal) => {
-    dispatch(updateState(token, payload, universal));
+  updateState: (token, payload, universal, callBack) => {
+    dispatch(updateState(token, payload, universal, callBack));
   },
-  setEditState: (payload) => {
-    dispatch(setEditState(payload));
+  assignedState: (token, universal) => {
+    dispatch(assignedState(token, universal));
   },
-  assignedState: (token, payload, universal) => {
-    dispatch(assignedState(token, payload, universal));
+  unassignedState: (token, universal) => {
+    dispatch(unassignedState(token, universal));
   },
-  unassignedState: (token, payload, universal) => {
-    dispatch(unassignedState(token, payload, universal));
-  },
-  setStateAssignUnassing: (payload) => {
-    dispatch(setStateAssignUnassing(payload));
-  },
-  addState: (token, payload, universal) => {
-    dispatch(addState(token, payload, universal));
+  addState: (token, payload, universal, callBack) => {
+    dispatch(addState(token, payload, universal, callBack));
   },
   viewState: (token, universal) => {
     dispatch(viewState(token, universal));
-  },
-  setStateName: (payload) => {
-    dispatch(setStateName(payload));
-  },
-  setStateCode: (payload) => {
-    dispatch(setStateCode(payload));
-  },
-  resetStateData: () => {
-    dispatch(resetStateData());
   },
 });
 
