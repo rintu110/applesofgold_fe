@@ -1,6 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Icon from "@mui/material/Icon";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "components/UI/TextField";
@@ -38,7 +39,7 @@ function Pagination() {
             )
           }
         >
-          <Icon>navigate_before</Icon>
+          <SkipPreviousIcon />
         </IconButton>
         <IconButton
           disabled={
@@ -52,7 +53,7 @@ function Pagination() {
             )
           }
         >
-          <Icon>navigate_next</Icon>
+          <SkipNextIcon />
         </IconButton>
       </span>
       <Box sx={{ bgcolor: "#ffffff", ml: 2 }}>
