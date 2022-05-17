@@ -31,13 +31,14 @@ function Row(props) {
   } = props;
   const [open, setOpen] = React.useState(false);
 
-  const attributeHandelDelete = (index) => {
+  const attributeHandelDelete = () => {
     let data = [...product.globalAttribute];
     data.splice(index, 1);
     setProduct({
       ...product,
       globalAttribute: data,
     });
+    product.productId === "" && deleteGlobalAttribute(row._id);
   };
 
   return (
@@ -121,13 +122,7 @@ function Row(props) {
               : 150,
           }}
         >
-          <IconButton
-            onClick={() =>
-              product.productId === ""
-                ? attributeHandelDelete(index)
-                : deleteGlobalAttribute(row._id)
-            }
-          >
+          <IconButton onClick={() => attributeHandelDelete(index)}>
             <Delete color="error" />
           </IconButton>
           <IconButton
