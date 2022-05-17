@@ -38,7 +38,7 @@ function Row(props) {
       ...product,
       globalAttribute: data,
     });
-    product.productId === "" && deleteGlobalAttribute(row._id);
+    product.productId !== "" && deleteGlobalAttribute(row._id);
   };
 
   return (

@@ -233,10 +233,10 @@ function LocalAttributes(props) {
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         if (responseJson.status) {
           setAttribute({
             ...attribute,
+            globalAttribute: "",
             globalAttributeIds: responseJson.result,
           });
         }
@@ -311,11 +311,6 @@ function LocalAttributes(props) {
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
-          viewGlobalAttribute();
-          setAttribute({
-            ...attribute,
-            globalAttribute: "",
-          });
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -414,10 +409,11 @@ function LocalAttributes(props) {
         globalAttribute: data,
       });
       product.productId !== "" && addGlobalAttribute();
-      setAttribute({
-        ...attribute,
-        globalAttribute: "",
-      });
+      product.productId !== "" &&
+        setAttribute({
+          ...attribute,
+          globalAttribute: "",
+        });
     }
   };
 

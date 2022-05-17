@@ -149,7 +149,9 @@ export const addProduct = (token, payload, universal, callBack) => {
           description: payload.description,
           thumbnail_image: payload.thumbnailImage,
           closeup_image: payload.closeupImage,
-          alternative_images: payload.alternativeImages,
+          alternative_images: payload.alternativeImages.filter(
+            (item) => item !== ""
+          ),
           shipping_message_id: payload.shippingMessageId,
           related_product_ids: payload.relatedProductIds,
           category_ids: payload.categoryIds,
@@ -263,7 +265,9 @@ export const updateProduct = (token, payload, universal, callBack) => {
           description: payload.description,
           thumbnail_image: payload.thumbnailImage,
           closeup_image: payload.closeupImage,
-          alternative_images: payload.alternativeImages,
+          alternative_images: payload.alternativeImages.filter(
+            (item) => item !== ""
+          ),
           shipping_message_id: payload.shippingMessageId,
           product_id: payload.productId,
           category_ids: payload.categoryIds,
