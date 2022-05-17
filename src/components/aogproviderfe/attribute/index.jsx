@@ -1,110 +1,30 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import EditIcon from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
+import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
-import Avatar from "@mui/material/Avatar";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
-import StatusMode from "components/UI/StatusMode";
-import Table from "components/UI/Table";
 import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
 import AddIcon from "@mui/icons-material/Add";
+import AttributeTable from "components/aogproviderfe/attribute/attributeTable";
 
 function AttributeComp(props) {
-  const columns = [
-    {
-      field: "prompt",
-      headerName: "ATTRIBUTE PROMPT",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "code",
-      headerName: "ATTRIBUTE CODE",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "image",
-      headerName: "ATTRIBUTE IMAGE",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      renderCell: (params) =>
-        !params.row.image &&
-        params.row.image !== null &&
-        params.row.image !== "" ? (
-          "Non"
-        ) : (
-          <Avatar
-            src={params.row.image}
-            variant="rounded"
-            sx={{ mx: "auto", p: 0.5 }}
-          />
-        ),
-    },
-    {
-      field: "attr_type",
-      headerName: "ATTRIBUTE TYPE",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "label",
-      headerName: "LABEL",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "labelcode",
-      headerName: "LABEL CODE",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "status",
-      headerName: "STATUS",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      disableSelectionOnClick: true,
-      renderCell: (params) => (
-        <StatusMode active={params.row.status === 1 ? true : false} />
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "ACTIONS",
-      flex: 0.7,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      disableSelectionOnClick: true,
-      renderCell: (params) => (
-        <>
-          <IconButton size="small" onClick={() => setAttributeEdit(params.row)}>
-            <EditIcon sx={{ color: "#03a5fc" }} />
-          </IconButton>
-        </>
-      ),
-    },
-  ];
+  const [attribute, setAttribute] = React.useState({
+    prompt: "",
+    code: "",
+    image: "",
+    attrType: "",
+    required: false,
+    attributeId: "",
+    editAttribute: false,
+  });
 
   const {
-    setAttributePrompt,
-    setAttributeCode,
-    setAttributeEdit,
-    resetAttribute,
     updateAttribute,
     viewAttribute,
     addAttribute,
@@ -112,11 +32,6 @@ function AttributeComp(props) {
     exportCSV,
     universal,
     login,
-    attribute,
-    setAttributeLabel,
-    setAttributeLabelCode,
-    setAttributeImage,
-    setAttributeType,
     assignAttribute,
     unassignAttribute,
   } = props;
@@ -142,14 +57,14 @@ function AttributeComp(props) {
           justifyContent="center"
           sx={{ bgcolor: "#e9ecef" }}
         >
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE PROMPT
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 ATTRIBUTE CODE
@@ -159,19 +74,27 @@ function AttributeComp(props) {
           <Grid item xs={12} md={3}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                LABEL
+                ATTRIBUTE IMAGE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                LABEL CODE
+                ATTRIBUTE TYPE
               </Typography>
             </Box>
           </Grid>
+          <Grid item xs={12} md={1}>
+            <Box sx={{ m: 1 }}>
+              <Typography variant="body1" sx={{ color: "#8898aa" }}>
+                REQUIRED
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={2} />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -179,11 +102,13 @@ function AttributeComp(props) {
               color="secondary"
               placeholder="Attribute prompt"
               value={attribute.prompt}
-              onChange={(event) => setAttributePrompt(event.target.value)}
+              onChange={(event) =>
+                setAttribute({ ...attribute, prompt: event.target.value })
+              }
             />
           </Box>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -191,58 +116,13 @@ function AttributeComp(props) {
               color="secondary"
               placeholder="Attribute code"
               value={attribute.code}
-              onChange={(event) => setAttributeCode(event.target.value)}
+              onChange={(event) =>
+                setAttribute({ ...attribute, code: event.target.value })
+              }
             />
           </Box>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Label"
-              value={attribute.label}
-              onChange={(event) => setAttributeLabel(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Label code"
-              value={attribute.labelCode}
-              onChange={(event) => setAttributeLabelCode(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid
-          item
-          xs={10}
-          container
-          justifyContent="center"
-          sx={{ bgcolor: "#e9ecef" }}
-        >
-          <Grid item xs={12} md={6}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                ATTRIBUTE IMAGE
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                ATTRIBUTE TYPE
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid item xs={2} sx={{ bgcolor: "#e9ecef" }} />
-        <Grid item xs={12} md={5}>
           <Box sx={{ m: 1, display: "flex", alignItems: "center" }}>
             <TextField
               size="small"
@@ -250,7 +130,9 @@ function AttributeComp(props) {
               color="secondary"
               placeholder="Attribute image"
               value={attribute.image}
-              onChange={(event) => setAttributeImage(event.target.value)}
+              onChange={(event) =>
+                setAttribute({ ...attribute, image: event.target.value })
+              }
             />
             <label htmlFor="attribute-images" style={{ padding: 0 }}>
               <input
@@ -272,7 +154,7 @@ function AttributeComp(props) {
             </label>
           </Box>
         </Grid>
-        <Grid item xs={12} md={5}>
+        <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -280,8 +162,10 @@ function AttributeComp(props) {
               color="secondary"
               select
               label="Attribute type"
-              value={attribute.type}
-              onChange={(event) => setAttributeType(event.target.value)}
+              value={attribute.attrType}
+              onChange={(event) =>
+                setAttribute({ ...attribute, attrType: event.target.value })
+              }
             >
               {[
                 { code: "checkBox", label: "checkbox" },
@@ -297,6 +181,17 @@ function AttributeComp(props) {
             </TextField>
           </Box>
         </Grid>
+        <Grid item xs={12} md={1}>
+          <Box sx={{ m: 1, textAlign: "center" }}>
+            <Checkbox
+              color="secondary"
+              checked={attribute.required}
+              onChange={(event) =>
+                setAttribute({ ...attribute, required: event.target.checked })
+              }
+            />
+          </Box>
+        </Grid>
         <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             {attribute.editAttribute ? (
@@ -305,7 +200,25 @@ function AttributeComp(props) {
                 variant="contained"
                 color="info"
                 onClick={() =>
-                  updateAttribute(login.user_token, attribute, universal)
+                  updateAttribute(
+                    login.user_token,
+                    attribute,
+                    universal,
+                    (status) => {
+                      if (status) {
+                        setAttribute({
+                          ...attribute,
+                          prompt: "",
+                          code: "",
+                          image: "",
+                          attrType: "",
+                          required: false,
+                          attributeId: "",
+                          editAttribute: false,
+                        });
+                      }
+                    }
+                  )
                 }
               >
                 Update
@@ -317,7 +230,25 @@ function AttributeComp(props) {
                 color="info"
                 variant="contained"
                 onClick={() =>
-                  addAttribute(login.user_token, attribute, universal)
+                  addAttribute(
+                    login.user_token,
+                    attribute,
+                    universal,
+                    (status) => {
+                      if (status) {
+                        setAttribute({
+                          ...attribute,
+                          prompt: "",
+                          code: "",
+                          image: "",
+                          attrType: "",
+                          required: false,
+                          attributeId: "",
+                          editAttribute: false,
+                        });
+                      }
+                    }
+                  )
                 }
               >
                 ADD
@@ -326,7 +257,18 @@ function AttributeComp(props) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => resetAttribute()}
+              onClick={() =>
+                setAttribute({
+                  ...attribute,
+                  prompt: "",
+                  code: "",
+                  image: "",
+                  attrType: "",
+                  required: false,
+                  attributeId: "",
+                  editAttribute: false,
+                })
+              }
             >
               RESET
             </Button>
@@ -381,7 +323,11 @@ function AttributeComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table columns={columns} />
+          <AttributeTable
+            {...props}
+            {...attribute}
+            setAttribute={setAttribute}
+          />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>

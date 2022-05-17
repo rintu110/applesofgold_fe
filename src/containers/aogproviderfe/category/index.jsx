@@ -2,18 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import CategoryComp from "components/aogproviderfe/category";
 import {
-  setCategoryName,
-  setCategoryCode,
-  setCategoryContent,
-  setCategoryParentId,
-  resetCategory,
-  setEditCategory,
   viewCategory,
   addCategory,
   updateCategory,
   assignedCategory,
   unassignedCategory,
-  viewAllCategory,
   uploadCSV,
   exportCSV,
 } from "actions/category";
@@ -37,35 +30,14 @@ const mapDispatchToProps = (dispatch) => ({
   uploadCSV: (token, csv, universal) => {
     dispatch(uploadCSV(token, csv, universal));
   },
-  viewAllCategory: (token, searchKeyWord) => {
-    dispatch(viewAllCategory(token, searchKeyWord));
-  },
-  setCategoryName: (payload) => {
-    dispatch(setCategoryName(payload));
-  },
-  setCategoryCode: (payload) => {
-    dispatch(setCategoryCode(payload));
-  },
-  setCategoryContent: (payload) => {
-    dispatch(setCategoryContent(payload));
-  },
-  setCategoryParentId: (payload) => {
-    dispatch(setCategoryParentId(payload));
-  },
-  setEditCategory: (payload) => {
-    dispatch(setEditCategory(payload));
-  },
-  resetCategory: () => {
-    dispatch(resetCategory());
-  },
   viewCategory: (token, universal) => {
     dispatch(viewCategory(token, universal));
   },
-  addCategory: (token, payload, universal) => {
-    dispatch(addCategory(token, payload, universal));
+  addCategory: (token, payload, universal, callBack) => {
+    dispatch(addCategory(token, payload, universal, callBack));
   },
-  updateCategory: (token, payload, universal) => {
-    dispatch(updateCategory(token, payload, universal));
+  updateCategory: (token, payload, universal, callBack) => {
+    dispatch(updateCategory(token, payload, universal, callBack));
   },
   assignedCategory: (token, universal) => {
     dispatch(assignedCategory(token, universal));

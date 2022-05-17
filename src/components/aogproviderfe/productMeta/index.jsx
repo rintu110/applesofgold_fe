@@ -3,7 +3,6 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import Autocomplete from "@mui/material/Autocomplete";
 import Table from "components/UI/Table";
 import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
@@ -12,6 +11,7 @@ import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import AllProduct from "components/UI/allProduct";
 
 function ProductMetaComp(props) {
   const [_id, setValue] = React.useState("");
@@ -25,10 +25,8 @@ function ProductMetaComp(props) {
     addProductMeta,
     meta,
     login,
-    allProduct,
     uploadCSV,
     exportCSV,
-    viewAllProduct,
     universal,
     updateProductMeta,
     resetMeta,
@@ -64,7 +62,7 @@ function ProductMetaComp(props) {
       headerClassName: "table-header",
       cellClassName: "table-row",
       renderCell: (params) => (
-        <>{parseInt(params.row.prd_id) === 0 ? "Non" : params.row.product_nm}</>
+        <>{parseInt(params.row.prd_id) === 0 ? "Non" : params.row.sku}</>
       ),
     },
     {
@@ -81,7 +79,7 @@ function ProductMetaComp(props) {
               setEditMeta({ ...params.row, foregin_id: params.row.prd_id });
               setValue({
                 _id: params.row.prd_id,
-                label: params.row.product_nm,
+                sku: params.row.sku,
               });
             }}
           >
@@ -174,37 +172,13 @@ function ProductMetaComp(props) {
       </Grid>
       <Grid item xs={3}>
         <Box sx={{ m: 1 }}>
-          <Autocomplete
-            value={_id}
-            options={allProduct}
-            freeSolo
-            autoComplete
-            isOptionEqualToValue={(option, value) => true}
-            onInputChange={(event, value) =>
-              value !== null &&
-              value !== undefined &&
-              value !== "" &&
-              viewAllProduct(login.user_token, value)
-            }
-            onChange={(event, value) => {
-              setValue(value);
-              setForeginId(value);
+          <AllProduct
+            onChange={(event) => {
+              setForeginId(event);
+              setValue(event);
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                size="small"
-                fullWidth
-                color="secondary"
-                placeholder="Choose Product"
-              />
-            )}
-            disableListWrap
-            renderOption={(props, option) => (
-              <li {...props} key={option._id}>
-                {option.label}
-              </li>
-            )}
+            value={_id}
+            size="small"
           />
         </Box>
       </Grid>
@@ -239,7 +213,10 @@ function ProductMetaComp(props) {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => resetMeta()}
+            onClick={() => {
+              resetMeta();
+              setValue("");
+            }}
           >
             RESET
           </Button>

@@ -57,11 +57,101 @@ export const addState = (token, payload, universal, callBack) => {
             "Can't add state right now please try again later",
             (status, message, result) => {
               if (status) {
-                dispatch(setAssignedUnassignedStore([]));
                 callBack(true);
                 dispatch(viewState(token, universal));
               } else {
                 callBack(false);
+              }
+            }
+          )
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: err.errors[0],
+          })
+        );
+      });
+  };
+};
+
+export const updateState = (token, payload, universal, callBack) => {
+  return (dispatch) => {
+    let body = {
+      user_token: token,
+      state_nm: payload.stateName,
+      code: payload.stateCode,
+      state_id: payload.stateId,
+    };
+
+    const schema = yup.object({
+      stateName: yup.string().trim().required("Please enter a state name."),
+      stateCode: yup.string().trim().required("Please enter a state code"),
+      stateId: yup
+        .string()
+        .trim()
+        .matches(schemaValid.OBJECT_ID, "Invalid state id!")
+        .required("Please enter a state code"),
+    });
+
+    schema
+      .validate({ ...payload })
+      .then(() => {
+        dispatch(
+          ApiAction(
+            "admin/api/state/edit_state",
+            body,
+            "Can't update state right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                callBack(true);
+                dispatch(viewState(token, universal));
+              } else {
+                callBack(false);
+              }
+            }
+          )
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: err.errors[0],
+          })
+        );
+      });
+  };
+};
+
+export const deleteState = (token, stateId, universal) => {
+  return (dispatch) => {
+    let body = {
+      user_token: token,
+      state_id: stateId,
+    };
+
+    const schema = yup.object({
+      stateId: yup
+        .string()
+        .trim()
+        .matches(schemaValid.OBJECT_ID, "Invalid state id!")
+        .required("Please enter a state code"),
+    });
+
+    schema
+      .validate({ stateId })
+      .then(() => {
+        dispatch(
+          ApiAction(
+            "admin/api/state/delete_state",
+            body,
+            "Can't delete state right now please try again later",
+            (status, message, result) => {
+              if (status) {
+                dispatch(viewState(token, universal));
               }
             }
           )
@@ -123,56 +213,6 @@ export const unassignedState = (token, universal) => {
         }
       })
     );
-  };
-};
-
-export const updateState = (token, payload, universal, callBack) => {
-  return (dispatch) => {
-    let body = {
-      user_token: token,
-      state_nm: payload.stateName,
-      code: payload.stateCode,
-      state_id: payload.stateId,
-    };
-
-    const schema = yup.object({
-      stateName: yup.string().trim().required("Please enter a state name."),
-      stateCode: yup.string().trim().required("Please enter a state code"),
-      stateId: yup
-        .string()
-        .trim()
-        .matches(schemaValid.OBJECT_ID, "Invalid state id!")
-        .required("Please enter a state code"),
-    });
-
-    schema
-      .validate({ ...payload })
-      .then(() => {
-        dispatch(
-          ApiAction(
-            "admin/api/state/edit_state",
-            body,
-            "Can't update state right now please try again later",
-            (status, message, result) => {
-              if (status) {
-                dispatch(setAssignedUnassignedStore([]));
-                callBack(true);
-                dispatch(viewState(token, universal));
-              } else {
-                callBack(false);
-              }
-            }
-          )
-        );
-      })
-      .catch((err) => {
-        dispatch(
-          setSnackBar({
-            status: 500,
-            message: err.errors[0],
-          })
-        );
-      });
   };
 };
 

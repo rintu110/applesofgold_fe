@@ -9,6 +9,7 @@ import {
   updateCountry,
   uploadCSV,
   exportCSV,
+  deleteCountry,
 } from "actions/country";
 
 class CountryCont extends Component {
@@ -23,6 +24,9 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  deleteCountry: (token, countryId, universal) => {
+    dispatch(deleteCountry(token, countryId, universal));
+  },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },

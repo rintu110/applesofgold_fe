@@ -8,7 +8,7 @@ const universalState = {
   store: [],
   startingAfter: 0,
   searchKeyword: "",
-  limit: 10,
+  limit: 100,
   total: 0,
   assignUnassignedStore: [],
 };
@@ -32,7 +32,7 @@ function universalReducer(state = universalState, action) {
         ...state,
         store: [],
         startingAfter: 0,
-        limit: 10,
+        limit: 100,
         total: 0,
         searchKeyword: "",
         assignUnassignedStore: [],

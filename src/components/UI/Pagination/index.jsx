@@ -7,8 +7,9 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "components/UI/TextField";
 import { useDispatch, useSelector } from "react-redux";
 import { setStartingAfter, setLimit } from "actions/universal";
+import Pagination from "@mui/material/Pagination";
 
-function Pagination() {
+function PaginationComp() {
   const universal = useSelector((store) => store.universalReducer);
 
   const dispatch = useDispatch();
@@ -22,40 +23,27 @@ function Pagination() {
         alignItems: "center",
       }}
     >
-      <span style={{ backgroundColor: "#FFFFFF" }}>
-        displaying {parseInt(universal.startingAfter) + 1} -{" "}
-        {parseInt(universal.limit) + parseInt(universal.startingAfter) >
-        parseInt(universal.total)
-          ? universal.total
-          : parseInt(universal.limit) + parseInt(universal.startingAfter)}{" "}
-        of {universal.total}
-        <IconButton
-          disabled={universal.startingAfter === 0}
-          onClick={() =>
-            dispatch(
-              setStartingAfter(
-                parseInt(universal.startingAfter) - parseInt(universal.limit)
-              )
-            )
-          }
-        >
-          <SkipPreviousIcon />
-        </IconButton>
-        <IconButton
-          disabled={
-            universal.startingAfter + universal.limit >= universal.total
-          }
-          onClick={() =>
-            dispatch(
-              setStartingAfter(
-                parseInt(universal.startingAfter) + parseInt(universal.limit)
-              )
-            )
-          }
-        >
-          <SkipNextIcon />
-        </IconButton>
-      </span>
+      <Pagination
+        count={
+          Number.isInteger(
+            parseInt(universal.total) / parseInt(universal.limit)
+          )
+            ? parseInt(universal.total / universal.limit)
+            : parseInt(universal.total / universal.limit) + 1
+        }
+        hideNextButton={false}
+        hidePrevButton={false}
+        showFirstButton={false}
+        showLastButton={false}
+        page={parseInt(universal.startingAfter / universal.limit) + 1}
+        shape="circular"
+        siblingCount={1}
+        variant="outlined"
+        color="secondary"
+        onChange={(event, page) =>
+          dispatch(setStartingAfter(parseInt(universal.limit) * (page - 1)))
+        }
+      />
       <Box sx={{ bgcolor: "#ffffff", ml: 2 }}>
         <TextField
           value={universal.limit}
@@ -64,7 +52,7 @@ function Pagination() {
           color="secondary"
           size="small"
         >
-          {[5, 10, 15, 20].map((item, index) => (
+          {[10, 30, 50, 100].map((item, index) => (
             <MenuItem value={item} key={index}>
               {item}
             </MenuItem>
@@ -75,4 +63,4 @@ function Pagination() {
   );
 }
 
-export default Pagination;
+export default PaginationComp;

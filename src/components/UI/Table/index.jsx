@@ -29,7 +29,7 @@ function Table(props) {
   const dispatch = useDispatch();
 
   return (
-    <DataGridBox sx={{ height: 450 }}>
+    <DataGridBox sx={{ height: { xs: 450, xl: "70vh" } }}>
       <DataGrid
         headerHeight={30}
         rowHeight={40}

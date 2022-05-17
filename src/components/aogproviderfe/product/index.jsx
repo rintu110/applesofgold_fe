@@ -4,54 +4,45 @@ import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
-import Autocomplete from "@mui/material/Autocomplete";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Table from "components/UI/Table";
-import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import Pagination from "components/UI/Pagination";
 import StatusMode from "components/UI/StatusMode";
-import EditProduct from "components/aogproviderfe/product/editProduct";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
+import AddProduct from "components/aogproviderfe/product/addProduct";
 
 function ProductComp(props) {
-  const [_id, setValue] = React.useState("");
-  const [category, setCategory] = React.useState("");
+  const [product, setOpen] = React.useState({
+    open: false,
+    title: "",
+    productId: "",
+    product: "",
+  });
   const {
-    setProductName,
-    setProductCode,
-    setProductCost,
-    setProductPrice,
-    setProductWeight,
-    setProductDescription,
-    setProductTaxable,
-    setProductCategoryId,
-    setProductAssignUnassigned,
-    setEditProduct,
     viewProduct,
-    addProduct,
     assignProduct,
     unassignProduct,
+    deleteProduct,
     uploadCSV,
     exportCSV,
-    product,
     login,
-    allCatgory,
-    viewAllCategory,
     universal,
   } = props;
 
   const columns = [
     {
-      field: "product_nm",
+      field: "product_name",
       flex: 1,
       headerName: "NAME",
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
     {
-      field: "code",
-      headerName: "CODE",
+      field: "sku",
+      headerName: "SKU",
       flex: 1,
       headerClassName: "table-header",
       cellClassName: "table-row",
@@ -64,29 +55,15 @@ function ProductComp(props) {
       cellClassName: "table-row",
     },
     {
-      field: "weight",
-      headerName: "WEIGHT",
+      field: "msrp",
+      headerName: "MSRP",
       flex: 1,
       headerClassName: "table-header",
       cellClassName: "table-row",
     },
     {
-      field: "cost",
-      headerName: "COST",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "taxable",
-      headerName: "TAXABLE",
-      flex: 1,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "prd_desc",
-      headerName: "DESCRIPTION",
+      field: "gender",
+      headerName: "GENDER",
       flex: 1,
       headerClassName: "table-header",
       cellClassName: "table-row",
@@ -103,19 +80,6 @@ function ProductComp(props) {
       ),
     },
     {
-      field: "cat_id",
-      headerName: "CATEGORY",
-      flex: 1,
-      width: 300,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      renderCell: (params) => (
-        <>
-          {parseInt(params.row.cat_id) === 0 ? "Non" : params.row.category_nm}
-        </>
-      ),
-    },
-    {
       field: "actions",
       headerName: "ACTIONS",
       flex: 0.7,
@@ -126,15 +90,31 @@ function ProductComp(props) {
         <>
           <IconButton
             size="small"
-            onClick={() => {
-              setEditProduct(params.row);
-              setCategory({
-                _id: params.row.cat_id,
-                label: params.row.category_nm,
-              });
-            }}
+            onClick={() =>
+              setOpen({
+                open: true,
+                title: "Edit Product",
+                productId: params.row._id,
+                product: params.row,
+              })
+            }
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={() =>
+              deleteProduct(
+                login.user_token,
+                {
+                  localAttribute: params.row.local_attribute,
+                  productId: params.row._id,
+                },
+                universal
+              )
+            }
+          >
+            <DeleteIcon color="error" />
           </IconButton>
         </>
       ),
@@ -148,214 +128,31 @@ function ProductComp(props) {
   return (
     <>
       <Grid container justifyContent="center">
-        <Grid item xs={12}>
+        <Grid item xs={10}>
           <Box sx={{ m: 2 }}>
             <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Add Product
+              Products
             </Typography>
           </Box>
         </Grid>
-        <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT NAME
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT CODE
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT PRICE
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT COST
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT WEIGHT
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT TAXABLE
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
         <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product name"
-              value={product.productName}
-              onChange={(event) => setProductName(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product code"
-              value={product.productCode}
-              onChange={(event) => setProductCode(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product price"
-              value={product.productPrice}
-              onChange={(event) => setProductPrice(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product cost"
-              value={product.productCost}
-              onChange={(event) => setProductCost(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product weight"
-              value={product.productWeight}
-              onChange={(event) => setProductWeight(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product taxable"
-              value={product.productTaxable}
-              onChange={(event) => setProductTaxable(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={5}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                PRODUCT DESCRIPTION
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={5}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2} />
-        </Grid>
-        <Grid item xs={5}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Product description"
-              value={product.productDescription}
-              onChange={(event) => setProductDescription(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={5}>
-          <Box sx={{ m: 1 }}>
-            <Autocomplete
-              value={_id}
-              options={allCatgory}
-              freeSolo
-              autoComplete
-              isOptionEqualToValue={(option, value) => true}
-              onInputChange={(event, value) =>
-                value !== null &&
-                value !== undefined &&
-                value !== "" &&
-                viewAllCategory(login.user_token, value)
-              }
-              onChange={(event, value) => {
-                setValue(value);
-                setProductCategoryId(value);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  fullWidth
-                  color="secondary"
-                  placeholder="Choose Category"
-                />
-              )}
-              disableListWrap
-              renderOption={(props, option) => (
-                <li {...props} key={option._id}>
-                  {option.label}
-                </li>
-              )}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box sx={{ m: 1 }}>
+          <Box sx={{ m: 2 }}>
             <Button
               color="info"
               fullWidth
               variant="contained"
-              onClick={() => {
-                addProduct(login.user_token, product, universal);
-                setValue({ _id: "", label: "" });
-              }}
+              startIcon={<AddIcon />}
+              onClick={() =>
+                setOpen({
+                  open: true,
+                  title: "Add Product",
+                  productId: "",
+                  product: "",
+                })
+              }
             >
               ADD
             </Button>
-          </Box>
-        </Grid>
-        <Grid item xs={12}>
-          <Box sx={{ m: 2, mt: 5 }}>
-            <Typography variant="h6" sx={{ color: "#32325d", width: "100%" }}>
-              Product List
-            </Typography>
           </Box>
         </Grid>
         <Grid item xs={12}>
@@ -370,9 +167,7 @@ function ProductComp(props) {
               size="small"
               color="secondary"
               variant="contained"
-              onClick={() =>
-                assignProduct(login.user_token, product, universal)
-              }
+              onClick={() => assignProduct(login.user_token, universal)}
             >
               ASSIGNED
             </Button>
@@ -381,9 +176,7 @@ function ProductComp(props) {
                 size="small"
                 color="secondary"
                 variant="contained"
-                onClick={() =>
-                  unassignProduct(login.user_token, product, universal)
-                }
+                onClick={() => unassignProduct(login.user_token, universal)}
               >
                 UNASSIGNED
               </Button>
@@ -404,12 +197,7 @@ function ProductComp(props) {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Table
-            rows={universal.store}
-            columns={columns}
-            selectionModel={product.productAssign}
-            onSelectionModelChange={(row) => setProductAssignUnassigned(row)}
-          />
+          <Table columns={columns} />
         </Grid>
         <Grid container sx={{ bgcolor: "#f7f8fa" }}>
           <Grid item xs={12} md={12}>
@@ -417,7 +205,21 @@ function ProductComp(props) {
           </Grid>
         </Grid>
       </Grid>
-      {product.productEdit && <EditProduct {...props} category={category} />}
+      {product.open && (
+        <AddProduct
+          {...props}
+          addProductProps={product}
+          onClose={() =>
+            setOpen({
+              ...product,
+              open: false,
+              title: "",
+              productId: "",
+              product: "",
+            })
+          }
+        />
+      )}
     </>
   );
 }

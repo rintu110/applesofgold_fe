@@ -9,28 +9,25 @@ import TextField from "components/UI/TextField";
 import Button from "components/UI/Button";
 import StatusMode from "components/UI/StatusMode";
 import Pagination from "components/UI/Pagination";
-import Autocomplete from "@mui/material/Autocomplete";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import AddIcon from "@mui/icons-material/Add";
 
 function CategoryComp(props) {
-  const [_id, setValue] = React.useState("");
+  const [category, setCategory] = React.useState({
+    categoryName: "",
+    categoryCode: "",
+    categoryID: "",
+    editCategory: false,
+  });
+
   const {
-    setCategoryName,
-    setCategoryCode,
-    setCategoryContent,
-    setCategoryParentId,
-    resetCategory,
     updateCategory,
-    setEditCategory,
     viewCategory,
     addCategory,
     assignedCategory,
     unassignedCategory,
-    category,
     login,
-    viewAllCategory,
     uploadCSV,
     exportCSV,
     universal,
@@ -66,28 +63,6 @@ function CategoryComp(props) {
       ),
     },
     {
-      field: "page_content",
-      headerName: "CATEGORY CONTENT",
-      width: 350,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-    },
-    {
-      field: "parent_id",
-      headerName: "PARENT",
-      flex: 1,
-      width: 300,
-      headerClassName: "table-header",
-      cellClassName: "table-row",
-      renderCell: (params) => (
-        <>
-          {parseInt(params.row.parent_id) === 0
-            ? "Non"
-            : params.row.parent.length > 0 && params.row.parent[0].category_nm}
-        </>
-      ),
-    },
-    {
       field: "actions",
       headerName: "ACTIONS",
       flex: 0.7,
@@ -98,14 +73,15 @@ function CategoryComp(props) {
         <>
           <IconButton
             size="small"
-            onClick={() => {
-              setEditCategory(params.row);
-              parseInt(params.row.parent_id) !== 0 &&
-                setValue({
-                  _id: params.row.parent[0]._id,
-                  label: params.row.parent[0].category_nm,
-                });
-            }}
+            onClick={() =>
+              setCategory({
+                ...category,
+                categoryName: params.row.category_nm,
+                categoryCode: params.row.code,
+                categoryID: params.row._id,
+                editCategory: true,
+              })
+            }
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
@@ -129,37 +105,23 @@ function CategoryComp(props) {
           </Box>
         </Grid>
         <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={2}>
+          <Grid item xs={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 CATEGORY NAME
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 CATEGORY CODE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY PARENT
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box sx={{ m: 1 }}>
-              <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                CATEGORY CONTENT
-              </Typography>
-            </Box>
-          </Grid>
           <Grid item xs={2} />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -167,11 +129,13 @@ function CategoryComp(props) {
               color="secondary"
               placeholder="Category name"
               value={category.categoryName}
-              onChange={(event) => setCategoryName(event.target.value)}
+              onChange={(event) =>
+                setCategory({ ...category, categoryName: event.target.value })
+              }
             />
           </Box>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -179,70 +143,34 @@ function CategoryComp(props) {
               color="secondary"
               placeholder="Category code"
               value={category.categoryCode}
-              onChange={(event) => setCategoryCode(event.target.value)}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={3}>
-          <Box sx={{ m: 1 }}>
-            <Autocomplete
-              value={_id}
-              options={category.allCatgory}
-              freeSolo
-              autoComplete
-              isOptionEqualToValue={(option, value) => true}
-              onInputChange={(event, value) =>
-                value !== null &&
-                value !== undefined &&
-                value !== "" &&
-                setTimeout(() => {
-                  viewAllCategory(login.user_token, value);
-                }, 200)
+              onChange={(event) =>
+                setCategory({ ...category, categoryCode: event.target.value })
               }
-              onChange={(event, value) => {
-                setValue(value);
-                setCategoryParentId(value);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  fullWidth
-                  color="secondary"
-                  placeholder="Choose Category"
-                />
-              )}
-              disableListWrap
-              renderOption={(props, option) => (
-                <li {...props} key={option._id}>
-                  {option.label}
-                </li>
-              )}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={3}>
-          <Box sx={{ m: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              color="secondary"
-              placeholder="Category content"
-              value={category.categoryContent}
-              onChange={(event) => setCategoryContent(event.target.value)}
             />
           </Box>
         </Grid>
         <Grid item xs={2}>
           <Box sx={{ m: 1 }}>
-            {category.categoryEdit ? (
+            {category.editCategory ? (
               <Button
                 sx={{ mr: 1 }}
                 variant="contained"
                 color="info"
                 onClick={() => {
-                  updateCategory(login.user_token, category, universal);
-                  setValue({ _id: "", label: "" });
+                  updateCategory(
+                    login.user_token,
+                    category,
+                    universal,
+                    (status) => {
+                      setCategory({
+                        ...category,
+                        categoryName: "",
+                        categoryCode: "",
+                        categoryID: "",
+                        editCategory: false,
+                      });
+                    }
+                  );
                 }}
               >
                 UPDATE
@@ -254,8 +182,20 @@ function CategoryComp(props) {
                 startIcon={<AddIcon />}
                 sx={{ mr: 1 }}
                 onClick={() => {
-                  addCategory(login.user_token, category, universal);
-                  setValue({ _id: "", label: "" });
+                  addCategory(
+                    login.user_token,
+                    category,
+                    universal,
+                    (status) => {
+                      setCategory({
+                        ...category,
+                        categoryName: "",
+                        categoryCode: "",
+                        categoryID: "",
+                        editCategory: false,
+                      });
+                    }
+                  );
                 }}
               >
                 ADD
@@ -264,7 +204,15 @@ function CategoryComp(props) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => resetCategory()}
+              onClick={() =>
+                setCategory({
+                  ...category,
+                  categoryName: "",
+                  categoryCode: "",
+                  categoryID: "",
+                  editCategory: false,
+                })
+              }
             >
               RESET
             </Button>

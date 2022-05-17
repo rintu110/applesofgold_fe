@@ -11,7 +11,7 @@ import * as yup from "yup";
 import * as schemaValid from "constants/schema";
 import { assignUnassignSchema, csvSchema } from "@/schema/universal";
 
-export const viewCountry = (token, universal) => {
+export const viewShippingMessage = (token, universal) => {
   return (dispatch) => {
     let body = {
       user_token: token,
@@ -22,9 +22,9 @@ export const viewCountry = (token, universal) => {
 
     dispatch(
       ApiAction(
-        "admin/api/country/view_country",
+        "admin/api/shipping_message/view_shipping_message",
         body,
-        "Can't view country right now please try again later",
+        "Can't view shipping message right now please try again later",
         (status, message, result, total) => {
           dispatch(setDataStore(result));
           dispatch(setTotal(total));
@@ -34,17 +34,42 @@ export const viewCountry = (token, universal) => {
   };
 };
 
-export const addCountry = (token, payload, universal, callBack) => {
+export const addShippingMessage = (token, payload, universal, callBack) => {
   return (dispatch) => {
     let body = {
       user_token: token,
-      country_nm: payload.countryName,
-      code: payload.countryCode,
+      shipping_message: payload.shippingMessage,
+      code: payload.shippingCode,
+      shipping_free: payload.shippingFree,
+      shipping_days: payload.shippingDays,
+      shipping_order: payload.shippingOrder,
+      country_message: payload.countryMessage,
+      country_flag: payload.countryFlag,
     };
 
     const schema = yup.object({
-      countryName: yup.string().trim().required("Please enter a country name."),
-      countryCode: yup.string().trim().required("Please enter a country code"),
+      shippingMessage: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping message."),
+      shippingCode: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping code"),
+      shippingFree: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping free"),
+      shippingDays: yup
+        .number()
+        .min(1)
+        .required("Please enter a shipping days"),
+      shippingOrder: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping order"),
+      countryMessage: yup.string().trim(),
+      countryFlag: yup.string().trim().url(),
     });
 
     schema
@@ -52,13 +77,13 @@ export const addCountry = (token, payload, universal, callBack) => {
       .then(() => {
         dispatch(
           ApiAction(
-            "admin/api/country/add_country",
+            "admin/api/shipping_message/add_shipping_message",
             body,
-            "Can't add country right now please try again later",
+            "Can't add shipping message right now please try again later",
             (status, message, result) => {
               if (status) {
                 callBack(true);
-                dispatch(viewCountry(token, universal));
+                dispatch(viewShippingMessage(token, universal));
               } else {
                 callBack(false);
               }
@@ -77,23 +102,48 @@ export const addCountry = (token, payload, universal, callBack) => {
   };
 };
 
-export const updateCountry = (token, payload, universal, callBack) => {
+export const updateShippingMessage = (token, payload, universal, callBack) => {
   return (dispatch) => {
     let body = {
       user_token: token,
-      country_nm: payload.countryName,
-      code: payload.countryCode,
-      country_id: payload.countryId,
+      shipping_message: payload.shippingMessage,
+      code: payload.shippingCode,
+      shipping_free: payload.shippingFree,
+      shipping_days: payload.shippingDays,
+      shipping_id: payload.shippingId,
+      shipping_order: payload.shippingOrder,
+      country_message: payload.countryMessage,
+      country_flag: payload.countryFlag,
     };
 
     const schema = yup.object({
-      countryName: yup.string().trim().required("Please enter a country name."),
-      countryCode: yup.string().trim().required("Please enter a country code"),
-      countryId: yup
+      shippingMessage: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping message."),
+      shippingCode: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping code"),
+      shippingFree: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping free"),
+      shippingDays: yup
+        .number()
+        .min(1)
+        .required("Please enter a shipping days"),
+      shippingId: yup
         .string()
         .trim()
         .matches(schemaValid.OBJECT_ID, "Invalid country id!")
-        .required("Please enter a country id"),
+        .required("Please enter a shipping id"),
+      shippingOrder: yup
+        .string()
+        .trim()
+        .required("Please enter a shipping order"),
+      countryMessage: yup.string().trim(),
+      countryFlag: yup.string().trim().url(),
     });
 
     schema
@@ -101,13 +151,13 @@ export const updateCountry = (token, payload, universal, callBack) => {
       .then(() => {
         dispatch(
           ApiAction(
-            "admin/api/country/edit_country",
+            "admin/api/shipping_message/edit_shipping_message",
             body,
-            "Can't update country right now please try again later",
+            "Can't update shipping message right now please try again later",
             (status, message, result) => {
               if (status) {
                 callBack(true);
-                dispatch(viewCountry(token, universal));
+                dispatch(viewShippingMessage(token, universal));
               } else {
                 callBack(false);
               }
@@ -126,32 +176,32 @@ export const updateCountry = (token, payload, universal, callBack) => {
   };
 };
 
-export const deleteCountry = (token, countryId, universal) => {
+export const deleteShippingMessage = (token, _id, universal) => {
   return (dispatch) => {
     let body = {
       user_token: token,
-      country_id: countryId,
+      shipping_id: _id,
     };
 
     const schema = yup.object({
-      countryId: yup
+      _id: yup
         .string()
         .trim()
         .matches(schemaValid.OBJECT_ID, "Invalid country id!")
-        .required("Please enter a country id"),
+        .required("Please enter a shipping id"),
     });
 
     schema
-      .validate({ countryId })
+      .validate({ _id })
       .then(() => {
         dispatch(
           ApiAction(
-            "admin/api/country/delete_country",
+            "admin/api/shipping_message/delete_shipping_message",
             body,
-            "Can't delete country right now please try again later",
+            "Can't delete shipping message right now please try again later",
             (status, message, result) => {
               if (status) {
-                dispatch(viewCountry(token, universal));
+                dispatch(viewShippingMessage(token, universal));
               }
             }
           )
@@ -168,22 +218,22 @@ export const deleteCountry = (token, countryId, universal) => {
   };
 };
 
-export const assignedCountry = (token, universal) => {
+export const assignedShippingMessage = (token, universal) => {
   return (dispatch) => {
     dispatch(
       assignUnassignSchema(universal, (assignstatus) => {
         if (assignstatus) {
           dispatch(
             ApiAction(
-              "admin/api/country/assigned_country",
+              "admin/api/shipping_message/assigned_shipping_message",
               {
                 user_token: token,
                 _id: universal.assignUnassignedStore,
               },
-              "Can't assign country right now please try again later",
+              "Can't assign shipping message right now please try again later",
               (status, message, result) => {
                 if (status) {
-                  dispatch(viewCountry(token, universal));
+                  dispatch(viewShippingMessage(token, universal));
                 }
                 dispatch(setAssignedUnassignedStore([]));
               }
@@ -195,22 +245,22 @@ export const assignedCountry = (token, universal) => {
   };
 };
 
-export const unassignedCountry = (token, universal) => {
+export const unassignedShippingMessage = (token, universal) => {
   return (dispatch) => {
     dispatch(
       assignUnassignSchema(universal, (assignstatus) => {
         if (assignstatus) {
           dispatch(
             ApiAction(
-              "admin/api/country/unassigned_country",
+              "admin/api/shipping_message/unassigned_shipping_message",
               {
                 user_token: token,
                 _id: universal.assignUnassignedStore,
               },
-              "Can't unassign country right now please try again later",
+              "Can't unassign shipping message right now please try again later",
               (status, message, result) => {
                 if (status) {
-                  dispatch(viewCountry(token, universal));
+                  dispatch(viewShippingMessage(token, universal));
                 }
                 dispatch(setAssignedUnassignedStore([]));
               }
@@ -235,13 +285,12 @@ export const uploadCSV = (token, csv, universal) => {
         if (csvstatus) {
           dispatch(
             ApiFileAction(
-              "admin/api/country/add_country_from_csv",
+              "admin/api/shipping_message/add_shipping_message_from_csv",
               formdata,
-              "Can't upload country right now please try again later",
+              "Can't upload shipping message right now please try again later",
               (status, message, result) => {
                 if (status) {
-                  dispatch(setAssignedUnassignedStore([]));
-                  dispatch(viewCountry(token, universal));
+                  dispatch(viewShippingMessage(token, universal));
                 }
               }
             )
@@ -256,12 +305,12 @@ export const exportCSV = (token) => {
   return (dispatch) => {
     dispatch(
       ApiFileDownLoadAction(
-        "admin/api/country/export_country_to_csv",
+        "admin/api/shipping_message/send_shipping_message_from_csv",
         {
           user_token: token,
         },
-        "Can't export country right now please try again later",
-        "country",
+        "Can't export shipping message right now please try again later",
+        "shipping_message",
         ".csv"
       )
     );

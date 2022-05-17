@@ -17,7 +17,6 @@ import {
   uploadCSV,
   exportCSV,
 } from "actions/productMeta";
-import { viewAllProduct } from "actions/product";
 
 class ProductMetaCont extends Component {
   render() {
@@ -28,14 +27,10 @@ class ProductMetaCont extends Component {
 const mapStateToProps = (store) => ({
   meta: store.metaReducer,
   login: store.loginReducer,
-  allProduct: store.productReducer.allProduct,
   universal: store.universalReducer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  viewAllProduct: (token, searchKeyWord) => {
-    dispatch(viewAllProduct(token, searchKeyWord));
-  },
   exportCSV: (token) => {
     dispatch(exportCSV(token));
   },

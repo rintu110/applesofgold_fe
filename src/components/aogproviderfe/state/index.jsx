@@ -12,6 +12,7 @@ import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function StateComp(props) {
   const [state, setStateData] = React.useState({
@@ -21,10 +22,23 @@ function StateComp(props) {
     editState: false,
   });
 
+  const {
+    viewState,
+    addState,
+    unassignedState,
+    assignedState,
+    uploadCSV,
+    exportCSV,
+    deleteState,
+    login,
+    universal,
+    updateState,
+  } = props;
+
   const columns = [
     {
       field: "state_nm",
-      headerName: "STATE NAME",
+      headerName: "NAME",
       flex: 1,
       minWidth: 300,
       headerClassName: "table-header",
@@ -32,7 +46,7 @@ function StateComp(props) {
     },
     {
       field: "code",
-      headerName: "STATE CODE",
+      headerName: "CODE",
       flex: 1,
       width: 300,
       headerClassName: "table-header",
@@ -73,22 +87,17 @@ function StateComp(props) {
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
+          <IconButton
+            onClick={() =>
+              deleteState(login.user_token, params.row._id, universal)
+            }
+          >
+            <DeleteIcon color="error" />
+          </IconButton>
         </>
       ),
     },
   ];
-
-  const {
-    viewState,
-    addState,
-    unassignedState,
-    assignedState,
-    uploadCSV,
-    exportCSV,
-    login,
-    universal,
-    updateState,
-  } = props;
 
   React.useEffect(() => {
     viewState(login.user_token, universal);
@@ -105,23 +114,23 @@ function StateComp(props) {
           </Box>
         </Grid>
         <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={5}>
+          <Grid item xs={12} md={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 STATE NAME
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={12} md={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
                 STATE CODE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2} />
+          <Grid item xs={12} md={2} />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={12} md={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -135,7 +144,7 @@ function StateComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={12} md={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -149,7 +158,7 @@ function StateComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             {state.editState ? (
               <>

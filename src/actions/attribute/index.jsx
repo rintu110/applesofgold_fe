@@ -1,4 +1,3 @@
-import * as constant from "constants/attribute";
 import {
   setSnackBar,
   setDataStore,
@@ -11,87 +10,97 @@ import {
 } from "actions/universal";
 import * as yup from "yup";
 import * as schemaValid from "constants/schema";
-import { assignUnassignSchema, csvSchema } from "@/schema/universal";
+import {
+  assignUnassignSchema,
+  csvSchema,
+  deleteSchema,
+} from "@/schema/universal";
 
-export const viewAllAttribute = (token, event) => {
+// export const viewAllAttribute = (token, event) => {
+//   return (dispatch) => {
+//     dispatch(
+//       ApiSearchAction(
+//         "admin/api/attributes/view_all_attributes",
+//         {
+//           user_token: token,
+//           searchKeyWord: event,
+//         },
+//         "Can't view attributes right now please try again later!",
+//         (status, message, result) => {
+//           dispatch({
+//             type: constant.SET_ALL_ATTRIBUTES,
+//             payload: result,
+//           });
+//         }
+//       )
+//     );
+//   };
+// };
+
+export const addAttributeOption = (token, universal, payload, callBack) => {
   return (dispatch) => {
-    dispatch(
-      ApiSearchAction(
-        "admin/api/attributes/view_all_attributes",
-        {
+    const schema = yup.object({
+      attrOptions: yup
+        .array()
+        .min(1)
+        .of(
+          yup.object({
+            prompt: yup
+              .string()
+              .trim()
+              .required("Please enter a attribute option name."),
+            code: yup
+              .string()
+              .trim()
+              .required("Please enter a attribute option code."),
+            price: yup
+              .string()
+              .trim()
+              .required("Please enter a attribute option price."),
+            defaults: yup
+              .boolean()
+              .oneOf([true, false])
+              .required("Please enter a attribute option default"),
+          })
+        )
+        .required("Please add a attribute option"),
+    });
+
+    schema
+      .validate({ attrOptions: payload.attrOptions })
+      .then(() => {
+        let body = {
           user_token: token,
-          searchKeyWord: event,
-        },
-        "Can't view attributes right now please try again later!",
-        (status, message, result) => {
-          dispatch({
-            type: constant.SET_ALL_ATTRIBUTES,
-            payload: result,
-          });
-        }
-      )
-    );
+          attr_id: payload.attributeId,
+          attr_options: payload.attrOptions,
+        };
+
+        dispatch(
+          ApiAction(
+            "admin/api/attributes/crud_attributes_options",
+            body,
+            "Please try again later...",
+            (status, message, result) => {
+              if (status) {
+                dispatch(viewAttribute(token, universal));
+                callBack(true);
+              } else {
+                callBack(false);
+              }
+            }
+          )
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: err.errors[0],
+          })
+        );
+      });
   };
 };
-
-export const setOptionPrice = (payload) => ({
-  type: constant.SET_OPTION_PRICE,
-  payload: payload,
-});
-
-export const setOptionCost = (payload) => ({
-  type: constant.SET_OPTION_COST,
-  payload: payload,
-});
-
-export const setAttributeId = (payload) => ({
-  type: constant.SET_ATTRIBUTE_ID,
-  payload: payload,
-});
-
-export const setEditAttributeOption = (payload) => ({
-  type: constant.SET_EDIT_ATTRIBUTE_OPTION,
-  payload: payload,
-});
-
-export const setAttributeLabelCode = (payload) => ({
-  type: constant.SET_ATTRIBUTE_LABEL_CODE,
-  payload: payload,
-});
-
-export const setAttributePrompt = (payload) => ({
-  type: constant.SET_ATTRIBUTE_PROMPT,
-  payload: payload,
-});
-
-export const setAttributeCode = (payload) => ({
-  type: constant.SET_ATTRIBUTE_CODE,
-  payload: payload,
-});
-
-export const setAttributeEdit = (payload) => ({
-  type: constant.SET_EDIT_ATTRIBUTE,
-  payload: payload,
-});
-
-export const resetAttribute = () => ({
-  type: constant.RESET_ATTRIBUTE_DATA,
-});
-
-export const setAttributeLabel = (payload) => ({
-  type: constant.SET_ATTRIBUTE_LABEL,
-  payload: payload,
-});
-
-export const setAttributeImage = (payload) => ({
-  type: constant.SET_ATTRIBUTE_IMAGE,
-  payload: payload,
-});
-
-export const setAttributeType = (payload) => ({
-  type: constant.SET_ATTRIBUTE_TYPE,
-  payload: payload,
-});
 
 export const viewAttribute = (token, universal) => {
   return (dispatch) => {
@@ -164,17 +173,13 @@ export const unassignAttribute = (token, universal) => {
   };
 };
 
-export const addAttribute = (token, payload, universal) => {
+export const addAttribute = (token, payload, universal, callBack) => {
   return (dispatch) => {
     const schema = yup.object({
       prompt: yup.string().trim().required("Please enter a attribute name."),
       code: yup.string().trim().required("Please enter a attribute code"),
-      image: yup
-        .string()
-        .trim()
-        .url()
-        .required("Please enter you attribute image"),
-      type: yup
+      image: yup.string().trim().url(),
+      attrType: yup
         .string()
         .trim()
         .oneOf([
@@ -185,11 +190,10 @@ export const addAttribute = (token, payload, universal) => {
           "textArea",
         ])
         .required("Please select your attribute type"),
-      label: yup.string().trim().required("Please enter your attribute label"),
-      labelCode: yup
-        .string()
-        .trim()
-        .required("Please enter your attribute label code"),
+      required: yup
+        .boolean()
+        .oneOf([true, false])
+        .required("Please enter required"),
     });
 
     schema
@@ -200,9 +204,8 @@ export const addAttribute = (token, payload, universal) => {
           prompt: payload.prompt,
           code: payload.code,
           image: payload.image,
-          attr_type: payload.type,
-          label: payload.label,
-          labelcode: payload.labelCode,
+          attr_type: payload.attrType,
+          required: payload.required,
         };
 
         dispatch(
@@ -212,8 +215,10 @@ export const addAttribute = (token, payload, universal) => {
             "Can't add attributes right now please try again later",
             (status, message, result) => {
               if (status) {
-                dispatch(resetAttribute());
                 dispatch(viewAttribute(token, universal));
+                callBack(true);
+              } else {
+                callBack(false);
               }
             }
           )
@@ -230,22 +235,18 @@ export const addAttribute = (token, payload, universal) => {
   };
 };
 
-export const updateAttribute = (token, payload, universal) => {
+export const updateAttribute = (token, payload, universal, callBack) => {
   return (dispatch) => {
     const schema = yup.object({
-      prompt: yup.string().trim().required("Please enter a attribute name."),
-      code: yup.string().trim().required("Please enter a attribute code"),
       attributeId: yup
         .string()
         .trim()
         .matches(schemaValid.OBJECT_ID, "Invalid attribute id!")
         .required("Please enter a attribute _id"),
-      image: yup
-        .string()
-        .trim()
-        .url()
-        .required("Please enter you attribute image"),
-      type: yup
+      prompt: yup.string().trim().required("Please enter a attribute name."),
+      code: yup.string().trim().required("Please enter a attribute code"),
+      image: yup.string().trim().url(),
+      attrType: yup
         .string()
         .trim()
         .oneOf([
@@ -256,11 +257,10 @@ export const updateAttribute = (token, payload, universal) => {
           "textArea",
         ])
         .required("Please select your attribute type"),
-      label: yup.string().trim().required("Please enter your attribute label"),
-      labelCode: yup
-        .string()
-        .trim()
-        .required("Please enter your attribute label code"),
+      required: yup
+        .boolean()
+        .oneOf([true, false])
+        .required("Please enter required"),
     });
 
     schema
@@ -268,13 +268,12 @@ export const updateAttribute = (token, payload, universal) => {
       .then(() => {
         let body = {
           user_token: token,
+          attribute_id: payload.attributeId,
           prompt: payload.prompt,
           code: payload.code,
-          attribute_id: payload.attributeId,
           image: payload.image,
-          attr_type: payload.type,
-          label: payload.label,
-          labelcode: payload.labelCode,
+          attr_type: payload.attrType,
+          required: payload.required,
         };
 
         dispatch(
@@ -284,8 +283,10 @@ export const updateAttribute = (token, payload, universal) => {
             "Can't update attributes right now please try again later",
             (status, message, result) => {
               if (status) {
-                dispatch(resetAttribute());
                 dispatch(viewAttribute(token, universal));
+                callBack(true);
+              } else {
+                callBack(false);
               }
             }
           )
@@ -299,6 +300,32 @@ export const updateAttribute = (token, payload, universal) => {
           })
         );
       });
+  };
+};
+
+export const deleteAttribute = (token, attributeId, universal) => {
+  return (dispatch) => {
+    dispatch(
+      deleteSchema(attributeId, (status) => {
+        if (status) {
+          dispatch(
+            ApiAction(
+              "admin/api/attributes/delete_attributes",
+              {
+                user_token: token,
+                attribute_id: attributeId,
+              },
+              "Can't delete attributes right now please try again later",
+              (status, message, result) => {
+                if (status) {
+                  dispatch(viewAttribute(token, universal));
+                }
+              }
+            )
+          );
+        }
+      })
+    );
   };
 };
 

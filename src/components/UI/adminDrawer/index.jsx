@@ -8,7 +8,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import { styled } from "@mui/material/styles";
 import ListItemButton from "@mui/material/ListItemButton";
-import Link from "next/link";
+import NextLink from "components/UI/NextLink";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { resetEverythingUniveral } from "actions/universal";
@@ -17,26 +17,25 @@ import DomainAddIcon from "@mui/icons-material/DomainAdd";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import CategoryIcon from "@mui/icons-material/Category";
 import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import LooksIcon from "@mui/icons-material/Looks";
-import LocalMallIcon from "@mui/icons-material/LocalMall";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import AttributionIcon from "@mui/icons-material/Attribution";
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 
 const FlexBox = styled(Box)(({ theme }) => ({
   display: "flex",
   backgroundColor: "#f7f8fa",
+  alignItems: "center",
+  width: "100%",
 }));
 
 const DrawerList = styled(List)(({ theme }) => ({
   padding: 0,
   "& .MuiListItem-root": {
-    width: 280,
+    width: "95%",
     marginBottom: 10,
     marginLeft: "auto",
     marginRight: "auto",
@@ -62,17 +61,15 @@ const DrawerList = styled(List)(({ theme }) => ({
 }));
 
 const CustomDrawer = styled(Drawer)(({ theme }) => ({
-  width: drawerWidth,
+  width: "22%",
   flexShrink: 0,
   "& .MuiDrawer-paper": {
-    width: drawerWidth,
+    width: "22%",
     boxSizing: "border-box",
     backgroundColor: "#f7f8fa",
     borderRight: 0,
   },
 }));
-
-const drawerWidth = 340;
 
 function AdminDrawer({ Components }) {
   const dispatch = useDispatch();
@@ -113,9 +110,13 @@ function AdminDrawer({ Components }) {
       link: "/admin/product",
     },
     {
+      icon: <SettingsApplicationsIcon sx={{ color: "#ffd600" }} />,
+      name: "Attribute",
+      link: "/admin/attributes",
+    },
+    {
       icon: <AssignmentIcon sx={{ color: "#5e72e4" }} />,
       name: "Assign",
-      link: "#",
       expand: [
         {
           icon: <CategoryIcon sx={{ color: "#11cdef" }} />,
@@ -125,26 +126,19 @@ function AdminDrawer({ Components }) {
       ],
     },
     {
-      icon: <SettingsApplicationsIcon sx={{ color: "#ffd600" }} />,
-      name: "Attribute",
-      link: "/admin/attributes",
+      icon: <LocalShippingIcon sx={{ color: "#048025" }} />,
+      name: "Shipping",
       expand: [
         {
-          icon: <AssignmentTurnedInIcon sx={{ color: "#34eb3a" }} />,
-          name: "Attributes",
-          link: "/admin/attributes",
-        },
-        {
-          icon: <FormatListNumberedIcon sx={{ color: "#4287f5" }} />,
-          name: "Attributes Options",
-          link: "/admin/attributes-options",
+          icon: <ChatBubbleIcon sx={{ color: "#344a3a" }} />,
+          name: "Shipping Message",
+          link: "/admin/shipping-message",
         },
       ],
     },
     {
       icon: <ViewAgendaIcon sx={{ color: "#ff1100" }} />,
       name: "Meta",
-      link: "#",
       expand: [
         {
           icon: <ViewAgendaIcon sx={{ color: "#1292ff" }} />,
@@ -176,9 +170,10 @@ function AdminDrawer({ Components }) {
             <Box sx={{ m: "10px" }}>
               <Image
                 src={"/images/adminDrawer/apples-of-gold-jewelry.png"}
-                width={220}
-                height={60}
+                width={"350px"}
+                height={"100%"}
                 alt="logo"
+                layout="intrinsic"
               />
             </Box>
             <DrawerList>
@@ -200,21 +195,12 @@ function AdminDrawer({ Components }) {
                       {item.expand.map((exp, expindex) => (
                         <DrawerList disablePadding key={expindex}>
                           <ListItem>
-                            <Link
-                              href={exp.link}
-                              style={{
-                                textDecoration: "none",
-                                margin: 0,
-                                padding: 0,
-                                width: "100%",
-                              }}
-                              passHref={true}
-                            >
+                            <NextLink href={exp.link}>
                               <ListItemButton>
                                 <ListItemIcon>{exp.icon}</ListItemIcon>
                                 <ListItemText primary={exp.name} />
                               </ListItemButton>
-                            </Link>
+                            </NextLink>
                           </ListItem>
                         </DrawerList>
                       ))}
@@ -222,28 +208,19 @@ function AdminDrawer({ Components }) {
                   </DrawerList>
                 ) : (
                   <ListItem key={index}>
-                    <Link
-                      href={item.link}
-                      style={{
-                        textDecoration: "none",
-                        margin: 0,
-                        padding: 0,
-                        width: "100%",
-                      }}
-                      passHref={true}
-                    >
+                    <NextLink href={item.link}>
                       <ListItemButton>
                         <ListItemIcon>{item.icon}</ListItemIcon>
                         <ListItemText primary={item.name} />
                       </ListItemButton>
-                    </Link>
+                    </NextLink>
                   </ListItem>
                 )
               )}
             </DrawerList>
           </Box>
         </CustomDrawer>
-        <Box sx={{ my: 2, mr: 2, bgcolor: "#fff", width: "100%" }}>
+        <Box sx={{ my: 2, mr: 2, bgcolor: "#fff", width: "78%" }}>
           {Components}
         </Box>
       </FlexBox>

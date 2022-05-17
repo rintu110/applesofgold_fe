@@ -65,3 +65,30 @@ export const csvSchema = (body, callBack) => {
       });
   };
 };
+
+export const deleteSchema = (_id, callBack) => {
+  return (dispatch) => {
+    const schema = yup.object({
+      _id: yup
+        .string()
+        .trim()
+        .matches(schemaValid.OBJECT_ID, "Invalid  _id!")
+        .required("Please enter a _id"),
+    });
+
+    schema
+      .validate({ _id })
+      .then(() => {
+        callBack(true);
+      })
+      .catch((err) => {
+        dispatch(
+          setSnackBar({
+            status: 500,
+            message: err.errors[0],
+          })
+        );
+        callBack(false);
+      });
+  };
+};

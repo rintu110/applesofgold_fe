@@ -12,6 +12,7 @@ import Pagination from "components/UI/Pagination";
 import Search from "components/UI/Search";
 import CSVFileUpload from "components/UI/CsvFileUpload";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CountryComp(props) {
   const [country, setCountryData] = React.useState({
@@ -20,6 +21,19 @@ function CountryComp(props) {
     countryId: "",
     editCountry: false,
   });
+
+  const {
+    viewCountry,
+    addCountry,
+    unassignedCountry,
+    assignedCountry,
+    deleteCountry,
+    updateCountry,
+    uploadCSV,
+    exportCSV,
+    login,
+    universal,
+  } = props;
 
   const columns = [
     {
@@ -73,22 +87,27 @@ function CountryComp(props) {
           >
             <EditIcon sx={{ color: "#03a5fc" }} />
           </IconButton>
+          <IconButton
+            onClick={() =>
+              deleteCountry(login.user_token, params.row._id, universal)
+            }
+          >
+            <DeleteIcon color="error" />
+          </IconButton>
         </>
       ),
     },
   ];
 
-  const {
-    viewCountry,
-    addCountry,
-    unassignedCountry,
-    assignedCountry,
-    updateCountry,
-    uploadCSV,
-    exportCSV,
-    login,
-    universal,
-  } = props;
+  const reset = () => {
+    setCountryData({
+      ...country,
+      countryName: "",
+      countryCode: "",
+      countryId: "",
+      editCountry: false,
+    });
+  };
 
   React.useEffect(() => {
     viewCountry(login.user_token, universal);
@@ -105,23 +124,23 @@ function CountryComp(props) {
           </Box>
         </Grid>
         <Grid container justifyContent="center" sx={{ bgcolor: "#e9ecef" }}>
-          <Grid item xs={5}>
+          <Grid item xs={12} md={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                COUNTRY NAME
+                NAME
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={12} md={5}>
             <Box sx={{ m: 1 }}>
               <Typography variant="body1" sx={{ color: "#8898aa" }}>
-                COUNTRY CODE
+                CODE
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={2} />
+          <Grid item xs={12} md={2} />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={12} md={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -135,7 +154,7 @@ function CountryComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={12} md={5}>
           <Box sx={{ m: 1 }}>
             <TextField
               size="small"
@@ -149,7 +168,7 @@ function CountryComp(props) {
             />
           </Box>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={12} md={2}>
           <Box sx={{ m: 1 }}>
             {country.editCountry ? (
               <Button
@@ -163,13 +182,7 @@ function CountryComp(props) {
                     universal,
                     (editstatus) => {
                       if (editstatus) {
-                        setCountryData({
-                          ...country,
-                          countryName: "",
-                          countryCode: "",
-                          countryId: "",
-                          editCountry: false,
-                        });
+                        reset();
                       }
                     }
                   )
@@ -190,13 +203,7 @@ function CountryComp(props) {
                     universal,
                     (addstatus) => {
                       if (addstatus) {
-                        setCountryData({
-                          ...country,
-                          countryName: "",
-                          countryCode: "",
-                          countryId: "",
-                          editCountry: false,
-                        });
+                        reset();
                       }
                     }
                   )
@@ -208,15 +215,7 @@ function CountryComp(props) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => {
-                setCountryData({
-                  ...country,
-                  countryName: "",
-                  countryCode: "",
-                  countryId: "",
-                  editCountry: false,
-                });
-              }}
+              onClick={() => reset()}
             >
               RESET
             </Button>
