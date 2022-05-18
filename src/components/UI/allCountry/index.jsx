@@ -41,7 +41,7 @@ function AllCountry({ value, onChange }) {
       label="Choose Country"
       onChange={(event) => onChange(event.target.value)}
       select
-      value={value === "" ? "" : allCountry.length > 0 ? value : ""}
+      value={value === null ? "" : allCountry.length > 0 ? value : ""}
     >
       <MenuItem value={""}></MenuItem>
       {allCountry.map((item, index) => (

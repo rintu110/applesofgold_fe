@@ -41,7 +41,7 @@ function AllShippingMessage({ value, onChange }) {
       label="Choose Shipping Message"
       onChange={(event) => onChange(event.target.value)}
       select
-      value={value === "" ? "" : allShippingMessage.length > 0 ? value : ""}
+      value={value === null ? "" : allShippingMessage.length > 0 ? value : ""}
     >
       <MenuItem value={""}></MenuItem>
       {allShippingMessage.map((item, index) => (

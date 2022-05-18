@@ -47,10 +47,6 @@ export const addProduct = (token, payload, universal, callBack) => {
       msrp: yup.string().trim().required("Please enter your product msrp"),
       sku: yup.string().trim().required("Please enter your product sku"),
       price: yup.string().trim().required("Please enter your product price"),
-      countryId: yup
-        .string()
-        .trim()
-        .matches(schemaConst.OBJECT_ID, "Please select your  country"),
       gender: yup.string().trim(),
       metaltype: yup.string().trim(),
       weight: yup.string().trim(),
@@ -63,10 +59,6 @@ export const addProduct = (token, payload, universal, callBack) => {
         .of(
           yup.string().trim().url("Please enter only image url nothing else!")
         ),
-      shippingMessageId: yup
-        .string()
-        .trim()
-        .matches(schemaConst.OBJECT_ID, "Please select your shipping message"),
       relatedProductIds: yup
         .array()
         .of(
@@ -152,11 +144,14 @@ export const addProduct = (token, payload, universal, callBack) => {
           alternative_images: payload.alternativeImages.filter(
             (item) => item !== ""
           ),
-          shipping_message_id: payload.shippingMessageId,
+          shipping_message_id:
+            payload.shippingMessageId === null
+              ? null
+              : payload.shippingMessageId,
           related_product_ids: payload.relatedProductIds,
           category_ids: payload.categoryIds,
           local_attribute: payload.localAttribute,
-          country_id: payload.countryId,
+          country_id: payload.countryId === null ? null : payload.countryId,
           gender: payload.gender,
           metaltype: payload.metaltype,
           weight: payload.weight,
@@ -202,10 +197,6 @@ export const updateProduct = (token, payload, universal, callBack) => {
       sku: yup.string().trim().required("Please enter your product sku"),
       price: yup.string().trim().required("Please enter your product price"),
       description: yup.string().trim(),
-      countryId: yup
-        .string()
-        .trim()
-        .matches(schemaConst.OBJECT_ID, "Please select your  country"),
       gender: yup.string().trim(),
       metaltype: yup.string().trim(),
       weight: yup.string().trim(),
@@ -217,10 +208,6 @@ export const updateProduct = (token, payload, universal, callBack) => {
         .of(
           yup.string().trim().url("Please enter only image url nothing else!")
         ),
-      shippingMessageId: yup
-        .string()
-        .trim()
-        .matches(schemaConst.OBJECT_ID, "Please select your shipping message"),
       relatedProductIds: yup
         .array()
         .of(
@@ -268,11 +255,14 @@ export const updateProduct = (token, payload, universal, callBack) => {
           alternative_images: payload.alternativeImages.filter(
             (item) => item !== ""
           ),
-          shipping_message_id: payload.shippingMessageId,
+          shipping_message_id:
+            payload.shippingMessageId === null
+              ? null
+              : payload.shippingMessageId,
           product_id: payload.productId,
           category_ids: payload.categoryIds,
           related_product_ids: payload.relatedProductIds,
-          country_id: payload.countryId,
+          country_id: payload.countryId === null ? null : payload.countryId,
           gender: payload.gender,
           metaltype: payload.metaltype,
           weight: payload.weight,

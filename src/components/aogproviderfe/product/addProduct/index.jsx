@@ -49,7 +49,7 @@ function AddProduct(props) {
     msrp: check ? addProductProps.product.msrp : "",
     price: check ? addProductProps.product.price : "",
     description: check ? addProductProps.product.description : "",
-    countryId: check ? addProductProps.product.country_id : "",
+    countryId: check ? addProductProps.product.country_id : null,
     gender: check ? addProductProps.product.gender : "",
     metaltype: check ? addProductProps.product.metaltype : "",
     weight: check ? addProductProps.product.weight : "",
@@ -59,7 +59,9 @@ function AddProduct(props) {
     alternativeImages: check
       ? addProductProps.product.alternative_images
       : ["", "", "", "", ""],
-    shippingMessageId: check ? addProductProps.product.shipping_message_id : "",
+    shippingMessageId: check
+      ? addProductProps.product.shipping_message_id
+      : null,
     relatedProductIds: check ? addProductProps.product.related_product_ids : [],
     categoryIds: check ? addProductProps.product.category_ids : [],
     localAttribute: check ? addProductProps.product.local_attribute : [],
