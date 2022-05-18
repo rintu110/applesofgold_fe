@@ -3,7 +3,7 @@ import TextField from "components/UI/TextField";
 import Box from "@mui/material/Box";
 import Button from "components/UI/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchKeyword } from "actions/universal";
+import { setSearchKeyword, setStartingAfter } from "actions/universal";
 
 function Search({ searchBy, CallBack }) {
   const universal = useSelector((store) => store.universalReducer);
@@ -24,7 +24,10 @@ function Search({ searchBy, CallBack }) {
             <Button
               color="primary"
               variant="outlined"
-              onClick={() => CallBack()}
+              onClick={() => {
+                CallBack();
+                setStartingAfter(0);
+              }}
             >
               Search
             </Button>

@@ -205,6 +205,7 @@ function LocalAttributes(props) {
             required: false,
             attributeId: "",
             attributeIndex: 0,
+            globalAttribute: "",
             editAttribute: false,
             globalAttributeIds: responseJson.result.global_attribute,
             localAttribute: responseJson.result.local_attributes,
@@ -311,6 +312,7 @@ function LocalAttributes(props) {
       .then((response) => response.json())
       .then((responseJson) => {
         if (responseJson.status) {
+          viewLocalAttribute();
           dispatch(
             setSnackBar({
               status: responseJson.status,
@@ -335,8 +337,10 @@ function LocalAttributes(props) {
   }
 
   React.useEffect(() => {
-    if (product.productId !== "") viewLocalAttribute();
-  }, [product.globalAttribute]);
+    if (product.productId !== "") {
+      viewLocalAttribute();
+    }
+  }, []);
 
   React.useEffect(() => {
     if (product.globalAttribute.length && product.productId === "") {
@@ -408,12 +412,8 @@ function LocalAttributes(props) {
         ...product,
         globalAttribute: data,
       });
+      product.productId === "" && viewGlobalAttribute();
       product.productId !== "" && addGlobalAttribute();
-      product.productId !== "" &&
-        setAttribute({
-          ...attribute,
-          globalAttribute: "",
-        });
     }
   };
 

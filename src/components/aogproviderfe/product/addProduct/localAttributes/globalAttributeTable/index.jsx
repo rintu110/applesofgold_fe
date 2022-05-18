@@ -25,6 +25,7 @@ function Row(props) {
     setProduct,
     index,
     deleteGlobalAttribute,
+    viewGlobalAttribute,
     innerRef,
     provided,
     snapshot,
@@ -38,6 +39,7 @@ function Row(props) {
       ...product,
       globalAttribute: data,
     });
+    product.productId === "" && viewGlobalAttribute();
     product.productId !== "" && deleteGlobalAttribute(row._id);
   };
 
@@ -223,8 +225,8 @@ function GlobalAttributeTable(props) {
       let attrRecord = attr.splice(result.source.index, 1);
       let record = data.splice(result.source.index, 1);
       data.splice(result.destination.index, 0, record[0]);
-      attr.splice(result.destination.index, 0, attrRecord[0]);
       product.productId !== "" && updateProductGlobalAttribute(data);
+      attr.splice(result.destination.index, 0, attrRecord[0]);
       setAttribute({
         ...attribute,
         globalAttributeIds: attr,
@@ -253,7 +255,7 @@ function GlobalAttributeTable(props) {
               <TableCell sx={{ padding: 0, width: 150 }}>ACTIONS</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody component={Droppable} droppableId="Attribute">
+          <TableBody component={Droppable} droppableId="Global-Attribute">
             {(Provided) => (
               <TableBody ref={Provided.innerRef} {...Provided.droppableProps}>
                 {!disabled &&
